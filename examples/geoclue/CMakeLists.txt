@@ -40,3 +40,8 @@ target_link_libraries(
     gtest
     gtest_main
 )
+
+install(
+    TARGETS geoclue 
+    DESTINATION bin/${CMAKE_PROJECT_NAME}/examples/geoclue/
+)

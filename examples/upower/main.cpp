@@ -1,6 +1,8 @@
 #include "upower.h"
 
 #include "org/freedesktop/dbus/bus.h"
+
+#include "org/freedesktop/dbus/asio/executor.h"
 #include "org/freedesktop/dbus/interfaces/properties.h"
 #include "org/freedesktop/dbus/types/struct.h"
 #include "org/freedesktop/dbus/types/stl/tuple.h"
@@ -29,6 +31,7 @@ dbus::Bus::Ptr the_system_bus()
 int main(int, char**)
 {
     auto bus = the_system_bus();
+    bus->install_executor(org::freedesktop::dbus::Executor::Ptr(new org::freedesktop::dbus::asio::Executor{bus}));
     std::thread t {std::bind(&dbus::Bus::run, bus)};
     auto upower = dbus::Service::use_service(bus, dbus::traits::Service<org::freedesktop::UPower>::interface_name());
     auto upower_object = upower->object_for_path(dbus::types::ObjectPath("/org/freedesktop/UPower"));

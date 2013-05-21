@@ -37,3 +37,8 @@ target_link_libraries(
     ${Boost_LIBRARIES}
     ${DBUS_LIBRARIES}
 )
+
+install(
+    TARGETS ofono
+    DESTINATION bin/${CMAKE_PROJECT_NAME}/examples/ofono/
+)

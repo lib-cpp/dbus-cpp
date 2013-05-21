@@ -38,3 +38,8 @@ target_link_libraries(
     ${Boost_LIBRARIES}
     ${DBUS_LIBRARIES}
 )
+
+install(
+    TARGETS benchmark 
+    DESTINATION bin/${CMAKE_PROJECT_NAME}/examples/benchmark/
+)
