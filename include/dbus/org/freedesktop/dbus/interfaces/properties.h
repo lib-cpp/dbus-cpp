@@ -40,47 +40,44 @@ public:
     struct GetAll
     {
         typedef Properties Interface;
-        static const std::string& name()
+        inline static const std::string& name()
         {
             static const std::string s{"GetAll"};
             return s;
         };
-        static const std::chrono::milliseconds default_timeout;
+        inline static const std::chrono::milliseconds default_timeout()
+        {
+            return std::chrono::seconds{1};
+        }
     };
 
     struct Get
     {
         typedef Properties Interface;
-        static const std::string& name()
+        inline static const std::string& name()
         {
             static const std::string s{"Get"};
             return s;
         };
-        static const std::chrono::milliseconds default_timeout;
+        inline static const std::chrono::milliseconds default_timeout()
+        {
+            return std::chrono::seconds{1};
+        }
     };
 
     struct Set
     {
         typedef Properties Interface;
-        static const std::string& name()
+        inline static const std::string& name()
         {
             static const std::string s{"Set"};
             return s;
         };
-        static const std::chrono::milliseconds default_timeout;
+        inline static const std::chrono::milliseconds default_timeout()
+        {
+            return std::chrono::seconds{1};
+        }
     };
-};
-const std::chrono::milliseconds Properties::Get::default_timeout
-{
-    10*1000
-};
-const std::chrono::milliseconds Properties::GetAll::default_timeout
-{
-    10*1000
-};
-const std::chrono::milliseconds Properties::Set::default_timeout
-{
-    10*1000
 };
 }
 
@@ -89,7 +86,7 @@ namespace traits
 template<>
 struct Service<interfaces::Properties>
 {
-    static const std::string& interface_name()
+    inline static const std::string& interface_name()
     {
         static const std::string s{"org.freedesktop.DBus.Properties"};
         return s;

@@ -67,20 +67,20 @@ namespace helper
 template<typename T>
 struct TypeMapper<org::freedesktop::dbus::types::Variant<T>>
 {
-    constexpr static ArgumentType type_value()
+    constexpr inline static ArgumentType type_value()
     {
         return ArgumentType::variant;
     }
-    constexpr static bool is_basic_type()
+    constexpr inline static bool is_basic_type()
     {
         return true;
     }
-    constexpr static bool requires_signature()
+    constexpr inline static bool requires_signature()
     {
         return true;
     }
 
-    static std::string signature()
+    inline static std::string signature()
     {
         return DBUS_TYPE_VARIANT_AS_STRING + TypeMapper<T>::signature();
     }
@@ -90,7 +90,7 @@ struct TypeMapper<org::freedesktop::dbus::types::Variant<T>>
 template<typename T>
 struct Codec<types::Variant<T>>
 {
-    static void encode_argument(DBusMessageIter* out, const types::Variant<T>& arg)
+    inline static void encode_argument(DBusMessageIter* out, const types::Variant<T>& arg)
     {
         DBusMessageIter sub;
         if (!dbus_message_iter_open_container(
@@ -106,7 +106,7 @@ struct Codec<types::Variant<T>>
             throw std::runtime_error("Problem closing container");
     }
 
-    static void decode_argument(DBusMessageIter* in, types::Variant<T>& arg)
+    inline static void decode_argument(DBusMessageIter* in, types::Variant<T>& arg)
     {
         if (dbus_message_iter_get_arg_type(in) != static_cast<int>(ArgumentType::variant))
             throw std::runtime_error("Incompatible argument type: dbus_message_iter_get_arg_type(in) != ArgumentType::variant");

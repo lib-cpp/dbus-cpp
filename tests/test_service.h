@@ -9,7 +9,7 @@ struct Service
     {
         typedef Service Interface;
 
-        static const std::string& name()
+        inline static const std::string& name()
         {
             static const std::string s
             {
@@ -18,14 +18,17 @@ struct Service
             return s;
         }
 
-        static const std::chrono::milliseconds default_timeout;
+        inline static const std::chrono::milliseconds default_timeout()
+        {
+            return std::chrono::seconds{1};
+        }
     };
 
     struct Signals
     {
         struct Dummy
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "Dummy";
             };
@@ -38,7 +41,7 @@ struct Service
     {
         struct Dummy
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "Dummy";
             };
@@ -48,11 +51,6 @@ struct Service
             static const bool writable = true;
         };
     };
-};
-
-const std::chrono::milliseconds Service::Method::default_timeout
-{
-    10*1000
 };
 }
 
@@ -69,7 +67,7 @@ namespace traits
 template<>
 struct Service<test::Service>
 {
-    static const std::string& interface_name()
+    inline static const std::string& interface_name()
     {
         static const std::string s
         {

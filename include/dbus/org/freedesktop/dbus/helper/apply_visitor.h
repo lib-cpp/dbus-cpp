@@ -30,7 +30,7 @@ namespace dbus
 namespace helper
 {
 template<typename Visitor>
-void apply_visitor(DBusMessageIter* it, Visitor visitor)
+inline void apply_visitor(DBusMessageIter* it, Visitor visitor)
 {
     ArgumentType type {ArgumentType::invalid};
 

@@ -35,7 +35,7 @@ namespace dbus
 template<typename T>
 struct Codec
 {
-    static void encode_argument(DBusMessageIter* out, const T& arg)
+    inline static void encode_argument(DBusMessageIter* out, const T& arg)
     {
         static_assert(helper::TypeMapper<T>::is_basic_type(), "Default codec only defined for basic types");
         if (std::is_same<T, typename helper::DBusTypeMapper<helper::TypeMapper<T>::type_value()>::Type>::value)
@@ -51,7 +51,7 @@ struct Codec
         }
     }
 
-    static void decode_argument(DBusMessageIter* in, T& arg)
+    inline static void decode_argument(DBusMessageIter* in, T& arg)
     {
         static_assert(helper::TypeMapper<T>::is_basic_type(), "Default codec only defined for basic types");
         if (std::is_same<T, typename helper::DBusTypeMapper<helper::TypeMapper<T>::type_value()>::Type>::value)
@@ -70,11 +70,11 @@ struct Codec
 template<>
 struct Codec<void>
 {
-    static void encode_argument(DBusMessageIter*)
+    inline static void encode_argument(DBusMessageIter*)
     {
     }
 
-    static void decode_argument(DBusMessageIter*)
+    inline static void decode_argument(DBusMessageIter*)
     {
     }
 };
@@ -82,14 +82,14 @@ struct Codec<void>
 template<>
 struct Codec<bool>
 {
-    static void encode_argument(DBusMessageIter* out, const bool& arg)
+    inline static void encode_argument(DBusMessageIter* out, const bool& arg)
     {
         dbus_bool_t value = arg ? TRUE : FALSE;
         if (!dbus_message_iter_append_basic(out, DBUS_TYPE_BOOLEAN, std::addressof(value)))
             throw std::runtime_error("Not enough memory when appending basic type to message");
     }
 
-    static void decode_argument(DBusMessageIter* in, bool& arg)
+    inline static void decode_argument(DBusMessageIter* in, bool& arg)
     {
         dbus_bool_t value;
         dbus_message_iter_get_basic(in, std::addressof(value));

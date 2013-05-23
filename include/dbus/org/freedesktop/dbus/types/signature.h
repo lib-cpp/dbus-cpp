@@ -64,20 +64,20 @@ namespace helper
 template<>
 struct TypeMapper<org::freedesktop::dbus::types::Signature>
 {
-    constexpr static ArgumentType type_value()
+    constexpr inline static ArgumentType type_value()
     {
         return ArgumentType::signature;
     }
-    constexpr static bool is_basic_type()
+    constexpr inline static bool is_basic_type()
     {
         return false;
     }
-    constexpr static bool requires_signature()
+    constexpr inline static bool requires_signature()
     {
         return true;
     }
 
-    static std::string signature()
+    inline static std::string signature()
     {
         return DBUS_TYPE_SIGNATURE_AS_STRING;
     }
@@ -86,13 +86,13 @@ struct TypeMapper<org::freedesktop::dbus::types::Signature>
 template<>
 struct Codec<types::Signature>
 {
-    static void encode_argument(DBusMessageIter* out, const types::Signature& arg)
+    inline static void encode_argument(DBusMessageIter* out, const types::Signature& arg)
     {
         const char* s = arg.signature.c_str();
         dbus_message_iter_append_basic(out, static_cast<int>(ArgumentType::signature), &s);
     }
 
-    static void decode_argument(DBusMessageIter* in, types::Signature& arg)
+    inline static void decode_argument(DBusMessageIter* in, types::Signature& arg)
     {
         if (dbus_message_iter_get_arg_type(in) != static_cast<int>(ArgumentType::signature))
             throw std::runtime_error("Incompatible argument type: dbus_message_iter_get_arg_type(in) != ArgumentType::signature");

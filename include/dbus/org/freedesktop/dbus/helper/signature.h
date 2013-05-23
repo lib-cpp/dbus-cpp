@@ -31,19 +31,19 @@ namespace dbus
 namespace helper
 {
 template<typename T>
-std::string atomic_signature()
+inline std::string atomic_signature()
 {
     return TypeMapper<T>::signature();
 }
 
-std::string signature()
+inline std::string signature()
 {
     static const std::string s;
     return s;
 }
 
 template<typename Arg, typename... Args>
-std::string signature(const Arg&, const Args& ... remainder)
+inline std::string signature(const Arg&, const Args& ... remainder)
 {
     static const std::string s = atomic_signature<Arg>() + signature(remainder...);
     return s;

@@ -31,10 +31,10 @@ namespace traits
 template<typename UnderlyingType>
 struct Watch
 {
-    static const int readable_event = -1;
-    static const int writeable_event = -1;
-    static const int error_event = -1;
-    static const int hangup_event = -1;
+    static inline int readable_event() { return -1; }
+    static inline int writeable_event() { return -1; }
+    static inline int error_event() { return -1; }
+    static inline int hangup_event() { return -1; }
 
     static bool is_watch_enabled(UnderlyingType* watch);
     static int get_watch_unix_fd(UnderlyingType* watch);

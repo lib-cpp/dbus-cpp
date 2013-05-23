@@ -17,7 +17,7 @@ struct UPower
     {
         struct DaemonVersion
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "DaemonVersion";
             };
@@ -28,7 +28,7 @@ struct UPower
         };
         struct CanSuspend
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "CanSuspend";
             };
@@ -39,7 +39,7 @@ struct UPower
         };
         struct CanHibernate
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "CanHibernate";
             };
@@ -50,7 +50,7 @@ struct UPower
         };
         struct OnBattery
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "OnBattery";
             };
@@ -61,7 +61,7 @@ struct UPower
         };
         struct OnLowBattery
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "OnLowBattery";
             };
@@ -72,7 +72,7 @@ struct UPower
         };
         struct LidIsClosed
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "LidIsClosed";
             };
@@ -83,7 +83,7 @@ struct UPower
         };
         struct LidIsPresent
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "LidIsPresent";
             };
@@ -98,7 +98,7 @@ struct UPower
     {
         struct DeviceAdded
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "DeviceAdded";
             };
@@ -107,7 +107,7 @@ struct UPower
         };
         struct DeviceRemoved
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "DeviceRemoved";
             };
@@ -116,7 +116,7 @@ struct UPower
         };
         struct DeviceChanged
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "DeviceChanged";
             };
@@ -125,7 +125,7 @@ struct UPower
         };
         struct Changed
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "Changed";
             };
@@ -134,7 +134,7 @@ struct UPower
         };
         struct Sleeping
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "Sleeping";
             };
@@ -143,7 +143,7 @@ struct UPower
         };
         struct Resuming
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "Resuming";
             };
@@ -165,32 +165,32 @@ struct UPower
             return s;
         }
 
-        static const std::chrono::milliseconds default_timeout;
+        inline static const std::chrono::milliseconds default_timeout() { return std::chrono::seconds{1}; }
     };
 
     struct Device
     {
         struct GetHistory
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "GetHistory";
             } typedef Device Interface;
-            static const std::chrono::milliseconds default_timeout;
+            inline static const std::chrono::milliseconds default_timeout() { return std::chrono::seconds{1}; }
         };
         struct GetStatistics
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "GetStatistics";
             } typedef Device Interface;
-            static const std::chrono::milliseconds default_timeout;
+            inline static const std::chrono::milliseconds default_timeout() { return std::chrono::seconds{1}; }
         };
         struct Properties
         {
             struct NativePath
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "NativePath";
                 };
@@ -201,7 +201,7 @@ struct UPower
             };
             struct Vendor
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "Vendor";
                 };
@@ -212,7 +212,7 @@ struct UPower
             };
             struct Model
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "Model";
                 };
@@ -223,7 +223,7 @@ struct UPower
             };
             struct Serial
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "Serial";
                 };
@@ -234,7 +234,7 @@ struct UPower
             };
             struct UpdateTime
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "UpdateTime";
                 };
@@ -245,7 +245,7 @@ struct UPower
             };
             struct Type
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "Type";
                 };
@@ -256,7 +256,7 @@ struct UPower
             };
             struct PowerSupply
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "PowerSupply";
                 };
@@ -267,7 +267,7 @@ struct UPower
             };
             struct HasHistory
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "HasHistory";
                 };
@@ -278,7 +278,7 @@ struct UPower
             };
             struct HasStatistics
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "HasStatistics";
                 };
@@ -289,7 +289,7 @@ struct UPower
             };
             struct Online
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "Online";
                 };
@@ -300,7 +300,7 @@ struct UPower
             };
             struct Energy
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "Energy";
                 };
@@ -311,7 +311,7 @@ struct UPower
             };
             struct EnergyEmpty
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "EnergyEmpty";
                 };
@@ -322,7 +322,7 @@ struct UPower
             };
             struct EnergyFull
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "EnergyFull";
                 };
@@ -333,7 +333,7 @@ struct UPower
             };
             struct EnergyFullDesign
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "EnergyFullDesign";
                 };
@@ -344,7 +344,7 @@ struct UPower
             };
             struct EnergyRate
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "EnergyRate";
                 };
@@ -355,7 +355,7 @@ struct UPower
             };
             struct Voltage
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "Voltage";
                 };
@@ -366,7 +366,7 @@ struct UPower
             };
             struct TimeToEmpty
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "TimeToEmpty";
                 };
@@ -377,7 +377,7 @@ struct UPower
             };
             struct TimeToFull
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "TimeToFull";
                 };
@@ -388,7 +388,7 @@ struct UPower
             };
             struct Percentage
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "Percentage";
                 };
@@ -399,7 +399,7 @@ struct UPower
             };
             struct IsPresent
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "IsPresent";
                 };
@@ -410,7 +410,7 @@ struct UPower
             };
             struct State
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "State";
                 };
@@ -421,7 +421,7 @@ struct UPower
             };
             struct IsRechargeable
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "IsRechargeable";
                 };
@@ -432,7 +432,7 @@ struct UPower
             };
             struct Capacity
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "Capacity";
                 };
@@ -443,7 +443,7 @@ struct UPower
             };
             struct Technology
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "Technology";
                 };
@@ -454,7 +454,7 @@ struct UPower
             };
             struct RecallNotice
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "RecallNotice";
                 };
@@ -465,7 +465,7 @@ struct UPower
             };
             struct RecallVendor
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "RecallVendor";
                 };
@@ -476,7 +476,7 @@ struct UPower
             };
             struct RecallUrl
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "RecallUrl";
                 };
@@ -490,7 +490,7 @@ struct UPower
         {
             struct Changed
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "Changed";
                 };
@@ -500,18 +500,6 @@ struct UPower
         };
     };
 
-};
-const std::chrono::milliseconds UPower::EnumerateDevices::default_timeout
-{
-    10*1000
-};
-const std::chrono::milliseconds UPower::Device::GetHistory::default_timeout
-{
-    10*1000
-};
-const std::chrono::milliseconds UPower::Device::GetStatistics::default_timeout
-{
-    10*1000
 };
 }
 }
@@ -527,7 +515,7 @@ namespace traits
 template<>
 struct Service<org::freedesktop::UPower>
 {
-    static const std::string& interface_name()
+    inline static const std::string& interface_name()
     {
         static const std::string s
         {
@@ -540,7 +528,7 @@ struct Service<org::freedesktop::UPower>
 template<>
 struct Service<org::freedesktop::UPower::Device>
 {
-    static const std::string& interface_name()
+    inline static const std::string& interface_name()
     {
         static const std::string s
         {

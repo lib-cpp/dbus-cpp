@@ -15,7 +15,7 @@
 # Authored by: Thomas Voss <thomas.voss@canonical.com>
 
 find_package(PkgConfig)
-find_package(Boost COMPONENTS system)
+find_package(Boost 1.49 COMPONENTS system)
 find_package(Threads)
 
 pkg_check_modules(DBUS dbus-1)

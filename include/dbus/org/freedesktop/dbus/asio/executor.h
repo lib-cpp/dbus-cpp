@@ -133,7 +133,7 @@ class Executor : public org::freedesktop::dbus::Executor
                     std::bind(
                         &Watch::on_stream_descriptor_event,
                         Watch<UnderlyingWatchType>::shared_from_this(),
-                        traits::Watch<UnderlyingWatchType>::readable_event,
+                        traits::Watch<UnderlyingWatchType>::readable_event(),
                         std::placeholders::_1,
                         std::placeholders::_2));
             }
@@ -144,7 +144,7 @@ class Executor : public org::freedesktop::dbus::Executor
                     std::bind(
                         &Watch::on_stream_descriptor_event,
                         Watch<UnderlyingWatchType>::shared_from_this(),
-                        traits::Watch<UnderlyingWatchType>::writable_event,
+                        traits::Watch<UnderlyingWatchType>::writeable_event(),
                         std::placeholders::_1,
                         std::placeholders::_2));
             }
@@ -172,7 +172,7 @@ class Executor : public org::freedesktop::dbus::Executor
             {
                 traits::Watch<UnderlyingWatchType>::invoke_watch_handler_for_event(
                     watch,
-                    traits::Watch<UnderlyingWatchType>::error_event);
+                    traits::Watch<UnderlyingWatchType>::error_event());
             }
             else
             {

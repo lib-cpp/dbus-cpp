@@ -54,27 +54,27 @@ private:
     struct GetManagedObjects
     {
         typedef ObjectManager Interface;
-        static std::string name()
+        inline static std::string name()
         {
             return "GetManagedObjects";
         }
         static const bool call_synchronously = true;
-        static const std::chrono::milliseconds default_timeout;
+        inline static const std::chrono::milliseconds default_timeout()
+        {
+            return std::chrono::seconds{1};
+        }
     };
     Service::Ptr service;
-};
-const std::chrono::milliseconds ObjectManager::GetManagedObjects::default_timeout
-{
-    10*1000
 };
 }
 template<>
 struct ServiceTraits<interfaces::ObjectManager>
 {
-    static const std::string& interface_name()
+    inline static const std::string& interface_name()
     {
         static const std::string s
-        {"org.freedesktop.DBus.ObjectManager"
+        {
+            "org.freedesktop.DBus.ObjectManager"
         };
         return s;
     }

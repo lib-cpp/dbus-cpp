@@ -28,7 +28,7 @@ namespace dbus
 {
 namespace helper
 {
-bool is_compound_type(ArgumentType type)
+inline bool is_compound_type(ArgumentType type)
 {
     switch (type)
     {

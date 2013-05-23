@@ -49,18 +49,17 @@ private:
     struct Introspect
     {
         typedef Introspectable Interface;
-        static std::string name()
+        inline static std::string name()
         {
             return "Introspect";
         }
         static const bool call_synchronously = true;
-        static const std::chrono::milliseconds default_timeout;
+        inline static const std::chrono::milliseconds default_timeout()
+        {
+            return std::chrono::seconds{1};
+        }
     };
     Service::Ptr service;
-};
-const std::chrono::milliseconds Introspectable::Introspect::default_timeout
-{
-    10*1000
 };
 }
 namespace traits
@@ -68,11 +67,9 @@ namespace traits
 template<>
 struct Service<interfaces::Introspectable>
 {
-    static const std::string& interface_name()
+    inline static const std::string& interface_name()
     {
-        static const std::string s
-        {"org.freedesktop.DBus.Introspectable"
-        };
+        static const std::string s{"org.freedesktop.DBus.Introspectable"};
         return s;
     }
 };

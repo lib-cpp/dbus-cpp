@@ -64,20 +64,20 @@ namespace helper
 template<>
 struct TypeMapper<org::freedesktop::dbus::types::UnixFd>
 {
-    constexpr static ArgumentType type_value()
+    constexpr inline static ArgumentType type_value()
     {
         return ArgumentType::unix_fd;
     }
-    constexpr static bool is_basic_type()
+    constexpr inline static bool is_basic_type()
     {
         return false;
     }
-    constexpr static bool requires_signature()
+    constexpr inline static bool requires_signature()
     {
         return true;
     }
 
-    static std::string signature()
+    inline static std::string signature()
     {
         return DBUS_TYPE_UNIX_FD_AS_STRING;
     }
@@ -86,12 +86,12 @@ struct TypeMapper<org::freedesktop::dbus::types::UnixFd>
 template<>
 struct Codec<types::UnixFd>
 {
-    static void encode_argument(DBusMessageIter* out, const types::UnixFd& arg)
+    inline static void encode_argument(DBusMessageIter* out, const types::UnixFd& arg)
     {
         dbus_message_iter_append_basic(out, static_cast<int>(ArgumentType::unix_fd), std::addressof(arg.fd));
     }
 
-    static void decode_argument(DBusMessageIter* in, types::UnixFd& arg)
+    inline static void decode_argument(DBusMessageIter* in, types::UnixFd& arg)
     {
         if (dbus_message_iter_get_arg_type(in) != static_cast<int>(ArgumentType::unix_fd))
             throw std::runtime_error("Incompatible argument type: dbus_message_iter_get_arg_type(in) != ArgumentType::unix_fd");

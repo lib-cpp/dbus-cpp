@@ -18,11 +18,11 @@ struct Geoclue
     {
         struct Create
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "Create";
             } typedef Master Interface;
-            static const std::chrono::milliseconds default_timeout;
+            inline static const std::chrono::milliseconds default_timeout() { return std::chrono::seconds{1}; }
         };
     };
 
@@ -30,27 +30,27 @@ struct Geoclue
     {
         struct SetRequirements
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "SetRequirements";
             } typedef MasterClient Interface;
-            static const std::chrono::milliseconds default_timeout;
+            inline static const std::chrono::milliseconds default_timeout() { return std::chrono::seconds{1}; }
         };
         struct GetAddressProvider
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "GetAddressProvider";
             } typedef MasterClient Interface;
-            static const std::chrono::milliseconds default_timeout;
+            inline static const std::chrono::milliseconds default_timeout() { return std::chrono::seconds{1}; }
         };
         struct GetPositionProvider
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "GetPositionProvider";
             } typedef MasterClient Interface;
-            static const std::chrono::milliseconds default_timeout;
+            inline static const std::chrono::milliseconds default_timeout() { return std::chrono::seconds{1}; }
         };
     };
 
@@ -58,11 +58,11 @@ struct Geoclue
     {
         struct GetAddress
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "GetAddress";
             } typedef Address Interface;
-            static const std::chrono::milliseconds default_timeout;
+            inline static const std::chrono::milliseconds default_timeout() { return std::chrono::seconds{1}; }
         };
     };
 
@@ -70,17 +70,17 @@ struct Geoclue
     {
         struct GetPosition
         {
-            static std::string name()
+            inline static std::string name()
             {
                 return "GetPosition";
             } typedef Position Interface;
-            static const std::chrono::milliseconds default_timeout;
+            inline static const std::chrono::milliseconds default_timeout() { return std::chrono::seconds{1}; }
         };
         struct Signals
         {
             struct PositionChanged
             {
-                static std::string name()
+                inline static std::string name()
                 {
                     return "PositionChanged";
                 };
@@ -89,30 +89,6 @@ struct Geoclue
             };
         };
     };
-};
-const std::chrono::milliseconds Geoclue::Master::Create::default_timeout
-{
-    10*1000
-};
-const std::chrono::milliseconds Geoclue::MasterClient::SetRequirements::default_timeout
-{
-    10*1000
-};
-const std::chrono::milliseconds Geoclue::MasterClient::GetAddressProvider::default_timeout
-{
-    10*1000
-};
-const std::chrono::milliseconds Geoclue::MasterClient::GetPositionProvider::default_timeout
-{
-    10*1000
-};
-const std::chrono::milliseconds Geoclue::Address::GetAddress::default_timeout
-{
-    10*1000
-};
-const std::chrono::milliseconds Geoclue::Position::GetPosition::default_timeout
-{
-    10*1000
 };
 }
 }
@@ -128,7 +104,7 @@ namespace traits
 template<>
 struct Service<org::freedesktop::Geoclue>
 {
-    static const std::string& interface_name()
+    inline static const std::string& interface_name()
     {
         static const std::string s
         {"org.freedesktop.Geoclue"
@@ -140,7 +116,7 @@ struct Service<org::freedesktop::Geoclue>
 template<>
 struct Service<org::freedesktop::Geoclue::Master>
 {
-    static const std::string& interface_name()
+    inline static const std::string& interface_name()
     {
         static const std::string s
         {"org.freedesktop.Geoclue.Master"
@@ -152,7 +128,7 @@ struct Service<org::freedesktop::Geoclue::Master>
 template<>
 struct Service<org::freedesktop::Geoclue::MasterClient>
 {
-    static const std::string& interface_name()
+    inline static const std::string& interface_name()
     {
         static const std::string s
         {"org.freedesktop.Geoclue.MasterClient"
@@ -164,7 +140,7 @@ struct Service<org::freedesktop::Geoclue::MasterClient>
 template<>
 struct Service<org::freedesktop::Geoclue::Address>
 {
-    static const std::string& interface_name()
+    inline static const std::string& interface_name()
     {
         static const std::string s
         {"org.freedesktop.Geoclue.Address"
@@ -176,7 +152,7 @@ struct Service<org::freedesktop::Geoclue::Address>
 template<>
 struct Service<org::freedesktop::Geoclue::Position>
 {
-    static const std::string& interface_name()
+    inline static const std::string& interface_name()
     {
         static const std::string s
         {"org.freedesktop.Geoclue.Position"

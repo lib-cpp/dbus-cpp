@@ -16,7 +16,7 @@ protected:
     {
         typedef IBenchmarkService Interface;
 
-        static const std::string& name()
+        inline static const std::string& name()
         {
             static const std::string s
             {
@@ -25,14 +25,17 @@ protected:
             return s;
         }
 
-        static const std::chrono::milliseconds default_timeout;
+        inline static const std::chrono::milliseconds default_timeout()
+        {
+           return std::chrono::seconds{1};
+        }
     };
 
     struct MethodVectorInt32
     {
         typedef IBenchmarkService Interface;
 
-        static const std::string& name()
+        inline static const std::string& name()
         {
             static const std::string s
             {
@@ -41,7 +44,10 @@ protected:
             return s;
         }
 
-        static const std::chrono::milliseconds default_timeout;
+        inline static const std::chrono::milliseconds default_timeout()
+        {   
+            return std::chrono::seconds{1};
+        }
     };
 
 public:
@@ -63,7 +69,7 @@ namespace traits
 template<>
 struct Service<test::IBenchmarkService>
 {
-    static const std::string& interface_name()
+    inline static const std::string& interface_name()
     {
         static const std::string s
         {
@@ -81,7 +87,7 @@ namespace test
 class BenchmarkServiceStub : public dbus::Stub<IBenchmarkService>
 {
 public:
-	typedef std::shared_ptr<BenchmarkServiceStub> Ptr;
+    typedef std::shared_ptr<BenchmarkServiceStub> Ptr;
 	
     BenchmarkServiceStub(const dbus::Bus::Ptr& bus) : dbus::Stub<IBenchmarkService>(bus),
         object(access_service()->object_for_path(dbus::types::ObjectPath("/org/freedesktop/dbus/benchmark/Service")))
@@ -172,15 +178,6 @@ public:
     {
         return arg;
     }
-};
-
-const std::chrono::milliseconds IBenchmarkService::MethodInt64::default_timeout
-{
-    std::chrono::seconds(10)
-};
-const std::chrono::milliseconds IBenchmarkService::MethodVectorInt32::default_timeout
-{
-    std::chrono::seconds(10)
 };
 }
 

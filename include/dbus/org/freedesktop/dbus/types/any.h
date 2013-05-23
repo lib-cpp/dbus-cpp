@@ -37,7 +37,7 @@ namespace types
 {
 struct Any
 {
-    static void clone_value_if_string(DBusBasicValue& out, const DBusBasicValue& in, const ArgumentType& type)
+    inline static void clone_value_if_string(DBusBasicValue& out, const DBusBasicValue& in, const ArgumentType& type)
     {
         out = in;
         if (type == ArgumentType::string)
@@ -81,7 +81,8 @@ struct Any
     ArgumentType type;
     DBusBasicValue value;
 };
-std::ostream& operator<<(std::ostream& out, const Any& any)
+
+inline std::ostream& operator<<(std::ostream& out, const Any& any)
 {
     switch (any.type)
     {
@@ -133,20 +134,20 @@ namespace helper
 template<>
 struct TypeMapper<org::freedesktop::dbus::types::Any>
 {
-    constexpr static ArgumentType type_value()
+    constexpr inline static ArgumentType type_value()
     {
         return ArgumentType::invalid;
     }
-    constexpr static bool is_basic_type()
+    constexpr inline static bool is_basic_type()
     {
         return false;
     }
-    constexpr static bool requires_signature()
+    constexpr inline static bool requires_signature()
     {
         return false;
     }
 
-    static std::string signature()
+    inline static std::string signature()
     {
         return "";
     }
@@ -155,11 +156,11 @@ struct TypeMapper<org::freedesktop::dbus::types::Any>
 template<>
 struct Codec<types::Any>
 {
-    static void encode_argument(DBusMessageIter*, const types::Any&)
+    inline static void encode_argument(DBusMessageIter*, const types::Any&)
     {
     }
 
-    static void decode_argument(DBusMessageIter* in, types::Any& any)
+    inline static void decode_argument(DBusMessageIter* in, types::Any& any)
     {
         helper::apply_visitor(in, std::ref(any));
     };

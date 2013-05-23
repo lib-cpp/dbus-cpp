@@ -41,7 +41,7 @@ class DBus
     {
         typedef DBus Interface;
         
-        static const std::string& name()
+        inline static const std::string& name()
         {
             static const std::string s
             {
@@ -50,14 +50,17 @@ class DBus
             return s;
         }
 
-        static const std::chrono::milliseconds default_timeout;
+        inline static const std::chrono::milliseconds default_timeout()
+        {
+            return std::chrono::seconds{1};
+        }
     };
     
     struct GetConnectionUnixProcessID
     {
         typedef DBus Interface;
         
-        static const std::string& name()
+        inline static const std::string& name()
         {
             static const std::string s
             {
@@ -66,7 +69,10 @@ class DBus
             return s;
         }
         
-        static const std::chrono::milliseconds default_timeout;
+        inline static const std::chrono::milliseconds default_timeout()
+        {
+            return std::chrono::seconds{1};
+        }
     };
 
     struct GetConnectionUnixUser
@@ -81,7 +87,11 @@ class DBus
             };
             return s;
         }
-        static const std::chrono::milliseconds default_timeout;
+        
+        inline static const std::chrono::milliseconds default_timeout()
+        {
+            return std::chrono::seconds{1};
+        }
     };
 
     DBus(const Bus::Ptr& bus) 
@@ -106,10 +116,6 @@ class DBus
     Service::Ptr service;
     Object::Ptr object;
 };
-
-const std::chrono::milliseconds DBus::ListNames::default_timeout{std::chrono::seconds{1}};
-const std::chrono::milliseconds DBus::GetConnectionUnixProcessID::default_timeout{std::chrono::seconds{1}};
-const std::chrono::milliseconds DBus::GetConnectionUnixUser::default_timeout{std::chrono::seconds{1}};
 
 namespace traits
 {

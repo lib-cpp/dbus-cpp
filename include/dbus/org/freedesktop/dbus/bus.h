@@ -73,10 +73,10 @@ struct Timeout<DBusTimeout>
 template<>
 struct Watch<DBusWatch>
 {
-    static const int readable_event;
-    static const int writable_event;
-    static const int error_event;
-    static const int hangup_event;
+    inline static int readable_event() { return DBUS_WATCH_READABLE; }
+    inline static int writeable_event() { return DBUS_WATCH_WRITABLE; }
+    inline static int error_event() { return DBUS_WATCH_ERROR; }
+    inline static int hangup_event() { return DBUS_WATCH_HANGUP; }
 
     static inline bool is_watch_enabled(DBusWatch* watch)
     {
@@ -103,11 +103,6 @@ struct Watch<DBusWatch>
         return dbus_watch_handle(watch, event);
     }
 };
-
-const int Watch<DBusWatch>::readable_event = DBUS_WATCH_READABLE;
-const int Watch<DBusWatch>::writable_event = DBUS_WATCH_WRITABLE;
-const int Watch<DBusWatch>::error_event = DBUS_WATCH_ERROR;
-const int Watch<DBusWatch>::hangup_event = DBUS_WATCH_HANGUP;
 }
 
 class Bus

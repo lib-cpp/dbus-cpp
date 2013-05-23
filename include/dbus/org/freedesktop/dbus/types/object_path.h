@@ -35,7 +35,7 @@ namespace types
 class ObjectPath
 {
 public:
-    static std::string root()
+    inline static std::string root()
     {
         return std::string{"/"};
     }
@@ -87,20 +87,20 @@ namespace helper
 template<>
 struct TypeMapper<org::freedesktop::dbus::types::ObjectPath>
 {
-    constexpr static ArgumentType type_value()
+    constexpr inline static ArgumentType type_value()
     {
         return ArgumentType::object_path;
     }
-    constexpr static bool is_basic_type()
+    constexpr inline static bool is_basic_type()
     {
         return false;
     }
-    constexpr static bool requires_signature()
+    constexpr inline static bool requires_signature()
     {
         return true;
     }
 
-    static std::string signature()
+    inline static std::string signature()
     {
         return DBUS_TYPE_OBJECT_PATH_AS_STRING;
     }
@@ -109,13 +109,13 @@ struct TypeMapper<org::freedesktop::dbus::types::ObjectPath>
 template<>
 struct Codec<types::ObjectPath>
 {
-    static void encode_argument(DBusMessageIter* out, const types::ObjectPath& arg)
+    inline static void encode_argument(DBusMessageIter* out, const types::ObjectPath& arg)
     {
         const char* s = arg.path.c_str();
         dbus_message_iter_append_basic(out, static_cast<int>(ArgumentType::object_path), &s);
     }
 
-    static void decode_argument(DBusMessageIter* in, types::ObjectPath& arg)
+    inline static void decode_argument(DBusMessageIter* in, types::ObjectPath& arg)
     {
         if (dbus_message_iter_get_arg_type(in) != static_cast<int>(ArgumentType::object_path))
             throw std::runtime_error("Incompatible argument type: dbus_message_iter_get_arg_type(in) != ArgumentType::object_path");

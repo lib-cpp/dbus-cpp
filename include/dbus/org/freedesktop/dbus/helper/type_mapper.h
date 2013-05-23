@@ -99,9 +99,9 @@ struct DBusTypeMapper<ArgumentType::floating_point>
 template<typename T>
 struct TypeMapper
 {
-    constexpr static inline ArgumentType type_value();
-    constexpr static inline bool is_basic_type();
-    constexpr static inline bool requires_signature();
+    constexpr inline static ArgumentType type_value();
+    constexpr inline static bool is_basic_type();
+    constexpr inline static bool requires_signature();
 
     static inline std::string signature();
 };
@@ -109,20 +109,20 @@ struct TypeMapper
 template<>
 struct TypeMapper<bool>
 {
-    constexpr static ArgumentType type_value()
+    constexpr inline static ArgumentType type_value()
     {
         return ArgumentType::boolean;
     }
-    constexpr static bool is_basic_type()
+    constexpr inline static bool is_basic_type()
     {
         return true;
     }
-    constexpr static bool requires_signature()
+    constexpr inline static bool requires_signature()
     {
         return true;
     }
 
-    static std::string signature()
+    inline static std::string signature()
     {
         return DBUS_TYPE_BOOLEAN_AS_STRING;
     }
@@ -131,20 +131,20 @@ struct TypeMapper<bool>
 template<>
 struct TypeMapper<std::int8_t>
 {
-    constexpr static ArgumentType type_value()
+    constexpr inline static ArgumentType type_value()
     {
         return ArgumentType::byte;
     }
-    constexpr static bool is_basic_type()
+    constexpr inline static bool is_basic_type()
     {
         return true;
     }
-    constexpr static bool requires_signature()
+    constexpr inline static bool requires_signature()
     {
         return true;
     }
 
-    static std::string signature()
+    inline static std::string signature()
     {
         return DBUS_TYPE_BYTE_AS_STRING;
     }
@@ -153,20 +153,20 @@ struct TypeMapper<std::int8_t>
 template<>
 struct TypeMapper<std::int16_t>
 {
-    constexpr static ArgumentType type_value()
+    constexpr inline static ArgumentType type_value()
     {
         return ArgumentType::int16;
     }
-    constexpr static bool is_basic_type()
+    constexpr inline static bool is_basic_type()
     {
         return true;
     }
-    constexpr static bool requires_signature()
+    constexpr inline static bool requires_signature()
     {
         return true;
     }
 
-    static std::string signature()
+    inline static std::string signature()
     {
         return DBUS_TYPE_INT16_AS_STRING;
     }
@@ -175,20 +175,20 @@ struct TypeMapper<std::int16_t>
 template<>
 struct TypeMapper<std::uint16_t>
 {
-    constexpr static ArgumentType type_value()
+    constexpr inline static ArgumentType type_value()
     {
         return ArgumentType::uint16;
     }
-    constexpr static bool is_basic_type()
+    constexpr inline static bool is_basic_type()
     {
         return true;
     }
-    constexpr static bool requires_signature()
+    constexpr inline static bool requires_signature()
     {
         return true;
     }
 
-    static std::string signature()
+    inline static std::string signature()
     {
         return DBUS_TYPE_UINT16_AS_STRING;
     }
@@ -197,20 +197,20 @@ struct TypeMapper<std::uint16_t>
 template<>
 struct TypeMapper<std::int32_t>
 {
-    constexpr static ArgumentType type_value()
+    constexpr inline static ArgumentType type_value()
     {
         return ArgumentType::int32;
     }
-    constexpr static bool is_basic_type()
+    constexpr inline static bool is_basic_type()
     {
         return true;
     }
-    constexpr static bool requires_signature()
+    constexpr inline static bool requires_signature()
     {
         return true;
     }
 
-    static std::string signature()
+    inline static std::string signature()
     {
         return DBUS_TYPE_INT32_AS_STRING;
     }
@@ -219,20 +219,20 @@ struct TypeMapper<std::int32_t>
 template<>
 struct TypeMapper<std::uint32_t>
 {
-    constexpr static ArgumentType type_value()
+    constexpr inline static ArgumentType type_value()
     {
         return ArgumentType::uint32;
     }
-    constexpr static bool is_basic_type()
+    constexpr inline static bool is_basic_type()
     {
         return true;
     }
-    constexpr static bool requires_signature()
+    constexpr inline static bool requires_signature()
     {
         return true;
     }
 
-    static std::string signature()
+    inline static std::string signature()
     {
         return DBUS_TYPE_UINT32_AS_STRING;
     }
@@ -241,20 +241,20 @@ struct TypeMapper<std::uint32_t>
 template<>
 struct TypeMapper<std::int64_t>
 {
-    constexpr static ArgumentType type_value()
+    constexpr inline static ArgumentType type_value()
     {
         return ArgumentType::int64;
     }
-    constexpr static bool is_basic_type()
+    constexpr inline static bool is_basic_type()
     {
         return true;
     }
-    constexpr static bool requires_signature()
+    constexpr inline static bool requires_signature()
     {
         return true;
     }
 
-    static std::string signature()
+    inline static std::string signature()
     {
         return DBUS_TYPE_INT32_AS_STRING;
     }
@@ -263,20 +263,20 @@ struct TypeMapper<std::int64_t>
 template<>
 struct TypeMapper<std::uint64_t>
 {
-    constexpr static ArgumentType type_value()
+    constexpr inline static ArgumentType type_value()
     {
         return ArgumentType::uint64;
     }
-    constexpr static bool is_basic_type()
+    constexpr inline static bool is_basic_type()
     {
         return true;
     }
-    constexpr static bool requires_signature()
+    constexpr inline static bool requires_signature()
     {
         return true;
     }
 
-    static std::string signature()
+    inline static std::string signature()
     {
         return DBUS_TYPE_UINT64_AS_STRING;
     }
@@ -285,20 +285,20 @@ struct TypeMapper<std::uint64_t>
 template<>
 struct TypeMapper<float>
 {
-    constexpr static ArgumentType type_value()
+    constexpr inline static ArgumentType type_value()
     {
         return ArgumentType::floating_point;
     }
-    constexpr static bool is_basic_type()
+    constexpr inline static bool is_basic_type()
     {
         return true;
     }
-    constexpr static bool requires_signature()
+    constexpr inline static bool requires_signature()
     {
         return true;
     }
 
-    static std::string signature()
+    inline static std::string signature()
     {
         return DBUS_TYPE_DOUBLE_AS_STRING;
     }
@@ -307,20 +307,20 @@ struct TypeMapper<float>
 template<>
 struct TypeMapper<double>
 {
-    constexpr static ArgumentType type_value()
+    constexpr inline static ArgumentType type_value()
     {
         return ArgumentType::floating_point;
     }
-    constexpr static bool is_basic_type()
+    constexpr inline static bool is_basic_type()
     {
         return true;
     }
-    constexpr static bool requires_signature()
+    constexpr inline static bool requires_signature()
     {
         return true;
     }
 
-    static std::string signature()
+    inline static std::string signature()
     {
         return DBUS_TYPE_DOUBLE_AS_STRING;
     }

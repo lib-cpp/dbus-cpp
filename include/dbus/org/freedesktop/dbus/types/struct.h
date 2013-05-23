@@ -39,22 +39,22 @@ namespace helper
 template<typename T>
 struct TypeMapper<org::freedesktop::dbus::types::Struct<T>>
 {
-    constexpr static ArgumentType type_value()
+    constexpr inline static ArgumentType type_value()
     {
         return ArgumentType::structure;
     }
 
-    constexpr static bool is_basic_type()
+    constexpr inline static bool is_basic_type()
     {
         return false;
     }
 
-    constexpr static bool requires_signature()
+    constexpr inline static bool requires_signature()
     {
         return false;
     }
 
-    static std::string signature()
+    inline static std::string signature()
     {
         static const std::string s =
             DBUS_STRUCT_BEGIN_CHAR_AS_STRING +
@@ -68,7 +68,7 @@ struct TypeMapper<org::freedesktop::dbus::types::Struct<T>>
 template<typename T>
 struct Codec<types::Struct<T>>
 {
-    static void encode_argument(DBusMessageIter* out, const types::Struct<T>& arg)
+    inline static void encode_argument(DBusMessageIter* out, const types::Struct<T>& arg)
     {
         DBusMessageIter sub;
         if (!dbus_message_iter_open_container(
@@ -84,7 +84,7 @@ struct Codec<types::Struct<T>>
             throw std::runtime_error("Problem closing container");
     }
 
-    static void decode_argument(DBusMessageIter* in, types::Struct<T>& out)
+    inline static void decode_argument(DBusMessageIter* in, types::Struct<T>& out)
     {
         DBusMessageIter sub;
         dbus_message_iter_recurse(in, std::addressof(sub));

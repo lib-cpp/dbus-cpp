@@ -48,7 +48,7 @@ namespace std
 template<>
 struct hash<std::tuple<std::string, std::string>>
 {
-    size_t operator()(const std::tuple<std::string, std::string>& key) const
+    inline size_t operator()(const std::tuple<std::string, std::string>& key) const
     {
         static const std::hash<std::string> h {};
         return h(std::get<0>(key)) ^ h(std::get<1>(key)); // Using XOR as we do not expect first and second to be equal.
@@ -56,7 +56,7 @@ struct hash<std::tuple<std::string, std::string>>
 
 };
 
-std::ostream& operator<<(std::ostream& out, const std::tuple<std::string, std::string>& tuple)
+inline std::ostream& operator<<(std::ostream& out, const std::tuple<std::string, std::string>& tuple)
 {
     out << "(" << std::get<0>(tuple) << "," << std::get<1>(tuple) << ")";
     return out;
@@ -93,7 +93,7 @@ public:
 
     typedef std::bitset<3> RequestNameFlags;
 
-    static const RequestNameFlags& default_request_name_flags()
+    static inline const RequestNameFlags& default_request_name_flags()
     {
         static const RequestNameFlags flags
         {
@@ -103,7 +103,7 @@ public:
     }
 
     template<typename Interface>
-    static Ptr add_service(
+    inline static Ptr add_service(
         const Bus::Ptr& connection,
         const RequestNameFlags& flags = default_request_name_flags())
     {
@@ -112,28 +112,28 @@ public:
     }
 
     template<typename Interface>
-    static Ptr use_service(const Bus::Ptr& connection)
+    static inline Ptr use_service(const Bus::Ptr& connection)
     {
         return Ptr(new Service(connection, traits::Service<Interface>::interface_name()));
     }
 
-    static Ptr use_service(const Bus::Ptr& connection, const std::string& name)
+    static inline Ptr use_service(const Bus::Ptr& connection, const std::string& name)
     {
         return Ptr(new Service(connection, name));
     }
 
-    static Ptr use_service_or_throw_if_not_available(const Bus::Ptr& connection, const std::string& name)
+    static inline Ptr use_service_or_throw_if_not_available(const Bus::Ptr& connection, const std::string& name)
     {
         if (!connection->has_owner_for_name(name))
             throw std::runtime_error(name + " is not owned on the bus");
         return Ptr(new Service(connection, name));
     }
 
-    const std::shared_ptr<Object>& root_object();
-    std::shared_ptr<Object> object_for_path(const types::ObjectPath& path);
-    std::shared_ptr<Object> add_object_for_path(const types::ObjectPath& path);
+    inline const std::shared_ptr<Object>& root_object();
+    inline std::shared_ptr<Object> object_for_path(const types::ObjectPath& path);
+    inline std::shared_ptr<Object> add_object_for_path(const types::ObjectPath& path);
 
-    const std::string& get_name() const
+    inline const std::string& get_name() const
     {
         return name;
     }
@@ -143,25 +143,25 @@ protected:
     friend class Object;
     template<typename T> friend class Property;
 
-    Service(const Bus::Ptr& connection, const std::string& name);
-    Service(const Bus::Ptr& connection, const std::string& name, const RequestNameFlags& flags);
+    inline Service(const Bus::Ptr& connection, const std::string& name);
+    inline Service(const Bus::Ptr& connection, const std::string& name, const RequestNameFlags& flags);
 
-    bool is_stub() const
+    inline bool is_stub() const
     {
         return stub;
     }
 
-    const Bus::Ptr& get_connection() const
+    inline const Bus::Ptr& get_connection() const
     {
         return connection;
     }
 
-    void add_match(const MatchRule& rule)
+    inline void add_match(const MatchRule& rule)
     {
         connection->add_match(rule.as_string());
     }
 
-    void remove_match(const MatchRule& rule)
+    inline void remove_match(const MatchRule& rule)
     {
         connection->remove_match(rule.as_string());
     }
@@ -190,7 +190,7 @@ public:
     typedef std::function<void(DBusMessage*)> MethodHandler;
 
     template<typename Signal, typename... Args>
-    void emit_signal(const Args& ... args)
+    inline void emit_signal(const Args& ... args)
     {
         auto msg = Message::make_signal(
                        object_path.as_string(),
@@ -204,7 +204,7 @@ public:
     }
 
     template<typename Method, typename ResultType, typename... Args>
-    Result<ResultType> invoke_method_synchronously(const Args& ... args)
+    inline Result<ResultType> invoke_method_synchronously(const Args& ... args)
     {
         auto msg = Message::make_method_call(
                        parent->get_name(),
@@ -219,7 +219,7 @@ public:
 
         auto reply = Message::from_raw_message(
                          parent->get_connection()->send_with_reply_and_block_for_at_most(
-                             msg->get(), Method::default_timeout));
+                             msg->get(), Method::default_timeout()));
 
         Result<ResultType> result;
         result.from_message(reply->get());
@@ -227,7 +227,7 @@ public:
     }
 
     template<typename Method, typename ResultType, typename... Args>
-    std::future<Result<ResultType>> invoke_method_asynchronously(const Args& ... args)
+    inline std::future<Result<ResultType>> invoke_method_asynchronously(const Args& ... args)
     {
         auto msg = Message::make_method_call(
                        parent->get_name(),
@@ -242,7 +242,7 @@ public:
 
         auto pending_call =
             parent->get_connection()->send_with_reply_and_timeout(
-                msg->get(), Method::default_timeout);
+                msg->get(), Method::default_timeout());
 
         auto cb = [](DBusPendingCall* pending, void* user_data)
         {
@@ -276,8 +276,8 @@ public:
     }
 
     template<typename PropertyDescription>
-    std::shared_ptr<Property<PropertyDescription>>
-            get_property()
+    inline std::shared_ptr<Property<PropertyDescription>>
+    get_property()
     {
         typedef Property<PropertyDescription> PropertyType;
         auto property =
@@ -288,8 +288,8 @@ public:
     }
 
     template<typename Interface>
-    std::map<std::string, types::Variant<types::Any>>
-            get_all_properties()
+    inline std::map<std::string, types::Variant<types::Any>>
+    get_all_properties()
     {
         return invoke_method_synchronously<
                interfaces::Properties::GetAll,
@@ -298,8 +298,8 @@ public:
     }
 
     template<typename SignalDescription>
-    const std::shared_ptr<Signal<SignalDescription, typename SignalDescription::ArgumentType>>
-            get_signal()
+    inline const std::shared_ptr<Signal<SignalDescription, typename SignalDescription::ArgumentType>>
+    get_signal()
     {
         typedef Signal<SignalDescription, typename SignalDescription::ArgumentType> SignalType;
         auto signal =
@@ -309,13 +309,13 @@ public:
         return signal;
     }
 
-    std::shared_ptr<Object> add_object_for_path(const types::ObjectPath& path)
+    inline std::shared_ptr<Object> add_object_for_path(const types::ObjectPath& path)
     {
         return std::shared_ptr<Object>(new Object(parent, path));
     }
 
     template<typename Method>
-    void install_method_handler(const MethodHandler& handler)
+    inline void install_method_handler(const MethodHandler& handler)
     {
         static const dbus::Object::MethodKey key
         {
@@ -326,7 +326,7 @@ public:
     }
 
     template<typename Method>
-    void uninstall_method_handler()
+    inline void uninstall_method_handler()
     {
         static const dbus::Object::MethodKey key
         {
@@ -336,7 +336,7 @@ public:
         method_router.uninstall_route(key);
     }
 
-    bool is_stub() const
+    inline bool is_stub() const
     {
         return parent->is_stub();
     }
@@ -346,18 +346,18 @@ private:
     template<typename T, typename U> friend class Signal;
     template<typename T> friend class Property;
 
-    static void unregister_object_path(DBusConnection*, void*)
+    inline static void unregister_object_path(DBusConnection*, void*)
     {
         std::cout << __PRETTY_FUNCTION__ << std::endl;
     }
 
-    static DBusHandlerResult on_new_message(DBusConnection*, DBusMessage* message, void* user_data)
+    inline static DBusHandlerResult on_new_message(DBusConnection*, DBusMessage* message, void* user_data)
     {
         auto thiz = static_cast<Object*>(user_data);
         return thiz->method_router(message) ? DBUS_HANDLER_RESULT_HANDLED : DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
     }
 
-    Object(const std::shared_ptr<Service> parent, const types::ObjectPath& path)
+    inline Object(const std::shared_ptr<Service> parent, const types::ObjectPath& path)
         : parent(parent),
           object_path(path),
           signal_router
@@ -408,12 +408,12 @@ private:
         }
     }
 
-    void add_match(const MatchRule& rule)
+    inline void add_match(const MatchRule& rule)
     {
         parent->add_match(rule.path(object_path));
     }
 
-    void remove_match(const MatchRule& rule)
+    inline void remove_match(const MatchRule& rule)
     {
         parent->remove_match(rule.path(object_path));
     }
@@ -430,7 +430,7 @@ template<typename PropertyType>
 class Property
 {
 public:
-    const typename PropertyType::ValueType& value()
+    inline const typename PropertyType::ValueType& value()
     {
         if (parent->is_stub())
             property_value = parent->invoke_method_synchronously<
@@ -440,7 +440,7 @@ public:
         return property_value.get();
     }
 
-    void value(const typename PropertyType::ValueType& new_value)
+    inline void value(const typename PropertyType::ValueType& new_value)
     {
         property_value.set(new_value);
         if (parent->is_stub())
@@ -454,7 +454,7 @@ public:
         }
     }
 
-    bool is_writable() const
+    inline bool is_writable() const
     {
         return writable;
     }
@@ -462,7 +462,7 @@ public:
 protected:
     friend class Object;
 
-    static std::shared_ptr<Property<PropertyType>> make_property(
+    inline static std::shared_ptr<Property<PropertyType>> make_property(
                 const std::shared_ptr<Object>& parent)
     {
         return std::shared_ptr<Property<PropertyType>>(
@@ -474,14 +474,14 @@ protected:
     }
 
 private:
-    Property(const std::shared_ptr<Object>& parent,
+    inline Property(const std::shared_ptr<Object>& parent,
              const std::string& interface,
              const std::string& name,
              bool writable)
-        : parent(parent),
-          interface(interface),
-          name(name),
-          writable(writable)
+            : parent(parent),
+              interface(interface),
+              name(name),
+              writable(writable)
     {
         if (!parent->is_stub())
         {
@@ -504,7 +504,7 @@ private:
         }
     }
 
-    void handle_get(DBusMessage* msg)
+    inline void handle_get(DBusMessage* msg)
     {
         auto reply = Message::make_method_return(msg);
         reply->writer() << property_value;
@@ -512,7 +512,7 @@ private:
         parent->parent->get_connection()->send(reply->get());
     }
 
-    void handle_set(DBusMessage* msg)
+    inline void handle_set(DBusMessage* msg)
     {
         if (!writable)
         {
@@ -579,25 +579,25 @@ public:
     typedef std::shared_ptr<Signal<SignalDescription, void>> Ptr;
     typedef std::function<void()> Handler;
 
-    ~Signal() noexcept
+    inline ~Signal() noexcept
     {
         parent->signal_router.uninstall_route(Object::SignalKey{interface, name});
         parent->remove_match(rule);
     }
 
-    void emit(void)
+    inline void emit(void)
     {
         parent->emit_signal<SignalDescription>();
     }
 
-    signals::Connection connect(const Handler& h)
+    inline signals::Connection connect(const Handler& h)
     {
         return signal.connect(h);
     }
 protected:
     friend class Object;
 
-    static std::shared_ptr<Signal<SignalDescription, void>> make_signal(const std::shared_ptr<Object>& parent,
+    inline static std::shared_ptr<Signal<SignalDescription, void>> make_signal(const std::shared_ptr<Object>& parent,
             const std::string& interface,
             const std::string& name)
     {
@@ -605,7 +605,7 @@ protected:
         return sp;
     }
 private:
-    Signal(const std::shared_ptr<Object>& parent,
+    inline Signal(const std::shared_ptr<Object>& parent,
            const std::string& interface,
            const std::string& name) : parent(parent),
         interface(interface),
@@ -616,7 +616,7 @@ private:
         parent->add_match(rule.type(Message::Type::signal).interface(interface).member(name));
     }
 
-    void operator()(const DBusMessage*)
+    inline void operator()(const DBusMessage*)
     {
         signal();
     }
@@ -640,18 +640,18 @@ public:
     typedef std::shared_ptr<Signal<SignalDescription, typename SignalDescription::ArgumentType>> Ptr;
     typedef std::function<void(const typename SignalDescription::ArgumentType&)> Handler;
 
-    ~Signal() noexcept
+    inline ~Signal() noexcept
     {
         d->parent->signal_router.uninstall_route(Object::SignalKey{d->interface, d->name});
         d->parent->remove_match(d->rule);
     }
 
-    void emit(const typename SignalDescription::ArgumentType&)
+    inline void emit(const typename SignalDescription::ArgumentType&)
     {
         // d->parent->emit_signal<SignalDescription, typename SignalDescription::ArgumentType>();
     }
 
-    signals::Connection connect(const Handler& h)
+    inline signals::Connection connect(const Handler& h)
     {
         return d->signal.connect(h);
     }
@@ -659,7 +659,7 @@ public:
 protected:
     friend class Object;
 
-    static std::shared_ptr<Signal<SignalDescription,typename SignalDescription::ArgumentType>>
+    inline static std::shared_ptr<Signal<SignalDescription,typename SignalDescription::ArgumentType>>
             make_signal(
                 const std::shared_ptr<Object>& parent,
                 const std::string& interface,
@@ -670,7 +670,7 @@ protected:
     }
 
 private:
-    Signal(const std::shared_ptr<Object>& parent,
+    inline Signal(const std::shared_ptr<Object>& parent,
            const std::string& interface,
            const std::string& name) : d {new Shared{parent, interface, name}}
     {
@@ -679,7 +679,7 @@ private:
         d->parent->add_match(d->rule.type(Message::Type::signal).interface(interface).member(name));
     }
 
-    void operator()(DBusMessage* msg) noexcept
+    inline void operator()(DBusMessage* msg) noexcept
     {
         DBusMessageIter iter;
         dbus_message_iter_init(msg, std::addressof(iter));
@@ -696,7 +696,7 @@ private:
 
     struct Shared
     {
-        Shared(const std::shared_ptr<Object>& parent, const std::string& interface, const std::string& name)
+        inline Shared(const std::shared_ptr<Object>& parent, const std::string& interface, const std::string& name)
             : parent(parent),
               interface(interface),
               name(name)
@@ -714,7 +714,7 @@ private:
 };
 
 
-Service::Service(const Bus::Ptr& connection, const std::string& name)
+inline Service::Service(const Bus::Ptr& connection, const std::string& name)
     : connection(connection),
       name(name),
       stub(true)
@@ -722,7 +722,7 @@ Service::Service(const Bus::Ptr& connection, const std::string& name)
 
 }
 
-Service::Service(const Bus::Ptr& connection, const std::string& name, const Service::RequestNameFlags& flags)
+inline Service::Service(const Bus::Ptr& connection, const std::string& name, const Service::RequestNameFlags& flags)
     : connection(connection),
       name(name),
       stub(false)
@@ -747,19 +747,19 @@ Service::Service(const Bus::Ptr& connection, const std::string& name, const Serv
         throw std::runtime_error(std::string(scope.error.name) + ": " + std::string(scope.error.message));
 }
 
-const std::shared_ptr<Object>& Service::root_object()
+inline const std::shared_ptr<Object>& Service::root_object()
 {
     if (!root)
         root = std::shared_ptr<Object>(new Object(shared_from_this(), types::ObjectPath::root()));
     return root;
 }
 
-std::shared_ptr<Object> Service::object_for_path(const types::ObjectPath& path)
+inline std::shared_ptr<Object> Service::object_for_path(const types::ObjectPath& path)
 {
     return std::shared_ptr<Object>(new Object(shared_from_this(), path));
 }
 
-std::shared_ptr<Object> Service::add_object_for_path(const types::ObjectPath& path)
+inline std::shared_ptr<Object> Service::add_object_for_path(const types::ObjectPath& path)
 {
     auto object = std::shared_ptr<Object>(new Object(shared_from_this(), path));
     auto vtable = new DBusObjectPathVTable

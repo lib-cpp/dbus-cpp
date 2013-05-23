@@ -251,10 +251,10 @@ namespace
 {
 struct WatchHelper
 {
-    static const int readable_event;
-    static const int writable_event;
-    static const int error_event;
-    static const int hangup_event;
+    inline static int readable_event() { return 0; };
+    inline static int writeable_event() { return 1; };
+    inline static int error_event() { return 2; };
+    inline static int hangup_event() { return 3; };
 
     static const unsigned int initial_value = 0;
     static const int flags = 0;
@@ -275,8 +275,8 @@ struct WatchHelper
     bool invoke_for_event(int event)
     {
         invocation_cache[event] = true;
-        if (has_been_invoked_for(readable_event) &&
-                has_been_invoked_for(writable_event))
+        if (has_been_invoked_for(readable_event()) &&
+            has_been_invoked_for(writeable_event()))
             reactor.stop();
         invocation_handler(event, *this);
         return true;
@@ -293,10 +293,6 @@ struct WatchHelper
     boost::asio::io_service reactor;
     boost::asio::io_service::work work;
 };
-const int WatchHelper::readable_event = 0;
-const int WatchHelper::writable_event = 1;
-const int WatchHelper::error_event = 2;
-const int WatchHelper::hangup_event = 3;
 }
 
 namespace org
@@ -310,10 +306,10 @@ namespace traits
 template<>
 struct Watch<WatchHelper>
 {
-    static const int readable_event;
-    static const int writable_event;
-    static const int error_event;
-    static const int hangup_event;
+    inline static int readable_event() { return WatchHelper::readable_event(); };
+    inline static int writeable_event() { return WatchHelper::writeable_event(); };
+    inline static int error_event() { return WatchHelper::error_event(); };
+    inline static int hangup_event() { return WatchHelper::hangup_event(); };
 
     static int get_watch_unix_fd(WatchHelper* watch)
     {
@@ -334,10 +330,6 @@ struct Watch<WatchHelper>
         return watch->invoke_for_event(event);
     }
 };
-const int Watch<WatchHelper>::readable_event = WatchHelper::readable_event;
-const int Watch<WatchHelper>::writable_event = WatchHelper::writable_event;
-const int Watch<WatchHelper>::error_event = WatchHelper::error_event;
-const int Watch<WatchHelper>::hangup_event = WatchHelper::hangup_event;
 }
 }
 }
@@ -361,6 +353,6 @@ TEST(Executor, WatchHandlerIsInvokedForReadableAndWritableEvents)
     watch->start();
     helper.reactor.run();
 
-    EXPECT_TRUE(helper.has_been_invoked_for(WatchHelper::readable_event));
-    EXPECT_TRUE(helper.has_been_invoked_for(WatchHelper::writable_event));
+    EXPECT_TRUE(helper.has_been_invoked_for(WatchHelper::readable_event()));
+    EXPECT_TRUE(helper.has_been_invoked_for(WatchHelper::writeable_event()));
 }
