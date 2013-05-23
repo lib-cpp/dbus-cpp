@@ -44,43 +44,43 @@ include_directories(
 )
 
 add_executable(
-    bus
+    bus_test
     bus_test.cpp
 )
 
 add_executable(
-    dbus
+    dbus_test
     dbus_test.cpp
 )
 
 add_executable(
-    codec
+    codec_test
     codec_test.cpp
 )
 
 add_executable(
-    executor
+    executor_test
     executor_test.cpp
 )
 
 add_executable(
-    stl_codec
+    stl_codec_test
     stl_codec_test.cpp
 )
 
 add_executable(
-    msg
+    msg_test
     message_test.cpp
     match_rule_test.cpp
 )
 
 add_executable(
-    msg_router
+    msg_router_test
     message_router_test.cpp
 )
 
 add_executable(
-    service
+    service_test
     service_test.cpp
 )
 
