@@ -44,48 +44,48 @@ include_directories(
 )
 
 add_executable(
-    bus
+    bus_test
     bus_test.cpp
 )
 
 add_executable(
-    dbus
+    dbus_test
     dbus_test.cpp
 )
 
 add_executable(
-    codec
+    codec_test
     codec_test.cpp
 )
 
 add_executable(
-    executor
+    executor_test
     executor_test.cpp
 )
 
 add_executable(
-    stl_codec
+    stl_codec_test
     stl_codec_test.cpp
 )
 
 add_executable(
-    msg
+    msg_test
     message_test.cpp
     match_rule_test.cpp
 )
 
 add_executable(
-    msg_router
+    msg_router_test
     message_router_test.cpp
 )
 
 add_executable(
-    service
+    service_test
     service_test.cpp
 )
 
 target_link_libraries(
-    bus
+    bus_test
     ${CMAKE_THREAD_LIBS_INIT}
     ${Boost_LIBRARIES}
     ${DBUS_LIBRARIES}
@@ -94,7 +94,7 @@ target_link_libraries(
 )
 
 target_link_libraries(
-    dbus
+    dbus_test
     ${CMAKE_THREAD_LIBS_INIT}
     ${Boost_LIBRARIES}
     ${DBUS_LIBRARIES}
@@ -103,7 +103,7 @@ target_link_libraries(
 )
 
 target_link_libraries(
-    executor
+    executor_test
     ${CMAKE_THREAD_LIBS_INIT}
     ${Boost_LIBRARIES}
     ${DBUS_LIBRARIES}
@@ -112,7 +112,7 @@ target_link_libraries(
 )
 
 target_link_libraries(
-    codec
+    codec_test
     ${CMAKE_THREAD_LIBS_INIT}
     ${Boost_LIBRARIES}
     ${DBUS_LIBRARIES}
@@ -121,7 +121,7 @@ target_link_libraries(
 )
 
 target_link_libraries(
-    stl_codec
+    stl_codec_test
     ${CMAKE_THREAD_LIBS_INIT}
     ${Boost_LIBRARIES}
     ${DBUS_LIBRARIES}
@@ -130,7 +130,7 @@ target_link_libraries(
 )
 
 target_link_libraries(
-    msg
+    msg_test
     ${CMAKE_THREAD_LIBS_INIT}
     ${Boost_LIBRARIES}
     ${DBUS_LIBRARIES}
@@ -139,7 +139,7 @@ target_link_libraries(
 )
 
 target_link_libraries(
-    msg_router
+    msg_router_test
     ${CMAKE_THREAD_LIBS_INIT}
     ${Boost_LIBRARIES}
     ${DBUS_LIBRARIES}
@@ -148,7 +148,7 @@ target_link_libraries(
 )
 
 target_link_libraries(
-    service
+    service_test
     ${CMAKE_THREAD_LIBS_INIT}
     ${Boost_LIBRARIES}
     ${DBUS_LIBRARIES}
@@ -157,21 +157,21 @@ target_link_libraries(
 )
 
 if (DBUS_CPP_ENABLE_DBUS_TEST_RUNNER)
-    add_test(bus ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/bus)
-    add_test(dbus ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/dbus)
-    add_test(executor ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/executor)
-    add_test(codec ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/codec)
-    add_test(stl_codec ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/stl_codec)
-    add_test(msg ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/msg)
-    add_test(msg_router ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/msg_router)
-    add_test(service ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/service)
+    add_test(bus_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/bus_test)
+    add_test(dbus_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/dbus_test)
+    add_test(executor_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/executor_test)
+    add_test(codec_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/codec_test)
+    add_test(stl_codec_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/stl_codec_test)
+    add_test(msg_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/msg_test)
+    add_test(msg_router_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/msg_router_test)
+    add_test(service_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/service_test)
 else(DBUS_CPP_ENABLE_DBUS_TEST_RUNNER)
-    add_test(bus ${CMAKE_CURRENT_BINARY_DIR}/bus)
-    add_test(dbus ${CMAKE_CURRENT_BINARY_DIR}/dbus)
-    add_test(executor ${CMAKE_CURRENT_BINARY_DIR}/executor)
-    add_test(codec ${CMAKE_CURRENT_BINARY_DIR}/codec)
-    add_test(stl_codec ${CMAKE_CURRENT_BINARY_DIR}/stl_codec)
-    add_test(msg ${CMAKE_CURRENT_BINARY_DIR}/msg)
-    add_test(msg_router ${CMAKE_CURRENT_BINARY_DIR}/msg_router)
-    add_test(service ${CMAKE_CURRENT_BINARY_DIR}/service)
+    add_test(bus_test ${CMAKE_CURRENT_BINARY_DIR}/bus_test)
+    add_test(dbus_test ${CMAKE_CURRENT_BINARY_DIR}/dbus_test)
+    add_test(executor_test ${CMAKE_CURRENT_BINARY_DIR}/executor_test)
+    add_test(codec_test ${CMAKE_CURRENT_BINARY_DIR}/codec_tes)
+    add_test(stl_codec_test ${CMAKE_CURRENT_BINARY_DIR}/stl_codec_test)
+    add_test(msg_test ${CMAKE_CURRENT_BINARY_DIR}/msg_test)
+    add_test(msg_router_test ${CMAKE_CURRENT_BINARY_DIR}/msg_router_test)
+    add_test(service_test ${CMAKE_CURRENT_BINARY_DIR}/service_test)
 endif(DBUS_CPP_ENABLE_DBUS_TEST_RUNNER)
