@@ -1,6 +1,6 @@
 dbus-cpp (0.0.1-0ubuntu2) UNRELEASED; urgency=low
 
-  * debian/rules, debian/control, debian/compat:
+  * debian/rules, debian/control, debian/compat, debian/copyright:
     - Modifications related to compliance with our packaging standards
   * Automatic snapshot from revision 5 (bootstrap)
 
