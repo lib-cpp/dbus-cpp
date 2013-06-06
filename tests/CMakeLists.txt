@@ -20,6 +20,9 @@ string (REPLACE " -Werror " " " CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 add_subdirectory(/usr/src/gtest gtest)
 set (CMAKE_CXX_FLAGS ${OLD_CMAKE_CXX_FLAGS})
 
+# We actually deliberately ignore the result of read and write in our tests
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=unused-result")
+
 find_package(PkgConfig)
 find_package(Boost COMPONENTS system)
 find_package(Threads)
