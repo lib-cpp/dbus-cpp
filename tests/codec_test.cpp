@@ -178,13 +178,14 @@ std::shared_ptr<DBusMessage>,
         EXPECT_NO_THROW(org::freedesktop::dbus::Codec<double>::encode_argument(std::addressof(iter), default_double););
     }
 
-    auto signature = []()
+    std::function<const char*()> signature = []()
     {
         return DBUS_TYPE_BOOLEAN_AS_STRING DBUS_TYPE_BYTE_AS_STRING DBUS_TYPE_INT16_AS_STRING DBUS_TYPE_UINT16_AS_STRING DBUS_TYPE_INT32_AS_STRING DBUS_TYPE_UINT32_AS_STRING DBUS_TYPE_INT64_AS_STRING DBUS_TYPE_UINT64_AS_STRING DBUS_TYPE_DOUBLE_AS_STRING DBUS_TYPE_DOUBLE_AS_STRING;
     };
 
     return std::make_tuple(msg, signature);
 }
+
 template<typename T>
 void check_value_and_advance(DBusMessageIter* iter, const T& expected_value)
 {
