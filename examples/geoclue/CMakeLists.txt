@@ -43,5 +43,5 @@ target_link_libraries(
 
 install(
     TARGETS geoclue 
-    DESTINATION lib/${CMAKE_PROJECT_NAME}/libexec/examples/geoclue/
+    DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/examples/geoclue/
 )

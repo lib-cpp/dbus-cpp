@@ -43,5 +43,5 @@ target_link_libraries(
 
 install(
     TARGETS upower
-    DESTINATION lib/${CMAKE_PROJECT_NAME}/libexec/examples/upower/
+    DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/examples/upower/
 )

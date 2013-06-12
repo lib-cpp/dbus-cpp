@@ -40,5 +40,5 @@ target_link_libraries(
 
 install(
     TARGETS ofono
-    DESTINATION lib/${CMAKE_PROJECT_NAME}/libexec/examples/ofono/
+    DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/examples/ofono/
 )

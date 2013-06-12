@@ -14,6 +14,7 @@
 #
 # Authored by: Thomas Voss <thomas.voss@canonical.com>
 
+include(GNUInstallDirs)
 add_subdirectory(benchmark)
 add_subdirectory(geoclue)
 add_subdirectory(ofono)
