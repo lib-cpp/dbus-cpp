@@ -41,5 +41,5 @@ target_link_libraries(
 
 install(
     TARGETS benchmark 
-    DESTINATION bin/${CMAKE_PROJECT_NAME}/examples/benchmark/
+    DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/examples/benchmark/
 )
