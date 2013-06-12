@@ -1,6 +1,6 @@
 Source: dbus-cpp
 Priority: optional
-Maintainer: Thomas Voß <thomas.voss@canonical.com>
+Maintainer: Thomas Voß <thomas.voss@ubuntu.com>
 Build-Depends: cmake,
                dbus-test-runner,
                debhelper (>= 9),
@@ -21,6 +21,7 @@ Package: dbus-cpp-dev
 Section: libdevel
 Architecture: any
 Depends: ${misc:Depends},
+         ${shlibs:Depends},
          libboost-system-dev,
          libdbus-1-3,
 Description: header-only dbus-binding leveraging C++-11
