@@ -1,11 +1,19 @@
-dbus-cpp (0.0.1-0ubuntu2) UNRELEASED; urgency=low
+dbus-cpp (0.0.1daily13.06.14.1-0ubuntu1) saucy; urgency=low
 
+  [ Łukasz 'sil2100' Zemczak ]
   * debian/rules, debian/control, debian/compat, debian/copyright:
     - Modifications related to compliance with our packaging standards
   * Disable tests during build for powerpc, as those are currently broken
   * Automatic snapshot from revision 5 (bootstrap)
 
- -- Łukasz 'sil2100' Zemczak <lukasz.zemczak@canonical.com>  Tue, 04 Jun 2013 15:47:14 +0200
+  [ Timo Jyrinki ]
+  * Add copyright headers, fix lintian errors, use @ubuntu.com
+    maintainer address, enable multi-arch.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 8
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 14 Jun 2013 15:25:24 +0000
 
 dbus-cpp (0.0.1-0ubuntu1) raring; urgency=low
 
