@@ -2,6 +2,7 @@ dbus-cpp (0.0.1-0ubuntu2) UNRELEASED; urgency=low
 
   * debian/rules, debian/control, debian/compat, debian/copyright:
     - Modifications related to compliance with our packaging standards
+  * Disable tests during build for powerpc, as those are currently broken
   * Automatic snapshot from revision 5 (bootstrap)
 
  -- Łukasz 'sil2100' Zemczak <lukasz.zemczak@canonical.com>  Tue, 04 Jun 2013 15:47:14 +0200
