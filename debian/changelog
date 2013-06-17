@@ -1,3 +1,9 @@
+dbus-cpp (0.0.1daily13.06.17-0ubuntu1) saucy; urgency=low
+
+  * Automatic snapshot from revision 9
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 17 Jun 2013 02:02:03 +0000
+
 dbus-cpp (0.0.1daily13.06.14.1-0ubuntu1) saucy; urgency=low
 
   [ Łukasz 'sil2100' Zemczak ]
