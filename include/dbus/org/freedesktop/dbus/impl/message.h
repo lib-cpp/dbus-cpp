@@ -37,7 +37,7 @@ namespace freedesktop
 namespace dbus
 {
 
-std::ostream& operator<<(std::ostream& out, const Message::Type& type)
+inline std::ostream& operator<<(std::ostream& out, const Message::Type& type)
 {
     static const std::map<Message::Type, std::string> lut =
             {
@@ -52,14 +52,14 @@ std::ostream& operator<<(std::ostream& out, const Message::Type& type)
 }
 
 template<typename T>
-Message::Reader& Message::Reader::operator>>(T& t)
+inline Message::Reader& Message::Reader::operator>>(T& t)
 {
     decode_argument(std::addressof(iter), t);
     dbus_message_iter_next(std::addressof(iter));
     return *this;
 }
 
-Message::Reader::Reader(
+inline Message::Reader::Reader(
     const std::shared_ptr<Message>& msg) : message(msg)
 {
     if (!msg)
@@ -70,20 +70,20 @@ Message::Reader::Reader(
 }
 
 template<typename T>
-Message::Writer& Message::Writer::operator<<(const T& t)
+inline Message::Writer& Message::Writer::operator<<(const T& t)
 {
     encode_argument(std::addressof(iter), t);
     return *this;
 }
 
 template<typename... Args>
-Message::Writer& Message::Writer::append(const Args& ... args)
+inline Message::Writer& Message::Writer::append(const Args& ... args)
 {
     encode_message(std::addressof(iter), args...);
     return *this;
 }
 
-Message::Writer::Writer(const std::shared_ptr<Message>& msg) : message(msg)
+inline Message::Writer::Writer(const std::shared_ptr<Message>& msg) : message(msg)
 {
     if (!msg)
         throw std::runtime_error("Precondition violated, cannot construct Reader for null message.");
@@ -91,7 +91,7 @@ Message::Writer::Writer(const std::shared_ptr<Message>& msg) : message(msg)
     dbus_message_iter_init_append(message->dbus_message.get(), std::addressof(iter));
 }
 
-std::shared_ptr<Message> Message::make_method_call(
+inline std::shared_ptr<Message> Message::make_method_call(
     const std::string& destination,
     const std::string& path,
     const std::string& interface,
@@ -101,12 +101,12 @@ std::shared_ptr<Message> Message::make_method_call(
     return std::shared_ptr<Message>(new Message(msg));
 }
 
-std::shared_ptr<Message> Message::make_method_return(DBusMessage* msg)
+inline std::shared_ptr<Message> Message::make_method_return(DBusMessage* msg)
 {
     return std::shared_ptr<Message>(new Message(dbus_message_new_method_return(msg)));
 }
 
-std::shared_ptr<Message> Message::make_signal(
+inline std::shared_ptr<Message> Message::make_signal(
     const std::string& path, 
     const std::string& interface, 
     const std::string& signal)
@@ -114,7 +114,7 @@ std::shared_ptr<Message> Message::make_signal(
     return std::shared_ptr<Message>(new Message(dbus_message_new_signal(path.c_str(), interface.c_str(), signal.c_str())));
 }
 
-std::shared_ptr<Message> Message::make_error(
+inline std::shared_ptr<Message> Message::make_error(
     DBusMessage* in_reply_to, 
     const std::string& error_name, 
     const std::string& error_desc)
@@ -123,67 +123,67 @@ std::shared_ptr<Message> Message::make_error(
     return std::shared_ptr<Message>(new Message(msg));
 }
 
-std::shared_ptr<Message> Message::from_raw_message(DBusMessage* msg)
+inline std::shared_ptr<Message> Message::from_raw_message(DBusMessage* msg)
 {
     return std::shared_ptr<Message>(new Message(msg, true));
 }
 
-Message::Type Message::type() const
+inline Message::Type Message::type() const
 {
     return static_cast<Type>(dbus_message_get_type(dbus_message.get()));
 }
 
-bool Message::expects_reply() const
+inline bool Message::expects_reply() const
 {
     return !dbus_message_get_no_reply(dbus_message.get());
 }
 
-types::ObjectPath Message::path() const
+inline types::ObjectPath Message::path() const
 {
     return types::ObjectPath(dbus_message_get_path(dbus_message.get()));
 }
 
-std::string Message::member() const
+inline std::string Message::member() const
 {
     return dbus_message_get_member(dbus_message.get());
 }
 
-std::string Message::signature() const
+inline std::string Message::signature() const
 {
     return dbus_message_get_signature(dbus_message.get());
 }
 
-std::string Message::interface() const
+inline std::string Message::interface() const
 {
     return dbus_message_get_interface(dbus_message.get());
 }
 
-std::string Message::destination() const
+inline std::string Message::destination() const
 {
     return dbus_message_get_destination(dbus_message.get());
 }
 
-std::string Message::sender() const
+inline std::string Message::sender() const
 {
     return dbus_message_get_sender(dbus_message.get());
 }
     
-Message::Reader Message::reader()
+inline Message::Reader Message::reader()
 {
     return Reader(shared_from_this());
 }
 
-Message::Writer Message::writer()
+inline Message::Writer Message::writer()
 {
     return Writer(shared_from_this());
 }
 
-DBusMessage* Message::get() const
+inline DBusMessage* Message::get() const
 {
     return dbus_message.get();
 }
 
-Message::Message(
+inline Message::Message(
     DBusMessage* msg, 
     bool ref_on_construction)
         : dbus_message(msg, [](DBusMessage* msg)
