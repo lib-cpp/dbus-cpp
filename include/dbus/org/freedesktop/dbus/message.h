@@ -50,19 +50,6 @@ public:
         error = DBUS_MESSAGE_TYPE_ERROR
     };
 
-    friend std::ostream& operator<<(std::ostream& out, const Type& type)
-    {
-        static const std::map<Type, std::string> lut =
-        {
-            {Type::invalid, "invalid"},
-            {Type::signal, "signal"},
-            {Type::method_call, "method_call"},
-            {Type::method_return, "method_return"},
-            {Type::error, "error"}
-        };
-        out << lut.at(type);
-        return out;
-    }
     class Reader
     {
     public:
@@ -70,24 +57,12 @@ public:
         Reader& operator=(const Reader&) = default;
 
         template<typename T>
-        Reader& operator>>(T& t)
-        {
-            decode_argument(std::addressof(iter), t);
-            dbus_message_iter_next(std::addressof(iter));
-            return *this;
-        }
+        Reader& operator>>(T& t);
 
     protected:
         friend class Message;
+        explicit Reader(const std::shared_ptr<Message>& msg);
 
-        explicit Reader(std::shared_ptr<Message> msg) : message(msg)
-        {
-            if (!msg)
-                throw std::runtime_error("Precondition violated, cannot construct Reader for null message.");
-
-            if (!dbus_message_iter_init(message->dbus_message.get(), std::addressof(iter)))
-                throw std::runtime_error("Could not initialize reader, message does not have arguments");
-        }
     private:
         std::shared_ptr<Message> message;
         DBusMessageIter iter;
@@ -100,28 +75,15 @@ public:
         Writer& operator=(const Writer&) = default;
 
         template<typename T>
-        Writer& operator<<(const T& t)
-        {
-            encode_argument(std::addressof(iter), t);
-            return *this;
-        }
+        Writer& operator<<(const T& t);
 
         template<typename... Args>
-        Writer& append(const Args& ... args)
-        {
-            encode_message(std::addressof(iter), args...);
-            return *this;
-        }
+        Writer& append(const Args& ... args);
+
     protected:
         friend class Message;
+        explicit Writer(const std::shared_ptr<Message>& msg);
 
-        explicit Writer(std::shared_ptr<Message> msg) : message(msg)
-        {
-            if (!msg)
-                throw std::runtime_error("Precondition violated, cannot construct Reader for null message.");
-
-            dbus_message_iter_init_append(message->dbus_message.get(), std::addressof(iter));
-        }
     private:
         std::shared_ptr<Message> message;
         DBusMessageIter iter;
@@ -131,119 +93,49 @@ public:
         const std::string& destination,
         const std::string& path,
         const std::string& interface,
-        const std::string& method)
-    {
-        DBusMessage* msg = dbus_message_new_method_call(destination.c_str(), path.c_str(), interface.c_str(), method.c_str());
-        return std::shared_ptr<Message>(new Message(msg));
-    }
+        const std::string& method);
 
-    static std::shared_ptr<Message> make_method_return(DBusMessage* msg)
-    {
-        return std::shared_ptr<Message>(new Message(dbus_message_new_method_return(msg)));
-    }
+    static std::shared_ptr<Message> make_method_return(DBusMessage* msg);
 
-    static std::shared_ptr<Message> make_signal(const std::string& path, const std::string& interface, const std::string& signal)
-    {
-        return std::shared_ptr<Message>(new Message(dbus_message_new_signal(path.c_str(), interface.c_str(), signal.c_str())));
-    }
+    static std::shared_ptr<Message> make_signal(
+        const std::string& path, 
+        const std::string& interface, 
+        const std::string& signal);
 
-    static std::shared_ptr<Message> make_error(DBusMessage* in_reply_to, const std::string& error_name, const std::string& error_desc)
-    {
-        DBusMessage* msg = dbus_message_new_error(in_reply_to, error_name.c_str(), error_desc.c_str());
-        return std::shared_ptr<Message>(new Message(msg));
-    }
+    static std::shared_ptr<Message> make_error(
+        DBusMessage* in_reply_to, 
+        const std::string& error_name, 
+        const std::string& error_desc);
 
-    static std::shared_ptr<Message> from_raw_message(DBusMessage* msg)
-    {
-        return std::shared_ptr<Message>(new Message(msg, true));
-    }
+    static std::shared_ptr<Message> from_raw_message(DBusMessage* msg);
 
-    Type type() const
-    {
-        return static_cast<Type>(dbus_message_get_type(dbus_message.get()));
-    }
+    Type type() const;
+    bool expects_reply() const;
+    types::ObjectPath path() const;
+    std::string member() const;
+    std::string signature() const;
+    std::string interface() const;
+    std::string destination() const;
+    std::string sender() const;
 
-    bool expects_reply() const
-    {
-        return !dbus_message_get_no_reply(dbus_message.get());
-    }
+    Reader reader();
+    Writer writer();
 
-    types::ObjectPath path() const
-    {
-        return types::ObjectPath(dbus_message_get_path(dbus_message.get()));
-    }
-
-    std::string member() const
-    {
-        return dbus_message_get_member(dbus_message.get());
-    }
-
-    std::string signature() const
-    {
-        return dbus_message_get_signature(dbus_message.get());
-    }
-
-    std::string interface() const
-    {
-        return dbus_message_get_interface(dbus_message.get());
-    }
-
-    std::string destination() const
-    {
-        return dbus_message_get_destination(dbus_message.get());
-    }
-
-    std::string sender() const
-    {
-        return dbus_message_get_sender(dbus_message.get());
-    }
-    
-    Reader reader()
-    {
-        return Reader(shared_from_this());
-    }
-
-    Writer writer()
-    {
-        return Writer(shared_from_this());
-    }
-
-    DBusMessage* get() const
-    {
-        return dbus_message.get();
-    }
+    DBusMessage* get() const;
 
 private:
-    Message(DBusMessage* msg, bool ref_on_construction = false) : dbus_message(msg, [](DBusMessage* msg)
-    {
-        if (msg)
-            dbus_message_unref(msg);
-    })
-    {
-        if (ref_on_construction)
-            dbus_message_ref(msg);
-
-        if (!msg)
-            throw std::runtime_error("Precondition violated, cannot construct Message from null DBusMessage.");
-    }
+    Message(
+        DBusMessage* msg, 
+        bool ref_on_construction = false);
     
     std::shared_ptr<DBusMessage> dbus_message;
 };
+
+std::ostream& operator<<(std::ostream& out, const Message::Type& type);
 }
 }
 }
 
-namespace std
-{
-template<>
-struct hash<org::freedesktop::dbus::Message::Type>
-{
-    size_t operator()(const org::freedesktop::dbus::Message::Type& type) const
-    {
-        static const hash<int> h {};
-        return h(static_cast<int>(type));
-    }
-};
-}
+#include "impl/message.h"
 
 #endif // DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_H_

@@ -72,13 +72,18 @@ add_executable(
 )
 
 add_executable(
-    msg_test
-    message_test.cpp
-    match_rule_test.cpp
+    message_test
+    message_test.cpp   
 )
 
 add_executable(
-    msg_router_test
+  match_rule_test
+  match_rule_test.cpp
+)
+  
+
+add_executable(
+    message_router_test
     message_router_test.cpp
 )
 
@@ -133,7 +138,7 @@ target_link_libraries(
 )
 
 target_link_libraries(
-    msg_test
+    message_test
     ${CMAKE_THREAD_LIBS_INIT}
     ${Boost_LIBRARIES}
     ${DBUS_LIBRARIES}
@@ -142,7 +147,16 @@ target_link_libraries(
 )
 
 target_link_libraries(
-    msg_router_test
+    match_rule_test
+    ${CMAKE_THREAD_LIBS_INIT}
+    ${Boost_LIBRARIES}
+    ${DBUS_LIBRARIES}
+    gtest
+    gtest_main
+)
+
+target_link_libraries(
+    message_router_test
     ${CMAKE_THREAD_LIBS_INIT}
     ${Boost_LIBRARIES}
     ${DBUS_LIBRARIES}
@@ -165,8 +179,9 @@ if (DBUS_CPP_ENABLE_DBUS_TEST_RUNNER)
     add_test(executor_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/executor_test)
     add_test(codec_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/codec_test)
     add_test(stl_codec_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/stl_codec_test)
-    add_test(msg_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/msg_test)
-    add_test(msg_router_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/msg_router_test)
+    add_test(message_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/message_test)
+    add_test(match_rule_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/match_rule_test)
+    add_test(message_router_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/message_router_test)
     add_test(service_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/service_test)
 else(DBUS_CPP_ENABLE_DBUS_TEST_RUNNER)
     add_test(bus_test ${CMAKE_CURRENT_BINARY_DIR}/bus_test)
@@ -174,7 +189,8 @@ else(DBUS_CPP_ENABLE_DBUS_TEST_RUNNER)
     add_test(executor_test ${CMAKE_CURRENT_BINARY_DIR}/executor_test)
     add_test(codec_test ${CMAKE_CURRENT_BINARY_DIR}/codec_tes)
     add_test(stl_codec_test ${CMAKE_CURRENT_BINARY_DIR}/stl_codec_test)
-    add_test(msg_test ${CMAKE_CURRENT_BINARY_DIR}/msg_test)
-    add_test(msg_router_test ${CMAKE_CURRENT_BINARY_DIR}/msg_router_test)
+    add_test(message_test ${CMAKE_CURRENT_BINARY_DIR}/message_test)
+    add_test(match_rule_test ${CMAKE_CURRENT_BINARY_DIR}/match_rule_test)
+    add_test(message_router_test ${CMAKE_CURRENT_BINARY_DIR}/message_router_test)
     add_test(service_test ${CMAKE_CURRENT_BINARY_DIR}/service_test)
 endif(DBUS_CPP_ENABLE_DBUS_TEST_RUNNER)
