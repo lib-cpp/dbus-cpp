@@ -1,3 +1,13 @@
+dbus-cpp (0.0.1+13.10.20130904-0ubuntu1) saucy; urgency=low
+
+  [ thomas-voss ]
+  * Drop lcov dependency. (LP: #1218896)
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 12
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 04 Sep 2013 02:32:09 +0000
+
 dbus-cpp (0.0.1daily13.06.18-0ubuntu1) saucy; urgency=low
 
   * Automatic snapshot from revision 10
