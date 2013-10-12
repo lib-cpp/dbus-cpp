@@ -499,8 +499,6 @@ private:
                 PropertyType::name()
             },
             std::bind(&Property::handle_set, this, std::placeholders::_1));
-            parent->install_method_handler<interfaces::Properties::Get>(std::bind(&Property::handle_get, this, std::placeholders::_1));
-            parent->install_method_handler<interfaces::Properties::Set>(std::bind(&Property::handle_set, this, std::placeholders::_1));
         }
     }
 
