@@ -18,6 +18,8 @@ cmake_minimum_required(VERSION 2.8)
 
 project(dbus-cpp)
 
+find_package(LibXml2 REQUIRED)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(cmake/EnableCoverageReport.cmake)
@@ -48,7 +50,10 @@ set(DBUS_CPP_VERSION_PATCH 1)
 
 include(CTest)
 
-include_directories(include/dbus)
+include_directories(
+  include/dbus
+  ${LIBXML2_INCLUDE_DIR}
+)
 
 add_subdirectory(data)
 add_subdirectory(doc)

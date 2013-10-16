@@ -40,9 +40,8 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
-  gtest
-  gtest_main
-  )
+  ${GTEST_BOTH_LIBRARIES}
+)
 
 install(
   TARGETS geoclue

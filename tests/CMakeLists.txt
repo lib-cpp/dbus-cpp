@@ -17,14 +17,15 @@
 set (OLD_CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 # Don't treat warnings as errors in 3rd_party/{gmock,cucumber-cpp}
 string (REPLACE " -Werror " " " CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-add_subdirectory(/usr/src/gtest gtest)
+find_package(Gtest REQUIRED)
+include_directories(${GMOCK_INCLUDE_DIR} ${GTEST_INCLUDE_DIR})
 set (CMAKE_CXX_FLAGS ${OLD_CMAKE_CXX_FLAGS})
 
 # We actually deliberately ignore the result of read and write in our tests
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=unused-result")
 
 find_package(PkgConfig)
-find_package(Boost COMPONENTS system)
+find_package(Boost COMPONENTS filesystem system)
 find_package(Threads)
 
 pkg_check_modules(DBUS dbus-1)
@@ -62,6 +63,11 @@ add_executable(
   )
 
 add_executable(
+  compiler_test
+  compiler_test.cpp
+  )
+
+add_executable(
   executor_test
   executor_test.cpp
   )
@@ -73,14 +79,13 @@ add_executable(
 
 add_executable(
   message_test
-  message_test.cpp
+  message_test.cpp   
   )
 
 add_executable(
   match_rule_test
   match_rule_test.cpp
   )
-
 
 add_executable(
   message_router_test
@@ -100,8 +105,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
-  gtest
-  gtest_main
+  ${GTEST_BOTH_LIBRARIES}
   )
 
 target_link_libraries(
@@ -112,8 +116,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
-  gtest
-  gtest_main
+  ${GTEST_BOTH_LIBRARIES}
   )
 
 target_link_libraries(
@@ -124,8 +127,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
-  gtest
-  gtest_main
+  ${GTEST_BOTH_LIBRARIES}
   )
 
 target_link_libraries(
@@ -136,8 +138,20 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
-  gtest
-  gtest_main
+  ${GTEST_BOTH_LIBRARIES}
+  )
+
+target_link_libraries(
+  compiler_test
+
+  dbus_cpp
+
+  ${CMAKE_THREAD_LIBS_INIT}
+  ${Boost_LIBRARIES}
+  ${DBUS_LIBRARIES}
+  ${LIBXML2_LIBRARIES}
+  ${GMOCK_LIBRARY}
+  ${GTEST_BOTH_LIBRARIES}
   )
 
 target_link_libraries(
@@ -148,8 +162,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
-  gtest
-  gtest_main
+  ${GTEST_BOTH_LIBRARIES}
   )
 
 target_link_libraries(
@@ -160,8 +173,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
-  gtest
-  gtest_main
+  ${GTEST_BOTH_LIBRARIES}
   )
 
 target_link_libraries(
@@ -172,8 +184,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
-  gtest
-  gtest_main
+  ${GTEST_BOTH_LIBRARIES}
   )
 
 target_link_libraries(
@@ -184,8 +195,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
-  gtest
-  gtest_main
+  ${GTEST_BOTH_LIBRARIES}
   )
 
 target_link_libraries(
@@ -196,8 +206,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
-  gtest
-  gtest_main
+  ${GTEST_BOTH_LIBRARIES}
   )
 
 if (DBUS_CPP_ENABLE_DBUS_TEST_RUNNER)
@@ -205,6 +214,7 @@ if (DBUS_CPP_ENABLE_DBUS_TEST_RUNNER)
   add_test(dbus_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/dbus_test)
   add_test(executor_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/executor_test)
   add_test(codec_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/codec_test)
+  add_test(compiler_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/compiler_test)
   add_test(stl_codec_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/stl_codec_test)
   add_test(message_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/message_test)
   add_test(match_rule_test ${DBUS_TEST_RUNNER_EXECUTABLE} --task=${CMAKE_CURRENT_BINARY_DIR}/match_rule_test)
@@ -215,6 +225,7 @@ else(DBUS_CPP_ENABLE_DBUS_TEST_RUNNER)
   add_test(dbus_test ${CMAKE_CURRENT_BINARY_DIR}/dbus_test)
   add_test(executor_test ${CMAKE_CURRENT_BINARY_DIR}/executor_test)
   add_test(codec_test ${CMAKE_CURRENT_BINARY_DIR}/codec_test)
+  add_test(compiler_test ${CMAKE_CURRENT_BINARY_DIR}/compiler_test)
   add_test(stl_codec_test ${CMAKE_CURRENT_BINARY_DIR}/stl_codec_test)
   add_test(message_test ${CMAKE_CURRENT_BINARY_DIR}/message_test)
   add_test(match_rule_test ${CMAKE_CURRENT_BINARY_DIR}/match_rule_test)
