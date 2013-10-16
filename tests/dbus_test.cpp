@@ -49,8 +49,7 @@ TEST(DBus, QueryingUnixProcessIdReturnsCorrectResult)
     auto child = [path, pid, uid, &barrier]()
     {
         auto bus = the_session_bus();
-        bus->install_executor(
-            org::freedesktop::dbus::Executor::Ptr(new org::freedesktop::dbus::asio::Executor{bus}));
+        bus->install_executor(org::freedesktop::dbus::asio::make_executor(bus));
         dbus::DBus daemon{bus};
 
         auto service = dbus::Service::add_service<test::Service>(bus);

@@ -17,6 +17,8 @@
  */
 
 #include "org/freedesktop/dbus/dbus.h"
+#include "org/freedesktop/dbus/object.h"
+#include "org/freedesktop/dbus/property.h"
 #include "org/freedesktop/dbus/service.h"
 #include "org/freedesktop/dbus/interfaces/properties.h"
 #include "org/freedesktop/dbus/types/stl/tuple.h"
@@ -62,7 +64,7 @@ TEST(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
     auto child = [expected_value, &cross_process_sync]()
     {
         auto bus = the_session_bus();
-        bus->install_executor(org::freedesktop::dbus::Executor::Ptr(new org::freedesktop::dbus::asio::Executor{bus}));
+        bus->install_executor(org::freedesktop::dbus::asio::make_executor(bus));
         auto service = dbus::Service::add_service<test::Service>(bus);
         auto skeleton = service->add_object_for_path(dbus::types::ObjectPath("/this/is/unlikely/to/exist/Service"));
         auto writable_property = skeleton->get_property<test::Service::Properties::Dummy>();
@@ -83,7 +85,7 @@ TEST(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
     auto parent = [expected_value, cross_process_sync]()
     {
         auto bus = the_session_bus();
-        bus->install_executor(org::freedesktop::dbus::Executor::Ptr(new org::freedesktop::dbus::asio::Executor{bus}));
+        bus->install_executor(org::freedesktop::dbus::asio::make_executor(bus));
         std::thread t{[bus](){ bus->run(); }};
         cross_process_sync.wait_for_signal_ready();
 

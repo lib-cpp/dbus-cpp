@@ -25,7 +25,7 @@ include(cmake/PrePush.cmake)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall -pedantic -Wextra -fPIC -pthread")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Werror -Wall -fno-strict-aliasing -pedantic -Wextra -fPIC -pthread")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined -lc++abi")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined")
 
 #####################################################################
 # Enable code coverage calculation with gcov/gcovr/lcov
@@ -54,6 +54,7 @@ add_subdirectory(data)
 add_subdirectory(doc)
 add_subdirectory(examples)
 add_subdirectory(include)
+add_subdirectory(src)
 add_subdirectory(tests)
 
 enable_coverage_report(benchmark)

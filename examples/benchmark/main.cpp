@@ -120,7 +120,7 @@ int main(int argc, char** argv)
     auto server = [&cross_process_sync](int, char**)
     {
         auto bus = the_session_bus();
-        bus->install_executor(org::freedesktop::dbus::Executor::Ptr(new org::freedesktop::dbus::asio::Executor{bus}));
+        bus->install_executor(org::freedesktop::dbus::asio::make_executor(bus));
         std::thread t1
         {
             [&]()

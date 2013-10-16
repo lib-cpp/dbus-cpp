@@ -43,7 +43,7 @@ dbus::Bus::Ptr the_session_bus()
 int main(int, char**)
 {
     auto bus = the_session_bus();
-    bus->install_executor(org::freedesktop::dbus::Executor::Ptr(new org::freedesktop::dbus::asio::Executor{bus}));
+    bus->install_executor(org::freedesktop::dbus::asio::make_executor(bus));
     std::thread t {std::bind(&dbus::Bus::run, bus)};
     auto ubuntu_geoip = dbus::Service::use_service(bus, "org.freedesktop.Geoclue.Providers.UbuntuGeoIP");
     auto ubuntu_geoip_obj = ubuntu_geoip->object_for_path(dbus::types::ObjectPath("/org/freedesktop/Geoclue/Providers/UbuntuGeoIP"));

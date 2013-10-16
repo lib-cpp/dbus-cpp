@@ -14,37 +14,4 @@
 #
 # Authored by: Thomas Voss <thomas.voss@canonical.com>
 
-find_package(PkgConfig)
-find_package(Boost COMPONENTS system)
-find_package(Threads)
-
-pkg_check_modules(DBUS dbus-1)
-
-include_directories(
-  ${CMAKE_SOURCE_DIR}/include/dbus
-  ${DBUS_INCLUDE_DIRS}
-  ${Boost_INCLUDE_DIRS}
-  ${GTEST_INCLUDE_DIRS}
-  )
-
-add_executable(
-  upower
-  main.cpp
-  )
-
-target_link_libraries(
-  upower
-
-  dbus_cpp
-
-  ${CMAKE_THREAD_LIBS_INIT}
-  ${Boost_LIBRARIES}
-  ${DBUS_LIBRARIES}
-  gtest
-  gtest_main
-  )
-
-install(
-  TARGETS upower
-  DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/examples/upower/
-  )
+add_subdirectory(dbus)

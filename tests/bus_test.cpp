@@ -175,7 +175,7 @@ TEST(Bus, AddingAndRemovingAnInvalidMatchRuleDoesThrow)
 TEST(Bus, AnInstalledFilterIsInvoked)
 {
     auto bus = the_session_bus();
-    bus->install_executor(org::freedesktop::dbus::Executor::Ptr(new org::freedesktop::dbus::asio::Executor{bus}));
+    bus->install_executor(org::freedesktop::dbus::asio::make_executor(bus));
     struct Helper
     {
         void notify_invocation()
@@ -235,7 +235,7 @@ TEST(Bus, InstallingARouteForSignalsResultsInTheRouteBeingInvoked)
     const org::freedesktop::dbus::types::ObjectPath to_route_for(path);
     bool invoked {false};
     auto bus = the_session_bus();
-    bus->install_executor(org::freedesktop::dbus::Executor::Ptr{new org::freedesktop::dbus::asio::Executor{bus}});
+    bus->install_executor(org::freedesktop::dbus::asio::make_executor(bus));
     bus->access_signal_router().install_route(to_route_for,[&](DBusMessage*)
                                               {
                                                   invoked = true;

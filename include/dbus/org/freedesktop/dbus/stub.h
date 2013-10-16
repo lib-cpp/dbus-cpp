@@ -19,6 +19,7 @@
 #define DBUS_ORG_FREEDESKTOP_DBUS_STUB_H_
 
 #include "org/freedesktop/dbus/bus.h"
+#include "org/freedesktop/dbus/object.h"
 #include "org/freedesktop/dbus/service.h"
 
 namespace org

@@ -15,8 +15,11 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_IMPL_BUS_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_IMPL_BUS_H_
+
+#include "org/freedesktop/dbus/bus.h"
+
+#include "org/freedesktop/dbus/traits/timeout.h"
+#include "org/freedesktop/dbus/traits/watch.h"
 
 namespace org
 {
@@ -24,79 +27,6 @@ namespace freedesktop
 {
 namespace dbus
 {
-namespace traits
-{
-template<>
-struct Timeout<DBusTimeout>
-{
-    typedef int DurationType;
-
-    static inline bool is_timeout_enabled(DBusTimeout* timeout)
-    {
-        return dbus_timeout_get_enabled(timeout);
-    }
-
-    static inline int get_timeout_interval(DBusTimeout* timeout)
-    {
-        return DurationType(dbus_timeout_get_interval(timeout));
-    }
-
-    static inline void invoke_timeout_handler(DBusTimeout* timeout)
-    {
-        dbus_timeout_handle(timeout);
-    }
-};
-
-template<>
-struct Watch<DBusWatch>
-{
-    inline static int readable_event() { return DBUS_WATCH_READABLE; }
-    inline static int writeable_event() { return DBUS_WATCH_WRITABLE; }
-    inline static int error_event() { return DBUS_WATCH_ERROR; }
-    inline static int hangup_event() { return DBUS_WATCH_HANGUP; }
-
-    static inline bool is_watch_enabled(DBusWatch* watch)
-    {
-        return dbus_watch_get_enabled(watch);
-    }
-
-    static inline int get_watch_unix_fd(DBusWatch* watch)
-    {
-        return dbus_watch_get_unix_fd(watch);
-    }
-
-    static inline bool is_watch_monitoring_fd_for_readable(DBusWatch* watch)
-    {
-        return dbus_watch_get_flags(watch) & DBUS_WATCH_READABLE;
-    }
-
-    static bool is_watch_monitoring_fd_for_writable(DBusWatch* watch)
-    {
-        return dbus_watch_get_flags(watch) & DBUS_WATCH_WRITABLE;
-    }
-
-    static bool invoke_watch_handler_for_event(DBusWatch* watch, int event)
-    {
-        return dbus_watch_handle(watch, event);
-    }
-};
-}
-
-Bus::Error::Error()
-{
-    dbus_error_init(std::addressof(error));
-}
-
-Bus::Error::~Error()
-{
-    dbus_error_free(std::addressof(error));
-}
-
-DBusError& Bus::Error::raw()
-{
-    return error;
-}
-
 DBusHandlerResult Bus::handle_message(DBusConnection*, DBusMessage* message, void* data)
 {
     auto thiz = static_cast<Bus*>(data);
@@ -123,7 +53,12 @@ Bus::Bus(WellKnownBus bus)
     if (!connection)
         throw std::runtime_error(se.raw().message);
 
-    message_type_router.install_route(DBUS_MESSAGE_TYPE_SIGNAL, std::bind(&Bus::SignalRouter::operator(), std::ref(signal_router), std::placeholders::_1));
+    message_type_router.install_route(
+        DBUS_MESSAGE_TYPE_SIGNAL, 
+        std::bind(
+            &Bus::SignalRouter::operator(), 
+            std::ref(signal_router), 
+            std::placeholders::_1));
     install_message_filter(handle_message, this);
 }
 
@@ -231,5 +166,3 @@ DBusConnection* Bus::raw() const
 }
 }
 }
-
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_IMPL_BUS_H_

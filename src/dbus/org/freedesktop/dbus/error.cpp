@@ -15,11 +15,10 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_ASIO_EXECUTOR_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_ASIO_EXECUTOR_H_
 
-#include "org/freedesktop/dbus/bus.h"
-#include "org/freedesktop/dbus/executor.h"
+#include "org/freedesktop/dbus/error.h"
+
+#include <dbus/dbus.h>
 
 namespace org
 {
@@ -27,12 +26,45 @@ namespace freedesktop
 {
 namespace dbus
 {
-namespace asio
+
+struct Error::Private
 {
-Executor::Ptr make_executor(const Bus::Ptr& bus);
+    Private()
+    {
+        dbus_error_init(std::addressof(error));
+    }
+    DBusError error;
+};
+
+Error::Error() : d(new Private())
+{
+}
+
+Error::~Error()
+{
+    dbus_error_free(std::addressof(d->error));
+}
+
+std::string Error::name() const
+{
+    return d->error.name;
+}
+
+std::string Error::message() const
+{
+    return d->error.message;
+}
+
+Error::operator bool() const
+{
+    return dbus_error_is_set(std::addressof(d->error));
+}
+
+DBusError& Error::raw()
+{
+    return d->error;
 }
 }
 }
 }
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_ASIO_EXECUTOR_H_

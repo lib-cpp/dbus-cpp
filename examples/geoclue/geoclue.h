@@ -19,6 +19,7 @@
 #ifndef ORG_FREEDESKTOP_GEOCLUE_H_
 #define ORG_FREEDESKTOP_GEOCLUE_H_
 
+#include "org/freedesktop/dbus/object.h"
 #include "org/freedesktop/dbus/service.h"
 #include "org/freedesktop/dbus/types/object_path.h"
 #include "org/freedesktop/dbus/types/struct.h"

@@ -22,6 +22,7 @@
 
 #include "org/freedesktop/dbus/bus.h"
 #include "org/freedesktop/dbus/codec.h"
+#include "org/freedesktop/dbus/object.h"
 #include "org/freedesktop/dbus/service.h"
 #include "org/freedesktop/dbus/types/object_path.h"
 

@@ -18,11 +18,10 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_BUS_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_BUS_H_
 
+#include "org/freedesktop/dbus/error.h"
 #include "org/freedesktop/dbus/executor.h"
 #include "org/freedesktop/dbus/message_router.h"
 #include "org/freedesktop/dbus/well_known_bus.h"
-#include "org/freedesktop/dbus/traits/timeout.h"
-#include "org/freedesktop/dbus/traits/watch.h"
 #include "org/freedesktop/dbus/types/object_path.h"
 
 #include <cstring>
@@ -52,21 +51,6 @@ class Bus
   public:
     typedef std::shared_ptr<Bus> Ptr;
     typedef MessageRouter<types::ObjectPath> SignalRouter;
-
-    class Error
-    {
-      public:
-        Error();
-        ~Error();
-
-        Error(const Error&) = delete;
-        Error& operator=(const Error&) = delete;
-      
-        DBusError& raw();
-        
-      private:
-        DBusError error;
-    };
 
     explicit Bus(WellKnownBus bus);
     Bus(const Bus&) = delete;
@@ -117,7 +101,5 @@ class Bus
 }
 }
 }
-
-#include "impl/bus.h"
 
 #endif // DBUS_ORG_FREEDESKTOP_DBUS_BUS_H_
