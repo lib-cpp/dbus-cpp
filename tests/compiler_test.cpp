@@ -49,7 +49,8 @@ struct ParserInspector
 
 struct MockGenerator : public dbus::Generator
 {
-    MOCK_METHOD1(invoke_for_model, bool(const std::shared_ptr<dbus::Compiler::Element>&));
+    MOCK_METHOD2(invoke_for_model,
+                 bool(const std::shared_ptr<dbus::Compiler::Element>&, std::istream&));
 };
 
 void ensure_test_introspection_file(const std::string& fn)
@@ -136,7 +137,7 @@ TEST(IntrospectionCompiler, invoking_the_compiler_triggers_the_generator)
     auto parser = std::make_shared<dbus::IntrospectionParser>();
 
     NiceMock<MockGenerator> generator;
-    EXPECT_CALL(generator, invoke_for_model(_));
+    EXPECT_CALL(generator, invoke_for_model(_, _));
     
     dbus::Compiler compiler(parser, std::shared_ptr<dbus::Generator>(&generator, [](dbus::Generator*){}));
     
@@ -155,7 +156,9 @@ struct StubGenerator : public dbus::Generator
     int annotation_count = 0;
     int argument_count = 0;
 
-    bool invoke_for_model(const std::shared_ptr<dbus::Compiler::Element>& element)
+    bool invoke_for_model(
+            const std::shared_ptr<dbus::Compiler::Element>& element,
+            std::istream&)
     {
         auto visitor = [this](const dbus::Compiler::Element& element)
         {

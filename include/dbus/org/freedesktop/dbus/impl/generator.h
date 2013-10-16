@@ -539,285 +539,331 @@ struct Generator::Private
             std::size_t count = 0;
             struct
             {
-                File protocol_file;
-                std::stringstream buffer;
-                detail::Interface current = detail::Interface::empty();
+                std::string path;
                 struct
                 {
-                    detail::Method current = detail::Method::empty();
-                } method;
-                struct
-                {
-                    std::size_t count = 0;
-                    detail::Property current = detail::Property::empty();
-                } properties;
-                struct
-                {
-                    std::size_t count = 0;
-                    detail::Signal current = detail::Signal::empty();
-                } signals;
-            } interface;
+                    File protocol_file;
+                    std::stringstream buffer;
+                    detail::Interface current = detail::Interface::empty();
+                    struct
+                    {
+                        detail::Method current = detail::Method::empty();
+                    } method;
+                    struct
+                    {
+                        std::size_t count = 0;
+                        detail::Property current = detail::Property::empty();
+                    } properties;
+                    struct
+                    {
+                        std::size_t count = 0;
+                        detail::Signal current = detail::Signal::empty();
+                    } signals;
+                } interface;
+            } node;
         } namespaces;
+        std::string raw_file_buffer;
+        };
     };
-};
 
-Generator::Generator() : d(new Private{})
-{
-}
-
-Generator::~Generator()
-{
-}
-
-bool Generator::invoke_for_model(const std::shared_ptr<Compiler::Element>& element)
-{
-    using boost::filesystem::current_path;
-
-    Private::Context context;
-
-    auto visitor = [&context](const Compiler::Element& element)
+    Generator::Generator() : d(new Private{})
     {
-        if (element.type() == Compiler::Element::Type::interface)
+    }
+
+    Generator::~Generator()
+    {
+    }
+
+    bool Generator::invoke_for_model(
+            const std::shared_ptr<Compiler::Element>& element,
+            std::istream& raw_file_contents)
+    {
+        using boost::filesystem::current_path;
+
+        Private::Context context;
+        bool state_is_tag_open = false;
+        std::copy_if(std::istreambuf_iterator<char>(raw_file_contents),
+                     std::istreambuf_iterator<char>(),
+                     std::back_inserter(context.raw_file_buffer),
+                     [&state_is_tag_open](const char& c) -> bool
+                     {
+                         if (c == '<')
+                         {
+                             state_is_tag_open = true;
+                             return true;
+                         }
+
+                         if (c == '>')
+                         {
+                             state_is_tag_open = false;
+                             return true;
+                         }
+
+                         if (std::iscntrl(c))
+                             return false;
+
+                         if (!state_is_tag_open && std::isspace(c))
+                             return false;
+
+                         return true;
+                     });
+
+        auto visitor = [&context](const Compiler::Element& element)
         {
-            auto name = element.interface().name;
-
-            auto ns_and_interface = detail::parse_namespaces_and_interface_from_dbus_name(name);
-            std::vector<std::string> namespaces = std::get<0>(ns_and_interface);
-            std::string interface = std::get<1>(ns_and_interface);
-
-            context.namespaces.interface.protocol_file.open(
-                        current_path() / (interface + ".h"),
-                        std::ios_base::out | std::ios_base::trunc);
-            
-            auto ts = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-
-            context.namespaces.interface.buffer
-                    << "/*" << std::endl
-                    << " * " << "Auto-generated header file." << std::endl
-                    << " * " << "Build timestamp: " << std::asctime(std::localtime(&ts))
-                    << "*/" << std::endl;
-
-            auto tag = boost::uuids::random_generator()();
-            auto tag_string = boost::uuids::to_string(tag);
-
-            boost::algorithm::to_upper(tag_string);
-            boost::algorithm::replace_all(tag_string, "-", "_");
-            context.namespaces.interface.buffer << "#ifndef " << tag_string << "_H_" << std::endl;
-            context.namespaces.interface.buffer << "#define " << tag_string << "_H_" << std::endl;
-            context.namespaces.interface.buffer << std::endl;
-
-            context.namespaces.interface.buffer
-                    << "#include <chrono>" << std::endl
-                    << "#include <pair>" << std::endl
-                    << "#include <string>" << std::endl
-                    << "#include <tuple>" << std::endl
-                    << "#include <vector>" << std::endl
-                    << std::endl
-                    << "#include <cstdint>" << std::endl
-                    << std::endl;
-
-            for (auto ns : namespaces)
+            if (element.type() == Compiler::Element::Type::node)
             {
-                context.namespaces.interface.buffer
-                        << "namespace "
-                        << ns
+                context.namespaces.node.path = element.node().name;
+            } else if (element.type() == Compiler::Element::Type::interface)
+            {
+                auto name = element.interface().name;
+
+                auto ns_and_interface = detail::parse_namespaces_and_interface_from_dbus_name(name);
+                std::vector<std::string> namespaces = std::get<0>(ns_and_interface);
+                std::string interface = std::get<1>(ns_and_interface);
+
+                context.namespaces.node.interface.protocol_file.open(
+                            current_path() / (interface + ".h"),
+                            std::ios_base::out | std::ios_base::trunc);
+
+                auto ts = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+
+                context.namespaces.node.interface.buffer
+                        << "/*" << std::endl
+                        << " * " << "Auto-generated header file." << std::endl
+                        << " * " << "Build timestamp: " << std::asctime(std::localtime(&ts))
+                        << "*/" << std::endl;
+
+                auto tag = boost::uuids::random_generator()();
+                auto tag_string = boost::uuids::to_string(tag);
+
+                boost::algorithm::to_upper(tag_string);
+                boost::algorithm::replace_all(tag_string, "-", "_");
+                context.namespaces.node.interface.buffer
+                        << "#ifndef " << tag_string << "_H_" << std::endl
+                        << "#define " << tag_string << "_H_" << std::endl
+                        << std::endl;
+
+                context.namespaces.node.interface.buffer
+                        << "#include <chrono>" << std::endl
+                        << "#include <pair>" << std::endl
+                        << "#include <string>" << std::endl
+                        << "#include <tuple>" << std::endl
+                        << "#include <vector>" << std::endl
                         << std::endl
-                        << "{" << std::endl;
-                context.namespaces.count++;
-            }
+                        << "#include <cstdint>" << std::endl
+                        << std::endl;
 
-            context.namespaces.interface.buffer
-                    << "struct " << interface << std::endl
-                    << "{" << std::endl;
-            context.namespaces.interface.buffer
-                    << "static const std::string& name() { static const std::string s{\""
-                    << element.interface().name
-                    << "\"}; return s; }"
-                    << std::endl;
-
-            context.namespaces.interface.current = detail::Interface{interface};
-        } else if (element.type() == Compiler::Element::Type::property)
-        {
-            // We are stateful here in that we have to check whether
-            // any signals are present on this interface. If so, we
-            // have to close the enclosing struct, too.
-            if (context.namespaces.interface.signals.count > 0)
-            {
-                context.namespaces.interface.buffer
-                        << "};" << std::endl;
-            }
-
-            // We are stateful here in that we have to check whether
-            // any properties have been visited before. If so, we
-            // have to open the enclosing struct, too.
-            if (context.namespaces.interface.properties.count == 0)
-            {
-                context.namespaces.interface.buffer
-                        << "struct Properties" << std::endl
-                        << "{" << std::endl;
-            }
-
-            context.namespaces.interface.properties.count++;
-            context.namespaces.interface.properties.current
-                    = detail::Property(element.property().name);
-
-            context.namespaces.interface.buffer
-                    << "struct " << element.property().name << std::endl
-                    << "{" << std::endl;
-            context.namespaces.interface.buffer
-                    << "typedef " << context.namespaces.interface.current.name() << " Interface;" << std::endl;
-            context.namespaces.interface.buffer
-                    << "static const std::string& name() { static const std::string s{\""
-                    << element.property().name
-                    << "\"}; return s; }"
-                    << std::endl;
-
-            switch(element.property().access)
-            {
-            case IntrospectionParser::Property::Access::read:
-                context.namespaces.interface.buffer
-                        << "static const bool readable = true;" << std::endl
-                        << "static const bool writable = false;" << std::endl;
-                break;
-            case IntrospectionParser::Property::Access::write:
-                context.namespaces.interface.buffer
-                        << "static const bool readable = false;" << std::endl
-                        << "static const bool writable = true;" << std::endl;
-                break;
-            case IntrospectionParser::Property::Access::read_write:
-                context.namespaces.interface.buffer
-                        << "static const bool readable = true;" << std::endl
-                        << "static const bool writable = true;" << std::endl;
-                break;
-            }
-
-            context.
-                    namespaces.
-                    interface.
-                    properties.
-                    current.
-                    argument_type_mangler().update_from_signature(
-                        element.property().type);
-            context.namespaces.interface.buffer
-                    << "typedef "
-                    << context.namespaces.interface.properties.current.argument_type_mangler().print_type()
-                    << " ArgumentType;"
-                    << std::endl;
-        } else if (element.type() == Compiler::Element::Type::method)
-        {
-            context.namespaces.interface.buffer
-                    << "struct " << element.method().name << std::endl
-                    << "{" << std::endl;
-            context.namespaces.interface.buffer
-                    << "typedef " << context.namespaces.interface.current.name() << " Interface;" << std::endl;
-            context.namespaces.interface.buffer
-                    << "static const std::string& name() { static const std::string s{\""
-                    << element.method().name
-                    << "\"}; return s; }"
-                    << std::endl;
-            context.namespaces.interface.buffer
-                    << "static const std::chrono::milliseconds& default_timeout() { static const std::chrono::seconds s{10}; return s; }"
-                    << std::endl;
-
-            context.namespaces.interface.method.current = detail::Method(element.method().name);
-        } else if (element.type() == Compiler::Element::Type::signal)
-        {
-            // We are stateful here in that we have to check whether
-            // any signals have been visited before. If so, we
-            // have to open the enclosing struct, too.
-            if (context.namespaces.interface.signals.count == 0)
-            {
-                context.namespaces.interface.buffer
-                        << "struct Signals" << std::endl
-                        << "{" << std::endl;
-            }
-
-            context.namespaces.interface.signals.count++;
-            context.namespaces.interface.signals.current
-                    = detail::Signal(element.signal().name);
-
-            context.namespaces.interface.buffer
-                    << "struct " << element.signal().name << std::endl
-                    << "{" << std::endl;
-            context.namespaces.interface.buffer
-                    << "typedef " << context.namespaces.interface.current.name() << " Interface;" << std::endl;
-            context.namespaces.interface.buffer
-                    << "static const std::string& name() { static const std::string s{\"" << element.signal().name << "\"}; return s; }" << std::endl;
-        } else if (element.type() == Compiler::Element::Type::argument)
-        {
-            if (!(context.namespaces.interface.method.current == detail::Method::empty()))
-            {
-                switch(element.argument().direction)
+                for (auto ns : namespaces)
                 {
-                case IntrospectionParser::Argument::Direction::in:
-                    context.namespaces.interface.method.current.in_type_mangler().update_from_signature(
-                                element.argument().type.begin(),
-                                element.argument().type.end());
+                    context.namespaces.node.interface.buffer
+                            << "namespace " << ns << std::endl
+                            << "{" << std::endl;
+                    context.namespaces.count++;
+                }
+
+                context.namespaces.node.interface.buffer
+                        << "struct " << interface << std::endl
+                        << "{" << std::endl;
+                context.namespaces.node.interface.buffer
+                        << "static const std::string& default_path() { static const std::string s{\""
+                        << context.namespaces.node.path
+                        << "\"}; return s; }"
+                        << std::endl;
+                context.namespaces.node.interface.buffer
+                        << "static const std::string& name() { static const std::string s{\""
+                        << element.interface().name
+                        << "\"}; return s; }"
+                        << std::endl;
+                context.namespaces.node.interface.buffer
+                        << "static const std::string& introspect() { static const std::string s{\""
+                        << context.raw_file_buffer
+                        << "\"}; return s; }"
+                        << std::endl;
+
+                context.namespaces.node.interface.current = detail::Interface{interface};
+            } else if (element.type() == Compiler::Element::Type::property)
+            {
+                // We are stateful here in that we have to check whether
+                // any signals are present on this interface. If so, we
+                // have to close the enclosing struct, too.
+                if (context.namespaces.node.interface.signals.count > 0)
+                {
+                    context.namespaces.node.interface.buffer
+                            << "};" << std::endl;
+                }
+
+                // We are stateful here in that we have to check whether
+                // any properties have been visited before. If so, we
+                // have to open the enclosing struct, too.
+                if (context.namespaces.node.interface.properties.count == 0)
+                {
+                    context.namespaces.node.interface.buffer
+                            << "struct Properties" << std::endl
+                            << "{" << std::endl;
+                }
+
+                context.namespaces.node.interface.properties.count++;
+                context.namespaces.node.interface.properties.current
+                        = detail::Property(element.property().name);
+
+                context.namespaces.node.interface.buffer
+                        << "struct " << element.property().name << std::endl
+                        << "{" << std::endl;
+                context.namespaces.node.interface.buffer
+                        << "typedef " << context.namespaces.node.interface.current.name() << " Interface;" << std::endl;
+                context.namespaces.node.interface.buffer
+                        << "static const std::string& name() { static const std::string s{\""
+                        << element.property().name
+                        << "\"}; return s; }"
+                        << std::endl;
+
+                switch(element.property().access)
+                {
+                case IntrospectionParser::Property::Access::read:
+                    context.namespaces.node.interface.buffer
+                            << "static const bool readable = true;" << std::endl
+                            << "static const bool writable = false;" << std::endl;
                     break;
-                case IntrospectionParser::Argument::Direction::out:
-                    context.namespaces.interface.method.current.out_type_mangler().update_from_signature(
-                                element.argument().type.begin(),
-                                element.argument().type.end());
+                case IntrospectionParser::Property::Access::write:
+                    context.namespaces.node.interface.buffer
+                            << "static const bool readable = false;" << std::endl
+                            << "static const bool writable = true;" << std::endl;
+                    break;
+                case IntrospectionParser::Property::Access::read_write:
+                    context.namespaces.node.interface.buffer
+                            << "static const bool readable = true;" << std::endl
+                            << "static const bool writable = true;" << std::endl;
                     break;
                 }
-            } else if (!(context.namespaces.interface.signals.current == detail::Signal::empty()))
-            {
-                context.namespaces.interface.signals.current.argument_type_mangler().update_from_signature(element.argument().type);
-            }
-        }
-    };
 
-    auto post_visitor = [&context](const Compiler::Element& element)
-    {
-        if (element.type() == Compiler::Element::Type::interface)
+                context.
+                        namespaces.
+                        node.
+                        interface.
+                        properties.
+                        current.
+                        argument_type_mangler().update_from_signature(
+                            element.property().type);
+                context.namespaces.node.interface.buffer
+                        << "typedef "
+                        << context.namespaces.node.interface.properties.current.argument_type_mangler().print_type()
+                        << " ArgumentType;"
+                        << std::endl;
+            } else if (element.type() == Compiler::Element::Type::method)
+            {
+                context.namespaces.node.interface.buffer
+                        << "struct " << element.method().name << std::endl
+                        << "{" << std::endl;
+                context.namespaces.node.interface.buffer
+                        << "typedef " << context.namespaces.node.interface.current.name() << " Interface;" << std::endl;
+                context.namespaces.node.interface.buffer
+                        << "static const std::string& name() { static const std::string s{\""
+                        << element.method().name
+                        << "\"}; return s; }"
+                        << std::endl;
+                context.namespaces.node.interface.buffer
+                        << "static const std::chrono::milliseconds& default_timeout() { static const std::chrono::seconds s{10}; return s; }"
+                        << std::endl;
+
+                context.namespaces.node.interface.method.current = detail::Method(element.method().name);
+            } else if (element.type() == Compiler::Element::Type::signal)
+            {
+                // We are stateful here in that we have to check whether
+                // any signals have been visited before. If so, we
+                // have to open the enclosing struct, too.
+                if (context.namespaces.node.interface.signals.count == 0)
+                {
+                    context.namespaces.node.interface.buffer
+                            << "struct Signals" << std::endl
+                            << "{" << std::endl;
+                }
+
+                context.namespaces.node.interface.signals.count++;
+                context.namespaces.node.interface.signals.current
+                        = detail::Signal(element.signal().name);
+
+                context.namespaces.node.interface.buffer
+                        << "struct " << element.signal().name << std::endl
+                        << "{" << std::endl;
+                context.namespaces.node.interface.buffer
+                        << "typedef " << context.namespaces.node.interface.current.name() << " Interface;" << std::endl;
+                context.namespaces.node.interface.buffer
+                        << "static const std::string& name() { static const std::string s{\"" << element.signal().name << "\"}; return s; }" << std::endl;
+            } else if (element.type() == Compiler::Element::Type::argument)
+            {
+                if (!(context.namespaces.node.interface.method.current == detail::Method::empty()))
+                {
+                    switch(element.argument().direction)
+                    {
+                    case IntrospectionParser::Argument::Direction::in:
+                        context.namespaces.node.interface.method.current.in_type_mangler().update_from_signature(
+                                    element.argument().type.begin(),
+                                    element.argument().type.end());
+                        break;
+                    case IntrospectionParser::Argument::Direction::out:
+                        context.namespaces.node.interface.method.current.out_type_mangler().update_from_signature(
+                                    element.argument().type.begin(),
+                                    element.argument().type.end());
+                        break;
+                    }
+                } else if (!(context.namespaces.node.interface.signals.current == detail::Signal::empty()))
+                {
+                    context.namespaces.node.interface.signals.current.argument_type_mangler().update_from_signature(element.argument().type);
+                }
+            }
+        };
+
+        auto post_visitor = [&context](const Compiler::Element& element)
         {
-            // We are stateful here in that we have to check whether
-            // any properties are present on this interface. If so, we
-            // have to close the enclosing struct, too.
-            if (context.namespaces.interface.properties.count > 0)
-                context.namespaces.interface.buffer
+            if (element.type() == Compiler::Element::Type::interface)
+            {
+                // We are stateful here in that we have to check whether
+                // any properties are present on this interface. If so, we
+                // have to close the enclosing struct, too.
+                if (context.namespaces.node.interface.properties.count > 0)
+                    context.namespaces.node.interface.buffer
+                            << "};" << std::endl;
+
+                context.namespaces.node.interface.buffer
                         << "};" << std::endl;
-
-            context.namespaces.interface.buffer
-                    << "};" << std::endl;
-            for (unsigned int i = 0; i < context.namespaces.count; i++)
+                for (unsigned int i = 0; i < context.namespaces.count; i++)
+                {
+                    context.namespaces.node.interface.buffer
+                            << "}" << std::endl;
+                }
+                context.namespaces.node.interface.buffer
+                        << "#endif" << std::endl;
+            } else if (element.type() == Compiler::Element::Type::property)
             {
-                context.namespaces.interface.buffer
-                        << "}" << std::endl;
+                context.namespaces.node.interface.buffer
+                        << "};" << std::endl;
+                context.namespaces.node.interface.properties.current = detail::Property::empty();
+            } else if (element.type() == Compiler::Element::Type::method)
+            {
+                context.namespaces.node.interface.buffer
+                        << "typedef " << context.namespaces.node.interface.method.current.in_type_mangler().print_type() << " ArgumentType;" << std::endl
+                        << "typedef " << context.namespaces.node.interface.method.current.out_type_mangler().print_type() << " ResultType;" << std::endl
+                        << "};" << std::endl;
+                context.namespaces.node.interface.method.current = detail::Method::empty();
+            } else if (element.type() == Compiler::Element::Type::signal)
+            {
+                context.namespaces.node.interface.buffer
+                        << "typedef " << context.namespaces.node.interface.signals.current.argument_type_mangler().print_type() << " ArgumentType;" << std::endl
+                        << "};" << std::endl;
+                context.namespaces.node.interface.signals.current
+                        = detail::Signal::empty();
             }
-            context.namespaces.interface.buffer
-                    << "#endif" << std::endl;
-        } else if (element.type() == Compiler::Element::Type::property)
-        {
-            context.namespaces.interface.buffer
-                    << "};" << std::endl;
-            context.namespaces.interface.properties.current = detail::Property::empty();
-        } else if (element.type() == Compiler::Element::Type::method)
-        {
-            context.namespaces.interface.buffer
-                    << "typedef " << context.namespaces.interface.method.current.in_type_mangler().print_type() << " ArgumentType;" << std::endl
-                    << "typedef " << context.namespaces.interface.method.current.out_type_mangler().print_type() << " ResultType;" << std::endl
-                    << "};" << std::endl;
-            context.namespaces.interface.method.current = detail::Method::empty();
-        } else if (element.type() == Compiler::Element::Type::signal)
-        {
-            context.namespaces.interface.buffer
-                    << "typedef " << context.namespaces.interface.signals.current.argument_type_mangler().print_type() << " ArgumentType;" << std::endl
-                    << "};" << std::endl;
-            context.namespaces.interface.signals.current
-                    = detail::Signal::empty();
-        }
-    };
+        };
 
-    element->apply(
-                std::function<void(const Compiler::Element&)>(),
-                visitor,
-                post_visitor);
+        element->apply(
+                    std::function<void(const Compiler::Element&)>(),
+                    visitor,
+                    post_visitor);
 
-    context.namespaces.interface.protocol_file << context.namespaces.interface.buffer.str();
+        context.namespaces.node.interface.protocol_file << context.namespaces.node.interface.buffer.str();
 
-    return false;
-}
+        return false;
+    }
 }
 }
 }

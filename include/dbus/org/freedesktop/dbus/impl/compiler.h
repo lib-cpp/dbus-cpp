@@ -163,7 +163,12 @@ bool Compiler::process_introspection_file(const std::string& fn)
 
     if (!d->parser->invoke_for(fn))
         return false;
-    if (!d->generator->invoke_for_model(d->context.root))
+
+    std::ifstream in_file(fn);
+    if (!in_file)
+        return false;
+
+    if (!d->generator->invoke_for_model(d->context.root, in_file))
         return false;
 
     return true;

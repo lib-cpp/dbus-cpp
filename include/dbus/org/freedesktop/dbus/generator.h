@@ -20,6 +20,7 @@
 
 #include <org/freedesktop/dbus/compiler.h>
 
+#include <fstream>
 #include <memory>
 
 namespace org
@@ -38,7 +39,9 @@ class Generator
     bool operator==(const Generator&) const = delete;
     Generator& operator=(const Generator&) = delete;
 
-    virtual bool invoke_for_model(const std::shared_ptr<Compiler::Element>& element);
+    virtual bool invoke_for_model(
+            const std::shared_ptr<Compiler::Element>& element,
+            std::istream& raw_file_contents);
 
   private:
     struct Private;
