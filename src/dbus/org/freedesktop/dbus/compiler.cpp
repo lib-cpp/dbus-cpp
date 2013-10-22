@@ -16,9 +16,7 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_IMPL_COMPILER_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_IMPL_COMPILER_H_
-
+#include <org/freedesktop/dbus/compiler.h>
 #include <org/freedesktop/dbus/generator.h>
 
 namespace org
@@ -44,7 +42,7 @@ struct Compiler::Private
 
         void adjust_up()
         {
-            current = current->parent();            
+            current = current->parent();
         }
 
         template<typename T>
@@ -157,7 +155,9 @@ Compiler::~Compiler()
 {
 }
 
-bool Compiler::process_introspection_file(const std::string& fn)
+bool Compiler::process_introspection_file_with_generator_config(
+        const std::string& fn,
+        const GeneratorConfiguration& config = Generator::default_configuration())
 {
     d->context.reset();
 
@@ -168,7 +168,7 @@ bool Compiler::process_introspection_file(const std::string& fn)
     if (!in_file)
         return false;
 
-    if (!d->generator->invoke_for_model(d->context.root, in_file))
+    if (!d->generator->invoke_for_model_with_configuration(d->context.root, in_file, config))
         return false;
 
     return true;
@@ -177,4 +177,3 @@ bool Compiler::process_introspection_file(const std::string& fn)
 }
 }
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_IMPL_COMPILER_H_

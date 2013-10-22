@@ -25,7 +25,6 @@ set (CMAKE_CXX_FLAGS ${OLD_CMAKE_CXX_FLAGS})
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=unused-result")
 
 find_package(PkgConfig)
-find_package(Boost COMPONENTS filesystem system)
 find_package(Threads)
 
 pkg_check_modules(DBUS dbus-1)

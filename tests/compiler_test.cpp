@@ -18,6 +18,7 @@
 
 #include <org/freedesktop/dbus/compiler.h>
 #include <org/freedesktop/dbus/generator.h>
+#include <org/freedesktop/dbus/generator_configuration.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -49,8 +50,11 @@ struct ParserInspector
 
 struct MockGenerator : public dbus::Generator
 {
-    MOCK_METHOD2(invoke_for_model,
-                 bool(const std::shared_ptr<dbus::Compiler::Element>&, std::istream&));
+    MOCK_METHOD3(invoke_for_model_with_configuration,
+                 bool(
+                     const std::shared_ptr<dbus::Compiler::Element>&,
+                     std::istream&,
+                     const dbus::GeneratorConfiguration&));
 };
 
 void ensure_test_introspection_file(const std::string& fn)
@@ -137,11 +141,15 @@ TEST(IntrospectionCompiler, invoking_the_compiler_triggers_the_generator)
     auto parser = std::make_shared<dbus::IntrospectionParser>();
 
     NiceMock<MockGenerator> generator;
-    EXPECT_CALL(generator, invoke_for_model(_, _));
+    EXPECT_CALL(generator, invoke_for_model_with_configuration(_, _, _));
     
-    dbus::Compiler compiler(parser, std::shared_ptr<dbus::Generator>(&generator, [](dbus::Generator*){}));
+    dbus::Compiler compiler(parser,
+                            std::shared_ptr<dbus::Generator>(&generator,
+                                                             [](dbus::Generator*){}));
     
-    EXPECT_NO_THROW(compiler.process_introspection_file(tmp_fn));
+    EXPECT_NO_THROW(compiler.process_introspection_file_with_generator_config(
+                        tmp_fn,
+                        dbus::Generator::default_configuration()));
 }
 
 namespace
@@ -156,9 +164,10 @@ struct StubGenerator : public dbus::Generator
     int annotation_count = 0;
     int argument_count = 0;
 
-    bool invoke_for_model(
+    bool invoke_for_model_with_configuration(
             const std::shared_ptr<dbus::Compiler::Element>& element,
-            std::istream&)
+            std::istream&,
+            const dbus::GeneratorConfiguration&)
     {
         auto visitor = [this](const dbus::Compiler::Element& element)
         {
@@ -211,7 +220,9 @@ TEST(IntrospectionGenerator, receives_correct_tree_from_compiler)
 
     dbus::Compiler compiler(parser, generator);
     
-    EXPECT_NO_THROW(compiler.process_introspection_file(tmp_fn));
+    EXPECT_NO_THROW(compiler.process_introspection_file_with_generator_config(
+                        tmp_fn,
+                        dbus::Generator::default_configuration()));
 
     EXPECT_EQ(3, generator->node_count);
     EXPECT_EQ(1, generator->interface_count);
@@ -236,5 +247,11 @@ TEST(IntrospectionGenerator, generates_correct_protocol_definition_header_file)
 
     dbus::Compiler compiler(parser, generator);
 
-    EXPECT_NO_THROW(compiler.process_introspection_file(tmp_fn));
+    EXPECT_NO_THROW(compiler.process_introspection_file_with_generator_config(
+                        tmp_fn,
+                        dbus::Generator::default_configuration()));
+
+    const std::string protocol_header_file_name{"SampleInterface.h"};
+
+
 }

@@ -15,7 +15,6 @@
 # Authored by: Thomas Voss <thomas.voss@canonical.com>
 
 find_package(PkgConfig)
-find_package(Boost 1.49 COMPONENTS system)
 find_package(Threads)
 
 pkg_check_modules(DBUS dbus-1)
@@ -30,7 +29,10 @@ add_library(
   dbus_cpp SHARED
 
   bus.cpp
+  compiler.cpp
   error.cpp
+  generator.cpp
+  introspection_parser.cpp
   service.cpp
 
   asio/executor.cpp
@@ -41,4 +43,5 @@ target_link_libraries(
 
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
+  ${LIBXML2_LIBRARIES}
 )

@@ -21,6 +21,7 @@
 #include "org/freedesktop/dbus/argument_type.h"
 #include "org/freedesktop/dbus/codec.h"
 #include "org/freedesktop/dbus/helper/signature.h"
+#include "org/freedesktop/dbus/types/any.h"
 
 #include <cstring>
 
@@ -35,7 +36,7 @@ namespace dbus
 {
 namespace types
 {
-template<typename T>
+template<typename T = org::freedesktop::dbus::types::Any>
 class Variant
 {
 public:

@@ -33,6 +33,7 @@ namespace freedesktop
 namespace dbus
 {
 class Generator;
+class GeneratorConfiguration;
 
 /**
  * \brief Parses and processes a DBus introspection XML.
@@ -94,7 +95,6 @@ class Compiler
         Element& operator=(const Element&) = delete;
         bool operator<(const Element& rhs) const
         {
-            std::cout << __PRETTY_FUNCTION__ << std::endl;
             return static_cast<int>(d.type) < static_cast<int>(rhs.d.type);
         }
 
@@ -219,7 +219,9 @@ class Compiler
      * \returns An instance of result on success.
      * \throws std::runtime_error in case of errors.
      */
-    bool process_introspection_file(const std::string& fn);
+    bool process_introspection_file_with_generator_config(
+            const std::string& fn,
+            const GeneratorConfiguration& config);
 
   private:
     struct Private;
@@ -228,7 +230,5 @@ class Compiler
 }
 }
 }
-
-#include "impl/compiler.h"
 
 #endif // DBUS_ORG_FREEDESKTOP_DBUS_COMPILER_H_

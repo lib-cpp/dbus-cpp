@@ -21,6 +21,7 @@
 #include <org/freedesktop/dbus/compiler.h>
 
 #include <fstream>
+#include <functional>
 #include <memory>
 
 namespace org
@@ -29,9 +30,13 @@ namespace freedesktop
 {
 namespace dbus
 {
+class GeneratorConfiguration;
+
 class Generator
 {
   public:
+    static const GeneratorConfiguration& default_configuration();
+
     Generator();
     Generator(const Generator&) = delete;
     virtual ~Generator();
@@ -39,9 +44,10 @@ class Generator
     bool operator==(const Generator&) const = delete;
     Generator& operator=(const Generator&) = delete;
 
-    virtual bool invoke_for_model(
+    virtual bool invoke_for_model_with_configuration(
             const std::shared_ptr<Compiler::Element>& element,
-            std::istream& raw_file_contents);
+            std::istream& raw_file_contents,
+            const GeneratorConfiguration& config = default_configuration());
 
   private:
     struct Private;
@@ -50,7 +56,5 @@ class Generator
 }
 }
 }
-
-#include "impl/generator.h"
 
 #endif // DBUS_ORG_FREEDESKTOP_DBUS_GENERATOR_H_

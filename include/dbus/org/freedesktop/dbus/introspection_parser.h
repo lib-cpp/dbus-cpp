@@ -222,6 +222,4 @@ class IntrospectionParser
 }
 }
 
-#include "impl/introspection_parser.h"
-
 #endif // DBUS_ORG_FREEDESKTOP_DBUS_INTROSPECTION_PARSER_H_

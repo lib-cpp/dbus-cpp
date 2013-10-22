@@ -15,8 +15,6 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_IMPL_INTROSPECTION_PARSER_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_IMPL_INTROSPECTION_PARSER_H_
 
 #include <org/freedesktop/dbus/introspection_parser.h>
 
@@ -32,7 +30,7 @@ namespace freedesktop
 namespace dbus
 {
 struct IntrospectionParser::Private
-{    
+{
     std::function<void(const Node&)> on_node;
     std::function<void()> on_node_done;
     std::function<void(const Interface&)> on_interface;
@@ -46,7 +44,7 @@ struct IntrospectionParser::Private
     std::function<void()> on_argument_done;
     std::function<void(const Annotation&)> on_annotation;
     std::function<void()> on_annotation_done;
-    
+
 };
 
 IntrospectionParser::IntrospectionParser() : d(new Private())
@@ -93,44 +91,44 @@ bool IntrospectionParser::invoke_for(const std::string& filename)
     {
         {
             Annotation::element_name(),
-            [this](xmlTextReaderPtr reader) 
+            [this](xmlTextReaderPtr reader)
             {
                 if (!d->on_annotation)
-                    return;  
-            
+                    return;
+
                 d->on_annotation(
                     Annotation{
-                        reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Annotation::name_attribute_name())), 
+                        reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Annotation::name_attribute_name())),
                         reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Annotation::value_attribute_name()))});
             }
         },
         {
             Node::element_name(),
-            [this](xmlTextReaderPtr reader) 
+            [this](xmlTextReaderPtr reader)
             {
                 if (!d->on_node)
                     return;
-            
+
                 d->on_node(Node{reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Node::name_attribute_name()))});
             }
         },
         {
             Interface::element_name(),
-            [this](xmlTextReaderPtr reader) 
+            [this](xmlTextReaderPtr reader)
             {
                 if (!d->on_interface)
-                    return;  
-            
+                    return;
+
                 d->on_interface(Interface{reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Interface::name_attribute_name()))});
             }
         },
         {
             Argument::element_name(),
-            [this](xmlTextReaderPtr reader) 
+            [this](xmlTextReaderPtr reader)
             {
                 if (!d->on_argument)
-                    return;  
-            
+                    return;
+
                 static const std::map<std::string, Argument::Direction> direction_lut =
                 {
                     {"in", Argument::Direction::in},
@@ -149,11 +147,11 @@ bool IntrospectionParser::invoke_for(const std::string& filename)
         },
         {
             Method::element_name(),
-            [this](xmlTextReaderPtr reader) 
+            [this](xmlTextReaderPtr reader)
             {
                 if (!d->on_method)
-                    return;  
-            
+                    return;
+
                 d->on_method(
                     Method{
                         reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Method::name_attribute_name()))});
@@ -161,11 +159,11 @@ bool IntrospectionParser::invoke_for(const std::string& filename)
         },
         {
             Signal::element_name(),
-            [this](xmlTextReaderPtr reader) 
+            [this](xmlTextReaderPtr reader)
             {
                 if (!d->on_signal)
-                    return;  
-            
+                    return;
+
                 d->on_signal(
                     Signal{
                         reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Signal::name_attribute_name()))});
@@ -173,11 +171,11 @@ bool IntrospectionParser::invoke_for(const std::string& filename)
         },
         {
             Property::element_name(),
-            [this](xmlTextReaderPtr reader) 
+            [this](xmlTextReaderPtr reader)
             {
                 if (!d->on_property)
-                    return;  
-                
+                    return;
+
                 static const std::map<std::string, Property::Access> access_lut =
                 {
                     {"read", Property::Access::read},
@@ -187,7 +185,7 @@ bool IntrospectionParser::invoke_for(const std::string& filename)
 
                 Property::Access a = access_lut.at(
                     reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Property::access_attribute_name())));
-                
+
                 d->on_property(
                     Property{
                         reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Property::name_attribute_name())),
@@ -219,7 +217,7 @@ bool IntrospectionParser::invoke_for(const std::string& filename)
         xml_declaration = 17
     };
 
-    static std::map<NodeType, std::string> node_type_lut= 
+    static std::map<NodeType, std::string> node_type_lut=
     {
         NAMED_ENUMERATION_ELEMENT(NodeType::attribute),
         NAMED_ENUMERATION_ELEMENT(NodeType::cdata),
@@ -249,7 +247,7 @@ bool IntrospectionParser::invoke_for(const std::string& filename)
     };
 
     int status = xmlTextReaderRead(reader.get());
-    
+
     if (Status::error == static_cast<Status>(status))
         return false;
 
@@ -278,10 +276,10 @@ bool IntrospectionParser::invoke_for(const std::string& filename)
         }
         status = xmlTextReaderRead(reader.get());
     }
-                     
+
     if (Status::error == static_cast<Status>(status))
         return false;
-              
+
     return Status::done == static_cast<Status>(status);
 }
 
@@ -352,5 +350,3 @@ void IntrospectionParser::on_annotation_done(const std::function<void()>& f)
 }
 }
 }
-
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_IMPL_INTROSPECTION_PARSER_H_

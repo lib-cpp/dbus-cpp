@@ -18,6 +18,7 @@ cmake_minimum_required(VERSION 2.8)
 
 project(dbus-cpp)
 
+find_package(Boost COMPONENTS filesystem system)
 find_package(LibXml2 REQUIRED)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
