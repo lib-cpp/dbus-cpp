@@ -1,3 +1,9 @@
+dbus-cpp (0.0.1+13.10.20130904-0ubuntu2) trusty; urgency=low
+
+  * No change rebuild for Boost 1.54 transition.
+
+ -- Dmitrijs Ledkovs <xnox@ubuntu.com>  Mon, 21 Oct 2013 14:52:42 +0100
+
 dbus-cpp (0.0.1+13.10.20130904-0ubuntu1) saucy; urgency=low
 
   [ thomas-voss ]
