@@ -499,8 +499,6 @@ private:
                 PropertyType::name()
             },
             std::bind(&Property::handle_set, this, std::placeholders::_1));
-            parent->install_method_handler<interfaces::Properties::Get>(std::bind(&Property::handle_get, this, std::placeholders::_1));
-            parent->install_method_handler<interfaces::Properties::Set>(std::bind(&Property::handle_set, this, std::placeholders::_1));
         }
     }
 
@@ -632,9 +630,10 @@ template<typename SignalDescription>
 class Signal<
     SignalDescription,
     typename std::enable_if<
-    is_not_void<typename SignalDescription::ArgumentType>::value,
-    typename SignalDescription::ArgumentType>::type
-    >
+        is_not_void<typename SignalDescription::ArgumentType>::value,
+        typename SignalDescription::ArgumentType
+    >::type
+>
 {
 public:
     typedef std::shared_ptr<Signal<SignalDescription, typename SignalDescription::ArgumentType>> Ptr;
@@ -646,9 +645,9 @@ public:
         d->parent->remove_match(d->rule);
     }
 
-    inline void emit(const typename SignalDescription::ArgumentType&)
+    inline void emit(const typename SignalDescription::ArgumentType& arg)
     {
-        // d->parent->emit_signal<SignalDescription, typename SignalDescription::ArgumentType>();
+        d->parent->template emit_signal<SignalDescription, typename SignalDescription::ArgumentType>(arg);
     }
 
     inline signals::Connection connect(const Handler& h)
