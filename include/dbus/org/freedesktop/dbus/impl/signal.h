@@ -108,7 +108,7 @@ Signal<
         typename SignalDescription::ArgumentType>::type
     >::emit(const typename SignalDescription::ArgumentType&)
 {
-    // d->parent->emit_signal<SignalDescription, typename SignalDescription::ArgumentType>();
+    d->parent->template emit_signal<SignalDescription, typename SignalDescription::ArgumentType>();
 }
 
 template<typename SignalDescription>

@@ -78,6 +78,7 @@ class IntrospectionParser
          */
         enum class Direction
         {
+            context, ///< Direction depends on context, i.e., whether it's an arg to a method or a signal.
             in, ///< Argument is passed in.
             out ///< Argument is returned.
         };

@@ -29,6 +29,13 @@ namespace freedesktop
 {
 namespace dbus
 {
+namespace
+{
+std::string safe_string_construct(const char* c)
+{
+    return std::move(std::string((c ? c : "")));
+}
+}
 struct IntrospectionParser::Private
 {
     std::function<void(const Node&)> on_node;
@@ -60,7 +67,8 @@ IntrospectionParser::~IntrospectionParser()
 bool IntrospectionParser::invoke_for(const std::string& filename)
 {
     static const char* empty_encoding = nullptr;
-    static const int parser_options = XML_PARSE_DTDVALID | XML_PARSE_PEDANTIC;
+    // We consciously do not check the dtd here
+    static const int parser_options = 0;
 
     auto reader = std::shared_ptr<xmlTextReader>(
         xmlReaderForFile(filename.c_str(),
@@ -98,8 +106,8 @@ bool IntrospectionParser::invoke_for(const std::string& filename)
 
                 d->on_annotation(
                     Annotation{
-                        reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Annotation::name_attribute_name())),
-                        reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Annotation::value_attribute_name()))});
+                        safe_string_construct(reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Annotation::name_attribute_name()))),
+                        safe_string_construct(reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Annotation::value_attribute_name())))});
             }
         },
         {
@@ -109,7 +117,11 @@ bool IntrospectionParser::invoke_for(const std::string& filename)
                 if (!d->on_node)
                     return;
 
-                d->on_node(Node{reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Node::name_attribute_name()))});
+                auto attribute_name = reinterpret_cast<const char*>(
+                            xmlTextReaderGetAttribute(reader,
+                                                      BAD_CAST Node::name_attribute_name()));
+
+                d->on_node(Node{safe_string_construct(attribute_name)});
             }
         },
         {
@@ -119,7 +131,12 @@ bool IntrospectionParser::invoke_for(const std::string& filename)
                 if (!d->on_interface)
                     return;
 
-                d->on_interface(Interface{reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Interface::name_attribute_name()))});
+                d->on_interface(
+                            Interface{
+                                safe_string_construct(reinterpret_cast<const char*>(
+                                    xmlTextReaderGetAttribute(
+                                    reader,
+                                    BAD_CAST Interface::name_attribute_name())))});
             }
         },
         {
@@ -131,17 +148,38 @@ bool IntrospectionParser::invoke_for(const std::string& filename)
 
                 static const std::map<std::string, Argument::Direction> direction_lut =
                 {
+                    {"", Argument::Direction::context},
                     {"in", Argument::Direction::in},
                     {"out", Argument::Direction::out}
                 };
 
-                Argument::Direction dir = direction_lut.at(
-                    reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Argument::direction_attribute_name())));
+                auto name_attribute = reinterpret_cast<const char*>(
+                            xmlTextReaderGetAttribute(
+                                reader,
+                                BAD_CAST Argument::name_attribute_name()));
+
+                Argument::Direction dir = Argument::Direction::context;
+                try
+                {
+                    dir = direction_lut.at(
+                                safe_string_construct(reinterpret_cast<const char*>(
+                                    xmlTextReaderGetAttribute(
+                                        reader,
+                                        BAD_CAST Argument::direction_attribute_name()))));
+                } catch(const std::out_of_range& e)
+                {
+                    throw std::runtime_error(
+                                std::string("Could not interpret direction for argument with name: ") +
+                                safe_string_construct(name_attribute));
+                }
 
                 d->on_argument(
                     Argument{
-                        reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Argument::name_attribute_name())),
-                        reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Argument::type_attribute_name())),
+                        safe_string_construct(name_attribute),
+                        safe_string_construct(reinterpret_cast<const char*>(
+                                xmlTextReaderGetAttribute(
+                                    reader,
+                                    BAD_CAST Argument::type_attribute_name()))),
                         dir});
             }
         },
@@ -154,7 +192,11 @@ bool IntrospectionParser::invoke_for(const std::string& filename)
 
                 d->on_method(
                     Method{
-                        reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Method::name_attribute_name()))});
+                        safe_string_construct(
+                            reinterpret_cast<const char*>(
+                                xmlTextReaderGetAttribute(
+                                    reader,
+                                    BAD_CAST Method::name_attribute_name())))});
             }
         },
         {
@@ -166,7 +208,11 @@ bool IntrospectionParser::invoke_for(const std::string& filename)
 
                 d->on_signal(
                     Signal{
-                        reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Signal::name_attribute_name()))});
+                        safe_string_construct(
+                            reinterpret_cast<const char*>(
+                                xmlTextReaderGetAttribute(
+                                    reader,
+                                    BAD_CAST Signal::name_attribute_name())))});
             }
         },
         {
@@ -183,13 +229,32 @@ bool IntrospectionParser::invoke_for(const std::string& filename)
                     {"readwrite", Property::Access::read_write}
                 };
 
-                Property::Access a = access_lut.at(
-                    reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Property::access_attribute_name())));
+                auto property_name = reinterpret_cast<const char*>(
+                            xmlTextReaderGetAttribute(
+                                reader,
+                                BAD_CAST Property::name_attribute_name()));
+
+                Property::Access a;
+                try
+                {
+                     a = access_lut.at(
+                                safe_string_construct(reinterpret_cast<const char*>(
+                                    xmlTextReaderGetAttribute(
+                                        reader,
+                                        BAD_CAST Property::access_attribute_name()))));
+                } catch(const std::out_of_range& e)
+                {
+                    throw std::runtime_error(
+                                std::string("Could not determine read/write setup of property ") + property_name);
+                }
 
                 d->on_property(
                     Property{
-                        reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Property::name_attribute_name())),
-                        reinterpret_cast<const char*>(xmlTextReaderGetAttribute(reader, BAD_CAST Property::type_attribute_name())),
+                        safe_string_construct(property_name),
+                        safe_string_construct(reinterpret_cast<const char*>(
+                                xmlTextReaderGetAttribute(
+                                    reader,
+                                    BAD_CAST Property::type_attribute_name()))),
                         a});
             }
         }
@@ -253,22 +318,29 @@ bool IntrospectionParser::invoke_for(const std::string& filename)
 
     while (Status::has_more == static_cast<Status>(status))
     {
+        auto node_name = reinterpret_cast<const char*>(
+                xmlTextReaderConstName(reader.get()));
         switch(static_cast<NodeType>(xmlTextReaderNodeType(reader.get())))
         {
             case NodeType::element:
-                vtable.at((const char*) xmlTextReaderConstName(reader.get()))(reader.get());
-                if (1 == xmlTextReaderIsEmptyElement(reader.get()))
+                if (vtable.count(safe_string_construct(node_name)) > 0)
                 {
-                    if (vtable_done.count((const char*) xmlTextReaderConstName(reader.get())) > 0)
+                    vtable.at(safe_string_construct(node_name))(reader.get());
+                }
+
+                if (xmlTextReaderIsEmptyElement(reader.get()))
+                {
+                    if (vtable_done.count(safe_string_construct(node_name)) > 0)
                     {
-                        vtable_done.at((const char*) xmlTextReaderConstName(reader.get()))();
+                        vtable_done.at(safe_string_construct(node_name))();
                     }
                 }
                 break;
             case NodeType::end_element:
-                if (vtable_done.count((const char*) xmlTextReaderConstName(reader.get())) > 0)
+                if (vtable_done.count(
+                            safe_string_construct((const char*) xmlTextReaderConstName(reader.get()))) > 0)
                 {
-                    vtable_done.at((const char*) xmlTextReaderConstName(reader.get()))();
+                    vtable_done.at(safe_string_construct((const char*) xmlTextReaderConstName(reader.get())))();
                 }
                 break;
             default:

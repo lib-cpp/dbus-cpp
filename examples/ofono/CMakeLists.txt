@@ -34,7 +34,7 @@ add_executable(
 target_link_libraries(
   ofono
 
-  dbus_cpp
+  dbus-cpp
 
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}

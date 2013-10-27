@@ -658,8 +658,6 @@ bool Generator::invoke_for_model_with_configuration(
                         current_path() / (interface + ".h"),
                         std::ios_base::out | std::ios_base::trunc);
 
-
-
             context.namespaces.node.interface.buffer
                     << "/*" << std::endl
                     << " * " << "Auto-generated header file." << std::endl
@@ -836,6 +834,14 @@ bool Generator::invoke_for_model_with_configuration(
                                 element.argument().type.begin(),
                                 element.argument().type.end());
                     break;
+                case IntrospectionParser::Argument::Direction::context:
+                    context.namespaces.node.interface.method.current.in_type_mangler().update_from_signature(
+                                element.argument().type.begin(),
+                                element.argument().type.end());
+                    context.namespaces.node.interface.method.current.out_type_mangler().update_from_signature(
+                                element.argument().type.begin(),
+                                element.argument().type.end());
+                    break;
                 }
             } else if (!(context.namespaces.node.interface.signals.current == detail::Signal::empty()))
             {
@@ -871,7 +877,6 @@ bool Generator::invoke_for_model_with_configuration(
             context.namespaces.node.interface.properties.current = detail::Property::empty();
         } else if (element.type() == Compiler::Element::Type::method)
         {
-
             context.namespaces.node.interface.buffer
                     << "typedef " << context.namespaces.node.interface.method.current.in_type_mangler().print_type() << " ArgumentType;" << std::endl
                     << "typedef " << context.namespaces.node.interface.method.current.out_type_mangler().print_type() << " ResultType;" << std::endl
@@ -894,10 +899,8 @@ bool Generator::invoke_for_model_with_configuration(
 
     context.namespaces.node.interface.protocol_file << context.namespaces.node.interface.buffer.str();
 
-    return false;
+    return true;
 }
 }
 }
 }
-
-

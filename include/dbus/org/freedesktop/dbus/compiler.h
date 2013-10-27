@@ -40,8 +40,9 @@ class GeneratorConfiguration;
  */
 class Compiler
 {
-  public:
-    
+  public:    
+    static int main(int argc, const char** argv);
+
     class Element
     {
       public:

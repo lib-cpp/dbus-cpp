@@ -29,6 +29,12 @@ find_package(Threads)
 
 pkg_check_modules(DBUS dbus-1)
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_data.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/test_data.h @ONLY)
+
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
 option(
   DBUS_CPP_ENABLE_DBUS_TEST_RUNNER
   "Rely on dbus test runner to start a private session for testing purposes"
@@ -99,7 +105,8 @@ add_executable(
 target_link_libraries(
   bus_test
 
-  dbus_cpp
+  dbus-cpp
+  dbus-cppc-helper
 
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
@@ -110,7 +117,8 @@ target_link_libraries(
 target_link_libraries(
   dbus_test
 
-  dbus_cpp
+  dbus-cpp
+  dbus-cppc-helper
 
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
@@ -121,7 +129,8 @@ target_link_libraries(
 target_link_libraries(
   executor_test
 
-  dbus_cpp
+  dbus-cpp
+  dbus-cppc-helper
 
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
@@ -132,7 +141,8 @@ target_link_libraries(
 target_link_libraries(
   codec_test
 
-  dbus_cpp
+  dbus-cpp
+  dbus-cppc-helper
 
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
@@ -143,7 +153,8 @@ target_link_libraries(
 target_link_libraries(
   compiler_test
 
-  dbus_cpp
+  dbus-cpp
+  dbus-cppc-helper
 
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
@@ -156,7 +167,8 @@ target_link_libraries(
 target_link_libraries(
   stl_codec_test
 
-  dbus_cpp
+  dbus-cpp
+  dbus-cppc-helper
 
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
@@ -167,7 +179,8 @@ target_link_libraries(
 target_link_libraries(
   message_test
 
-  dbus_cpp
+  dbus-cpp
+  dbus-cppc-helper
 
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
@@ -178,7 +191,8 @@ target_link_libraries(
 target_link_libraries(
   match_rule_test
 
-  dbus_cpp
+  dbus-cpp
+  dbus-cppc-helper
 
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
@@ -189,7 +203,8 @@ target_link_libraries(
 target_link_libraries(
   message_router_test
 
-  dbus_cpp
+  dbus-cpp
+  dbus-cppc-helper
 
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
@@ -200,7 +215,8 @@ target_link_libraries(
 target_link_libraries(
   service_test
 
-  dbus_cpp
+  dbus-cpp
+  dbus-cppc-helper
 
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}

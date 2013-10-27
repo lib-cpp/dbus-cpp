@@ -35,7 +35,7 @@ add_executable(
 target_link_libraries(
   geoclue
 
-  dbus_cpp
+  dbus-cpp
 
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}

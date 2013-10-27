@@ -1,0 +1,46 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+	<interface name="com.canonical.UserMetrics">
+	
+		<property name="dataSources" type="ao" access="read"/>
+		
+		<signal name="dataSourceAdded">
+			<arg name="name" type="s" direction="out"/>
+			<arg name="path" type="o" direction="out"/>
+		</signal>
+		
+		<signal name="dataSourceRemoved">
+			<arg name="name" type="s" direction="out"/>
+			<arg name="path" type="o" direction="out"/>
+		</signal>
+		
+		<method name="createDataSource">
+			<annotation name="org.qtproject.QtDBus.QtTypeName.In5" value="QVariantMap"/>
+			<arg type="o" direction="out"/>
+			<arg name="name" type="s" direction="in"/>
+			<arg name="formatString" type="s" direction="in"/>
+			<arg name="emptyDataString" type="s" direction="in"/>
+			<arg name="textDomain" type="s" direction="in"/>
+			<arg name="metricType" type="u" direction="in"/>
+			<arg name="options" type="a{sv}" direction="in"/>
+		</method>
+		
+		<property name="userDatas" type="ao" access="read"/>
+		
+		<signal name="userDataAdded">
+			<arg name="username" type="s" direction="out"/>
+			<arg name="path" type="o" direction="out"/>
+		</signal>
+		
+		<signal name="userDataRemoved">
+			<arg name="username" type="s" direction="out"/>
+			<arg name="path" type="o" direction="out"/>
+		</signal>
+		
+		<method name="createUserData">
+			<arg type="o" direction="out"/>
+			<arg name="username" type="s" direction="in"/>
+		</method>
+
+	</interface>
+</node>

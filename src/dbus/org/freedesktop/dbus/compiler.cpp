@@ -19,6 +19,8 @@
 #include <org/freedesktop/dbus/compiler.h>
 #include <org/freedesktop/dbus/generator.h>
 
+#include <boost/program_options.hpp>
+
 namespace org
 {
 namespace freedesktop
@@ -172,6 +174,155 @@ bool Compiler::process_introspection_file_with_generator_config(
         return false;
 
     return true;
+}
+
+namespace
+{
+struct CommandLineOptions
+{
+    static const char* key_input_file() { return "input-file"; }
+
+    CommandLineOptions() : allowed_options("Allowed options")
+    {
+        static const int unlimited = -1;
+
+        allowed_options.add_options()
+                (CommandLineOptions::key_input_file(),
+                 boost::program_options::value<std::vector<std::string>>(),
+                 "DBUS XML introspection input files to the compiler");
+        positional_options.add(CommandLineOptions::key_input_file(), unlimited);
+    }
+
+    bool parse(int argc, const char* argv[])
+    {
+        try
+        {
+            boost::program_options::variables_map vm;
+
+            boost::program_options::store(
+                        boost::program_options::command_line_parser(
+                            argc,
+                            argv).options(allowed_options).positional(positional_options).run(), vm);
+            boost::program_options::notify(vm);
+
+            files = vm[CommandLineOptions::key_input_file()].as<std::vector<std::string>>();
+        } catch(...)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    std::string usage() const
+    {
+        std::stringstream ss; ss << allowed_options;
+        return ss.str();
+    }
+
+    boost::program_options::options_description allowed_options;
+    boost::program_options::positional_options_description positional_options;
+
+    std::vector<std::string> files;
+};
+
+struct AnsiiControlSequences
+{
+    struct Style
+    {
+        static constexpr const char* Bold()
+        {
+            return "\033[1m";
+        }
+
+        static constexpr const char* Normal()
+        {
+            return "\033[0m";
+        }
+    };
+
+    struct Colors
+    {
+        static constexpr const char* DefaultForeground()
+        {
+            return "\033[39m";
+        }
+
+        static constexpr const char* Green()
+        {
+            return "\033[32m";
+        }
+
+        static constexpr const char* Red()
+        {
+            return "\033[91m";
+        }
+    };
+};
+
+struct Ok
+{
+    friend std::ostream& operator<<(std::ostream& out, const Ok&)
+    {
+        out << AnsiiControlSequences::Style::Bold()
+            << AnsiiControlSequences::Colors::Green()
+            << "[OK  ]"
+            << AnsiiControlSequences::Colors::DefaultForeground()
+            << AnsiiControlSequences::Style::Normal();
+
+        return out;
+    }
+};
+
+struct Fail
+{
+    friend std::ostream& operator<<(std::ostream& out, const Fail&)
+    {
+        out << AnsiiControlSequences::Style::Bold()
+            << AnsiiControlSequences::Colors::Red()
+            << "[FAIL]"
+            << AnsiiControlSequences::Colors::DefaultForeground()
+            << AnsiiControlSequences::Style::Normal();
+
+        return out;
+    }
+};
+}
+
+int Compiler::main(int argc, const char* argv[])
+{
+    CommandLineOptions cli_options;
+
+    if (!cli_options.parse(argc, argv))
+    {
+        std::cout << "Could not parse command line arguments, aborting now." << std::endl;
+        std::cout << cli_options.usage() << std::endl;
+
+        return EXIT_FAILURE;
+    }
+    auto parser = std::make_shared<dbus::IntrospectionParser>();
+    auto generator = std::make_shared<dbus::Generator>();
+
+    dbus::Compiler compiler(parser, generator);
+
+    for (auto file : cli_options.files)
+    {
+        auto result
+                = compiler.process_introspection_file_with_generator_config(
+                    file,
+                    dbus::Generator::default_configuration());
+
+        if (result)
+            std::cout << Ok() << " ";
+        else
+            std::cout << Fail() << " ";
+        std::cout << file << std::endl;
+
+        if (!result)
+            exit(EXIT_FAILURE);
+    }
+
+    return EXIT_SUCCESS;
 }
 }
 }

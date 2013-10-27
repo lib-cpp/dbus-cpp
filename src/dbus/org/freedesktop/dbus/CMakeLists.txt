@@ -26,22 +26,62 @@ include_directories(
   )
 
 add_library(
-  dbus_cpp SHARED
+  dbus-cpp SHARED
 
   bus.cpp
-  compiler.cpp
   error.cpp
-  generator.cpp
-  introspection_parser.cpp
   service.cpp
 
   asio/executor.cpp
 )
 
 target_link_libraries(
-  dbus_cpp
+  dbus-cpp
 
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
   ${LIBXML2_LIBRARIES}
+)
+
+set_target_properties(
+  dbus-cpp
+
+  PROPERTIES
+  VERSION ${DBUS_CPP_VERSION_MAJOR}.${DBUS_CPP_VERSION_MINOR}.${DBUS_CPP_VERSION_PATCH}
+  SOVERSION ${DBUS_CPP_VERSION_MAJOR}
+)
+
+install(
+  TARGETS dbus-cpp
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+
+# We want to test compiler functionality in our testing framework and
+# thus collect symbols in this temporary helper library that is not
+# installed but just linked to the actual compiler executable.
+add_library(
+  dbus-cppc-helper
+
+  compiler.cpp
+  generator.cpp
+  introspection_parser.cpp
+)
+
+target_link_libraries(
+  dbus-cppc-helper
+
+  ${Boost_LIBRARIES}
+  ${LIBXML2_LIBRARIES}
+)
+
+add_executable(
+  dbus-cppc
+
+  compiler_main.cpp
+)
+
+target_link_libraries(
+  dbus-cppc
+
+  dbus-cppc-helper
 )
