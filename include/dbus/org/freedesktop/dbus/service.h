@@ -23,6 +23,8 @@
 #include "org/freedesktop/dbus/match_rule.h"
 #include "org/freedesktop/dbus/message_router.h"
 #include "org/freedesktop/dbus/result.h"
+#include "org/freedesktop/dbus/visibility.h"
+
 #include "org/freedesktop/dbus/interfaces/properties.h"
 #include "org/freedesktop/dbus/traits/service.h"
 #include "org/freedesktop/dbus/types/any.h"
@@ -59,7 +61,7 @@ class Object;
 * \example upower/main.cpp
 * Provides an example of access the UPower system service on the bus.
 */
-class Service : public std::enable_shared_from_this<Service>
+class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Service : public std::enable_shared_from_this<Service>
 {
 public:
     typedef std::shared_ptr<Service> Ptr;

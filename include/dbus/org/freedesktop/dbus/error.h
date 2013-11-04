@@ -18,6 +18,8 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_ERROR_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_ERROR_H_
 
+#include "org/freedesktop/dbus/visibility.h"
+
 #include <memory>
 #include <string>
 
@@ -29,7 +31,7 @@ namespace freedesktop
 {
 namespace dbus
 {
-class Error
+class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Error
 {
   public:
     Error();
@@ -46,7 +48,7 @@ class Error
     DBusError& raw();
 
   private:
-    struct Private;
+    struct ORG_FREEDESKTOP_DBUS_DLL_LOCAL Private;
     std::unique_ptr<Private> d;
 };
 }

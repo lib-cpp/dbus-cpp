@@ -373,7 +373,7 @@ class Executor : public org::freedesktop::dbus::Executor
     boost::asio::io_service::work work;
 };
 
-Executor::Ptr make_executor(const Bus::Ptr& bus)
+ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Executor::Ptr make_executor(const Bus::Ptr& bus)
 {
     return std::make_shared<org::freedesktop::dbus::asio::Executor>(bus);
 }

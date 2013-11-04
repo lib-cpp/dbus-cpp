@@ -21,7 +21,9 @@
 #include "org/freedesktop/dbus/error.h"
 #include "org/freedesktop/dbus/executor.h"
 #include "org/freedesktop/dbus/message_router.h"
+#include "org/freedesktop/dbus/visibility.h"
 #include "org/freedesktop/dbus/well_known_bus.h"
+
 #include "org/freedesktop/dbus/types/object_path.h"
 
 #include <cstring>
@@ -46,7 +48,7 @@ namespace freedesktop
 {
 namespace dbus
 {
-class Bus
+class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Bus
 {
   public:
     typedef std::shared_ptr<Bus> Ptr;
