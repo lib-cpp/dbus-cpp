@@ -21,6 +21,8 @@
 
 #include <boost/program_options.hpp>
 
+#include <iostream>
+
 namespace org
 {
 namespace freedesktop

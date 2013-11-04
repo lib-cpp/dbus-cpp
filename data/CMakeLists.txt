@@ -15,11 +15,11 @@
 # Authored by: Thomas Voss <thomas.voss@canonical.com>
 
 configure_file(
-	dbus-cpp.pc.in dbus-cpp.pc @ONLY
+  dbus-cpp.pc.in dbus-cpp.pc @ONLY
 )
 
 install(
-	FILES ${CMAKE_CURRENT_BINARY_DIR}/dbus-cpp.pc
-	DESTINATION lib/pkgconfig
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/dbus-cpp.pc
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
 )
 

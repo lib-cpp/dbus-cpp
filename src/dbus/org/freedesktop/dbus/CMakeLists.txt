@@ -85,3 +85,8 @@ target_link_libraries(
 
   dbus-cppc-helper
 )
+
+install(
+  TARGETS dbus-cppc
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)

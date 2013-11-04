@@ -26,6 +26,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(cmake/EnableCoverageReport.cmake)
 include(cmake/PrePush.cmake)
 
+include(GNUInstallDirs)
+
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall -pedantic -Wextra -fPIC -pthread")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Werror -Wall -fno-strict-aliasing -pedantic -Wextra -fPIC -pthread")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined")
@@ -45,9 +47,9 @@ IF(CMAKE_BUILD_TYPE MATCHES [cC][oO][vV][eE][rR][aA][gG][eE])
   SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -ftest-coverage -fprofile-arcs" )
 ENDIF(CMAKE_BUILD_TYPE MATCHES [cC][oO][vV][eE][rR][aA][gG][eE])
 
-set(DBUS_CPP_VERSION_MAJOR 0)
+set(DBUS_CPP_VERSION_MAJOR 1)
 set(DBUS_CPP_VERSION_MINOR 0)
-set(DBUS_CPP_VERSION_PATCH 1)
+set(DBUS_CPP_VERSION_PATCH 0)
 
 include(CTest)
 
