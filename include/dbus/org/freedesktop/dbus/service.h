@@ -104,7 +104,7 @@ public:
     const std::string& get_name() const;
 
 protected:
-    friend struct Bus;
+    friend class Bus;
     friend class Object;
     template<typename T> friend class Property;
 

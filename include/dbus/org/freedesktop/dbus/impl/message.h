@@ -54,8 +54,21 @@ inline std::ostream& operator<<(std::ostream& out, const Message::Type& type)
 template<typename T>
 inline Message::Reader& Message::Reader::operator>>(T& t)
 {
+    return pop(t);
+}
+
+template<typename T>
+void Message::Reader::peek(T& t)
+{
     decode_argument(std::addressof(iter), t);
+}
+
+template<typename T>
+inline Message::Reader& Message::Reader::pop(T& t)
+{
+    peek(t);
     dbus_message_iter_next(std::addressof(iter));
+
     return *this;
 }
 

@@ -34,7 +34,7 @@ public:
     virtual ~Executor() = default;
 
 protected:
-    friend struct Bus;
+    friend class Bus;
 
     Executor() = default;
     Executor(const Executor&) = delete;

@@ -55,7 +55,7 @@ namespace dbus
 {
 namespace types
 {
-class Any;
+struct Any;
 class ObjectPath;
 template<typename T>
 class Variant;

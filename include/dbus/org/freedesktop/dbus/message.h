@@ -59,6 +59,12 @@ public:
         template<typename T>
         Reader& operator>>(T& t);
 
+        template<typename T>
+        void peek(T& t);
+
+        template<typename T>
+        Reader& pop(T& t);
+
     protected:
         friend class Message;
         explicit Reader(const std::shared_ptr<Message>& msg);
