@@ -30,6 +30,9 @@ namespace freedesktop
 {
 namespace dbus
 {
+/**
+ * @brief Wraps the underlying DBus types and exposes them as a strongly typed enum.
+ */
 enum class ArgumentType : int
 {
     byte = DBUS_TYPE_BYTE,
@@ -52,7 +55,13 @@ enum class ArgumentType : int
     invalid = DBUS_TYPE_INVALID
 };
 
-inline std::ostream& operator<<(std::ostream& out, const ArgumentType& type)
+/**
+ * @brief Pretty prints ArgumentType to an output stream.
+ * @param out The stream to write to.
+ * @param type The type to be printed.
+ * @return The stream that has been written to.
+ */
+inline std::ostream& operator<<(std::ostream& out, const ArgumentType& type) noexcept(true)
 {
     static const std::map<ArgumentType, std::string> lut =
     {
@@ -76,7 +85,14 @@ inline std::ostream& operator<<(std::ostream& out, const ArgumentType& type)
         {ArgumentType::invalid, "invalid"}
     };
 
-    out << lut.at(type);
+    try
+    {
+        out << lut.at(type);
+    } catch(...)
+    {
+        out << lut.at(ArgumentType::invalid);
+    }
+
     return out;
 }
 }

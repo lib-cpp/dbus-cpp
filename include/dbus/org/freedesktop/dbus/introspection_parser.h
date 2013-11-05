@@ -28,6 +28,9 @@ namespace freedesktop
 {
 namespace dbus
 {
+/**
+ * @brief Parses the DBus XML introspection file format and maps it to an intermediate code model.
+ */
 class IntrospectionParser
 {
   public:

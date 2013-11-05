@@ -32,11 +32,21 @@ namespace dbus
 {
 class GeneratorConfiguration;
 
+/**
+ * @brief Interface and implementation to generate boilerplate bindings code for interfacing with DBus services.
+ */
 class Generator
 {
   public:
+    /**
+     * @brief Specifies the default generator configuration.
+     * @return An instance of the default generator configuration.
+     */
     static const GeneratorConfiguration& default_configuration();
 
+    /**
+     * @brief Constructs a default generator.
+     */
     Generator();
     Generator(const Generator&) = delete;
     virtual ~Generator();
@@ -44,6 +54,13 @@ class Generator
     bool operator==(const Generator&) const = delete;
     Generator& operator=(const Generator&) = delete;
 
+    /**
+     * @brief Invokes the generator for the supplied root element and configuration.
+     * @param element The root element that the generator should start with.
+     * @param raw_file_contents The raw file contents that the intermediate model has been parsed from.
+     * @param config The configuration of the generator.
+     * @return true if the final binding boilerplate code has been generated successfully, false otherwise.
+     */
     virtual bool invoke_for_model_with_configuration(
             const std::shared_ptr<Compiler::Element>& element,
             std::istream& raw_file_contents,

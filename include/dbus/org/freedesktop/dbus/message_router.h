@@ -32,33 +32,61 @@ namespace freedesktop
 {
 namespace dbus
 {
+/**
+ * @brief Takes a raw DBus message and routes it to a handler.
+ */
 template<typename Key>
 class MessageRouter
 {
 public:
+    /**
+     * @brief Mapper takes a raw DBus Message and maps it to the Key type of the router.
+     */
     typedef std::function<Key(DBusMessage*)> Mapper;
+
+    /**
+     * @brief Handler is a function type that handles raw DBus messages.
+     */
     typedef std::function<void(DBusMessage*)> Handler;
 
-    explicit MessageRouter(const Mapper& m) : mapper(m)
+    /**
+     * @brief Constructs an empty router with the specified mapper instance.
+     * @param m An object of type Mapper.
+     */
+    inline explicit MessageRouter(const Mapper& m) : mapper(m)
     {
     }
 
     MessageRouter(const MessageRouter&) = delete;
     MessageRouter& operator=(const MessageRouter&) = delete;
 
-    void install_route(const Key& key, Handler handler)
+    /**
+     * @brief Installs a route for a specific key in a thread-safe manner, replacing any previously installed route.
+     * @param key The key to install the route for.
+     * @param handler The handler to install, must not be empty.
+     */
+    inline void install_route(const Key& key, Handler handler)
     {
         std::unique_lock<std::mutex> ul(guard);
         router[key] = handler;
     }
 
-    void uninstall_route(const Key& key)
+    /**
+     * @brief Uninstalls a route for a specific key in a thread-safe manner.
+     * @param key The key to uninstall the route for.
+     */
+    inline void uninstall_route(const Key& key)
     {
         std::unique_lock<std::mutex> ul(guard);
         router.erase(key);
     }
 
-    bool operator()(DBusMessage* msg)
+    /**
+     * @brief Maps and routes a raw DBus message in a thread-safe manner.
+     * @param msg The message to map and route, must not be null.
+     * @return true if the message has been routes successfully, false otherwise.
+     */
+    inline bool operator()(DBusMessage* msg)
     {
         std::unique_lock<std::mutex> ul(guard);
         auto it = router.find(mapper(msg));

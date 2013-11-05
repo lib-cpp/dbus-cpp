@@ -28,29 +28,47 @@ namespace dbus
 {
 class Object;
 
+/**
+ * @brief Models a DBus property.
+ * @tparam PropertyType Underlying value type of the property.
+ */
 template<typename PropertyType>
 class Property
 {
 public:
-    const typename PropertyType::ValueType& value();
-    void value(const typename PropertyType::ValueType& new_value);
+    /**
+     * @brief Non-mutable access to the contained value.
+     * @return Non-mutable reference to the contained value.
+     */
+    inline const typename PropertyType::ValueType& value();
 
-    bool is_writable() const;
+    /**
+     * @brief Adjusts the contained value
+     * @param [in] new_value New value of the property.
+     */
+    inline void value(const typename PropertyType::ValueType& new_value);
+
+    /**
+     * @brief Queries whether the property is writable.
+     * @return true if the property is writable, false otherwise.
+     */
+    inline bool is_writable() const;
+
 protected:
     friend class Object;
 
-    static std::shared_ptr<Property<PropertyType>> make_property(
+    inline static std::shared_ptr<Property<PropertyType>> make_property(
         const std::shared_ptr<Object>& parent);
 
 private:
-    Property(
+    inline Property(
         const std::shared_ptr<Object>& parent,
         const std::string& interface,
         const std::string& name,
         bool writable);
 
-    void handle_get(DBusMessage* msg);
-    void handle_set(DBusMessage* msg);
+    inline void handle_get(DBusMessage* msg);
+    inline void handle_set(DBusMessage* msg);
 
     std::shared_ptr<Object> parent;
     std::string interface;

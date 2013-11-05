@@ -31,10 +31,19 @@ namespace freedesktop
 {
 namespace dbus
 {
+/**
+ * @brief Wraps a remote method invocation, its error state and result.
+ * @tparam T Result type.
+ */
 template<typename T>
 struct Result
 {
-    void from_message(DBusMessage* msg)
+    /**
+     * @brief from_message parses the result from a raw dbus message.
+     * @throw std::runtime_error in case of errors.
+     * @param msg The message to parse the result from.
+     */
+    inline void from_message(DBusMessage* msg)
     {
         if (dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_METHOD_CALL)
             throw std::runtime_error("Cannot construct result from method call");
@@ -78,34 +87,58 @@ struct Result
         }
     }
 
-    bool is_error() const
+    /**
+     * @brief Check if the result is an error.
+     * @return true if the invocation returned an error, false otherwise.
+     */
+    inline bool is_error() const
     {
         return d.is_error;
     }
 
-    const std::string& error() const
+    /**
+     * @brief Accesses the contained error message if any.
+     * @return A string describing the error state. Can be empty if no error occured.
+     */
+    inline const std::string& error() const
     {
         return d.what;
     }
 
-    void set_error(const std::runtime_error& error)
+    /**
+     * @brief Adjusts the error contained within this object.
+     * @param [in] The new error description.
+     */
+    inline void set_error(const std::runtime_error& error)
     {
         set_error(error.what());
     }
 
-    void set_error(const std::string& error)
+    /**
+     * @brief Adjusts the error contained within this object.
+     * @param [in] The new error description.
+     */
+    inline void set_error(const std::string& error)
     {
         d.is_error = true;
         d.what = error;
     }
 
-    void reset_error()
+    /**
+     * @brief Resets the error state.
+     * @post is_error() returns false and error() returns an empty string.
+     */
+    inline void reset_error()
     {
         d.is_error = false;
         d.what.clear();
     }
 
-    const T& value() const
+    /**
+     * @brief Non-mutable access to the contained value.
+     * @return A non-mutable reference to the contained value.
+     */
+    inline const T& value() const
     {
         return d.value;
     }
@@ -122,10 +155,18 @@ struct Result
     } d;
 };
 
+/**
+ * @brief Wraps a remote method invocation and its error state. Template specialization for void results.
+ */
 template<>
 struct Result<void>
 {
-    void from_message(DBusMessage* msg)
+    /**
+     * @brief from_message parses the result from a raw dbus message.
+     * @throw std::runtime_error in case of errors.
+     * @param msg The message to parse the result from.
+     */
+    inline void from_message(DBusMessage* msg)
     {
         if (dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_METHOD_CALL)
             throw std::runtime_error("Cannot construct result from method call");
@@ -163,28 +204,48 @@ struct Result<void>
         }
     }
 
-    bool is_error() const
+    /**
+     * @brief Check if the result is an error.
+     * @return true if the invocation returned an error, false otherwise.
+     */
+    inline bool is_error() const
     {
         return d.is_error;
     }
 
-    const std::string& error() const
+    /**
+     * @brief Accesses the contained error message if any.
+     * @return A string describing the error state. Can be empty if no error occured.
+     */
+    inline const std::string& error() const
     {
         return d.what;
     }
 
-    void set_error(const std::runtime_error& error)
+    /**
+     * @brief Adjusts the error contained within this object.
+     * @param [in] The new error description.
+     */
+    inline void set_error(const std::runtime_error& error)
     {
         set_error(error.what());
     }
 
-    void set_error(const std::string& s)
+    /**
+     * @brief Adjusts the error contained within this object.
+     * @param [in] The new error description.
+     */
+    inline void set_error(const std::string& s)
     {
         d.is_error = true;
         d.what = s;
     }
 
-    void reset_error()
+    /**
+     * @brief Resets the error state.
+     * @post is_error() returns false and error() returns an empty string.
+     */
+    inline void reset_error()
     {
         d.is_error = false;
         d.what.clear();

@@ -31,6 +31,9 @@ namespace freedesktop
 {
 namespace dbus
 {
+/**
+ * @brief Wraps a DBus match rule.
+ */
 class MatchRule
 {
 private:
@@ -51,75 +54,132 @@ private:
         mutable bool is_required;
     };
 public:
-    MatchRule()
+    /**
+     * @brief Constructs an empty match rule.
+     */
+    inline MatchRule()
     {
     }
 
-    MatchRule& type(Message::Type t)
+    /**
+     * @brief Adjusts the message type that this rule applies to.
+     * @param t The new type
+     * @return The match rule instance.
+     */
+    inline MatchRule& type(Message::Type t)
     {
         d.type = t;
         return *this;
     }
 
-    MatchRule type(Message::Type t) const
+    /**
+     * @brief Adjusts the message type that this rule applies to.
+     * @param t The new type
+     * @return A new match rule instance.
+     */
+    inline MatchRule type(Message::Type t) const
     {
         MatchRule result {*this};
         result.d.type = t;
         return result;
     }
 
-    MatchRule& sender(const std::string& s)
+    /**
+     * @brief Adjusts the sender that this rule applies to.
+     * @param s The new sender
+     * @return The match rule instance.
+     */
+    inline MatchRule& sender(const std::string& s)
     {
         d.sender = s;
         return *this;
     }
 
-    MatchRule sender(const std::string& s) const
+    /**
+     * @brief Adjusts the sender that this rule applies to.
+     * @param s The new sender
+     * @return A new match rule instance.
+     */
+    inline MatchRule sender(const std::string& s) const
     {
         MatchRule result {*this};
         result.d.sender = s;
         return result;
     }
 
-    MatchRule& interface(const std::string& i)
+    /**
+     * @brief Adjusts the interface that this rule applies to.
+     * @param i The new interface.
+     * @return The match rule instance.
+     */
+    inline MatchRule& interface(const std::string& i)
     {
         d.interface = i;
         return *this;
     }
 
-    MatchRule interface(const std::string& i) const
+    /**
+     * @brief Adjusts the interface that this rule applies to.
+     * @param i The new interface.
+     * @return A new match rule instance.
+     */
+    inline MatchRule interface(const std::string& i) const
     {
         MatchRule result {*this};
         result.d.interface = i;
         return result;
     }
 
-    MatchRule& member(const std::string& m)
+    /**
+     * @brief Adjusts the member that this rule applies to.
+     * @param m The new member.
+     * @return The match rule instance.
+     */
+    inline MatchRule& member(const std::string& m)
     {
         d.member = m;
         return *this;
     }
 
-    MatchRule member(const std::string& m) const
+    /**
+     * @brief Adjusts the member that this rule applies to.
+     * @param m The new member.
+     * @return A new match rule instance.
+     */
+    inline MatchRule member(const std::string& m) const
     {
         MatchRule result {*this};
         result.d.member = m;
         return result;
     }
 
-    MatchRule& path(const types::ObjectPath& p)
+    /**
+     * @brief Adjusts the path that this rule applies to.
+     * @param p The new path.
+     * @return The match rule instance.
+     */
+    inline MatchRule& path(const types::ObjectPath& p)
     {
         d.path = p;
         return *this;
     }
 
-    MatchRule path(const types::ObjectPath& p) const
+    /**
+     * @brief Adjusts the path that this rule applies to.
+     * @param p The new path.
+     * @return A new match rule instance.
+     */
+    inline MatchRule path(const types::ObjectPath& p) const
     {
         MatchRule result {*this};
         return result.path(p);
     }
 
-    std::string as_string() const
+    /**
+     * @brief Constructs a valid match rule string from this instance.
+     * @return A string formatted according to DBus match rule rules.
+     */
+    inline std::string as_string() const
     {
         static const std::map<Message::Type, std::string> lut =
         {

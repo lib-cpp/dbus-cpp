@@ -28,6 +28,9 @@ namespace freedesktop
 {
 namespace dbus
 {
+/**
+ * @brief Abstracts an event loop that a bus instance should be running upon.
+ */
 class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Executor
 {
 public:
@@ -42,7 +45,14 @@ protected:
     Executor(const Executor&) = delete;
     Executor& operator=(const Executor&) = delete;
 
+    /**
+     * @brief Start the event loop and block until stop is called.
+     */
     virtual void run() = 0;
+
+    /**
+     * @brief Stop the event loop.
+     */
     virtual void stop() = 0;
 };
 }

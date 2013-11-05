@@ -18,6 +18,8 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_SIGNAL_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_SIGNAL_H_
 
+#include <org/freedesktop/dbus/visibility.h>
+
 #include <boost/signals2.hpp>
 
 #include <functional>
@@ -48,31 +50,36 @@ struct is_not_void<void>
     static const bool value = false;
 };
 
+/**
+ * @brief Template class Signal models a type-safe DBus signal.
+ * @tparam SignalDescription Needs to be a model of concept SignalDescription.
+ * @tparam Argument The type of the argument that is emitted by this signal.
+ */
 template<typename SignalDescription, typename Argument = void>
-class Signal
+class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Signal
 {
 public:
     typedef std::shared_ptr<Signal<SignalDescription, void>> Ptr;
     typedef std::function<void()> Handler;
 
-    ~Signal() noexcept;
+    inline ~Signal() noexcept;
 
-    void emit(void);
+    inline void emit(void);
 
-    signals::Connection connect(const Handler& h);
+    inline signals::Connection connect(const Handler& h);
 
 protected:
     friend class Object;
 
-    static std::shared_ptr<Signal<SignalDescription, void>> make_signal(
-        const std::shared_ptr<Object>& parent,
-        const std::string& interface,
-        const std::string& name);
+    inline static std::shared_ptr<Signal<SignalDescription, void>> make_signal(
+                                                                       const std::shared_ptr<Object>& parent,
+                                                                       const std::string& interface,
+                                                                       const std::string& name);
 
 private:
-    Signal(const std::shared_ptr<Object>& parent,
-           const std::string& interface,
-           const std::string& name);
+    inline Signal(const std::shared_ptr<Object>& parent,
+                  const std::string& interface,
+                  const std::string& name);
 
     void operator()(const DBusMessage*);
 
@@ -83,6 +90,11 @@ private:
     boost::signals2::signal<void()> signal;
 };
 
+/**
+ * @brief Template class Signal models a type-safe DBus signal.
+ * @tparam SignalDescription Needs to be a model of concept SignalDescription.
+ * @tparam Argument The type of the argument that is emitted by this signal.
+ */
 template<typename SignalDescription>
 class Signal<
     SignalDescription,
@@ -95,30 +107,30 @@ public:
     typedef std::shared_ptr<Signal<SignalDescription, typename SignalDescription::ArgumentType>> Ptr;
     typedef std::function<void(const typename SignalDescription::ArgumentType&)> Handler;
 
-    ~Signal() noexcept;
+    inline ~Signal() noexcept;
 
-    void emit(const typename SignalDescription::ArgumentType&);
+    inline void emit(const typename SignalDescription::ArgumentType&);
 
-    signals::Connection connect(const Handler& h);
+    inline signals::Connection connect(const Handler& h);
 
 protected:
     friend class Object;
 
-    static std::shared_ptr<Signal<SignalDescription,typename SignalDescription::ArgumentType>>
+    inline static std::shared_ptr<Signal<SignalDescription,typename SignalDescription::ArgumentType>>
     make_signal(
         const std::shared_ptr<Object>& parent,
         const std::string& interface,
         const std::string& name);
 
 private:
-    Signal(
+    inline Signal(
         const std::shared_ptr<Object>& parent,
         const std::string& interface,
         const std::string& name);
 
-    void operator()(DBusMessage* msg) noexcept;
+    inline void operator()(DBusMessage* msg) noexcept;
 
-    struct Shared
+    struct ORG_FREEDESKTOP_DBUS_DLL_LOCAL Shared
     {
         Shared(
             const std::shared_ptr<Object>& parent, 

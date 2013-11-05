@@ -18,9 +18,10 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_STUB_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_STUB_H_
 
-#include "org/freedesktop/dbus/bus.h"
-#include "org/freedesktop/dbus/object.h"
-#include "org/freedesktop/dbus/service.h"
+#include <org/freedesktop/dbus/bus.h>
+#include <org/freedesktop/dbus/object.h>
+#include <org/freedesktop/dbus/service.h>
+#include <org/freedesktop/dbus/visibility.h>
 
 namespace org
 {
@@ -28,30 +29,34 @@ namespace freedesktop
 {
 namespace dbus
 {
+/**
+ * @brief Stub is a template class that helps with accessing proxy objects on the bus.
+ * @tparam T The type of the interface for which we want to access a proxy for.
+ */
 template<typename T>
-class Stub : public T
+class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Stub : public T
 {
 public:
-    virtual ~Stub() noexcept = default;
+    virtual ~Stub() noexcept(true) = default;
 
 protected:
-    explicit Stub(const Bus::Ptr& bus) : bus(bus),
+    inline explicit Stub(const Bus::Ptr& bus) : bus(bus),
         service(Service::use_service<T>(bus)),
         root(service->root_object())
     {
     }
 
-    const Bus::Ptr& access_bus() const
+    inline const Bus::Ptr& access_bus() const
     {
         return bus;
     }
 
-    const Object::Ptr& access_root() const
+    inline const Object::Ptr& access_root() const
     {
         return root;
     }
 
-    const Service::Ptr& access_service() const
+    inline const Service::Ptr& access_service() const
     {
         return service;
     }

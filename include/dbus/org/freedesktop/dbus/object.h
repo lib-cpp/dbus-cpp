@@ -30,17 +30,28 @@
 
 namespace std
 {
+/**
+ * @brief Template specialization of std::hash for a std::tuple<std::string, std::string>.
+ */
 template<>
 struct hash<std::tuple<std::string, std::string>>
 {
     size_t operator()(const std::tuple<std::string, std::string>& key) const
     {
         static const std::hash<std::string> h {};
-        return h(std::get<0>(key)) ^ h(std::get<1>(key)); // Using XOR as we do not expect first and second to be equal.
+        // Using XOR as we do not expect first and second to be equal.
+        return h(std::get<0>(key)) ^ h(std::get<1>(key));
     }
 };
 
-std::ostream& operator<<(std::ostream& out, const std::tuple<std::string, std::string>& tuple)
+/**
+ * @brief Pretty prints a std::tuple<std::string, std::string>.
+ * @param out The output stream to write to.
+ * @param tuple The tuple to print.
+ * @return Returns a reference to the output stream.
+ */
+inline std::ostream& operator<<(std::ostream& out,
+                                const std::tuple<std::string, std::string>& tuple)
 {
     out << "(" << std::get<0>(tuple) << "," << std::get<1>(tuple) << ")";
     return out;
@@ -68,6 +79,9 @@ struct Result;
 template<typename T, typename U>
 class Signal;
 
+/**
+ * @brief The Object class models a DBus object living on the bus.
+ */
 class Object : public std::enable_shared_from_this<Object>
 {
   private:
@@ -79,37 +93,85 @@ class Object : public std::enable_shared_from_this<Object>
     typedef std::shared_ptr<Object> Ptr;
     typedef std::function<void(DBusMessage*)> MethodHandler;
 
+    /**
+     * @brief Emits a signal with arguments for this object.
+     */
     template<typename Signal, typename... Args>
-    void emit_signal(const Args& ... args);
+    inline void emit_signal(const Args& ... args);
 
+    /**
+     * @brief Invokes a method of a remote object blocking while waiting for the result.
+     * @tparam Method The method to invoke.
+     * @tparam ResultType The expected type of the result.
+     * @tparam Args Parameter pack of arguments passed to the invocation.
+     * @param [in] args Argument instances passed to the invocation.
+     * @return An invocation result, either signalling an error or containing the result of the invocation.
+     */
     template<typename Method, typename ResultType, typename... Args>
-    Result<ResultType> invoke_method_synchronously(const Args& ... args);
+    inline Result<ResultType> invoke_method_synchronously(const Args& ... args);
 
+    /**
+     * @brief Invokes a method of a remote object returning a std::future to synchronize with the result
+     * @tparam Method The method to invoke.
+     * @tparam ResultType The expected type of the result.
+     * @tparam Args Parameter pack of arguments passed to the invocation.
+     * @param [in] args Argument instances passed to the invocation.
+     * @return A future wrapping an invocation result, either signalling an error or containing the result of the invocation.
+     */
     template<typename Method, typename ResultType, typename... Args>
-    std::future<Result<ResultType>> invoke_method_asynchronously(const Args& ... args);
+    inline std::future<Result<ResultType>> invoke_method_asynchronously(const Args& ... args);
 
+    /**
+     * @brief Accesses a property of the object.
+     * @return An instance of the property or nullptr in case of errors.
+     */
     template<typename PropertyDescription>
     std::shared_ptr<Property<PropertyDescription>>
-    get_property();
+    inline get_property();
 
+    /**
+     * @brief Queries all properties in one go for the object.
+     */
     template<typename Interface>
     std::map<std::string, types::Variant<types::Any>>
-    get_all_properties();
+    inline get_all_properties();
 
+    /**
+     * @brief Accesses a signal of the object.
+     * @return An instance of the signal or nullptr in case of errors.
+     */
     template<typename SignalDescription>
     const std::shared_ptr<Signal<SignalDescription, typename SignalDescription::ArgumentType>>
-    get_signal();
+    inline get_signal();
 
+    /**
+     * @brief Adds an object as a child of this object.
+     * @param [in] path The path to associate the object with.
+     * @return An object instance or nullptr in case of errors.
+     */
     std::shared_ptr<Object> 
-    add_object_for_path(const types::ObjectPath& path);
+    inline add_object_for_path(const types::ObjectPath& path);
 
+    /**
+     * @brief Installs an implementation for a specific method of this object instance.
+     * @tparam Method The method to install the implementation for.
+     * @param [in] handler The implementation.
+     */
     template<typename Method>
-    void install_method_handler(const MethodHandler& handler);
+    inline void install_method_handler(const MethodHandler& handler);
 
+    /**
+     * @brief Uninstalls an implementation for a specific method of this object instance.
+     * @tparam Method The method to uninstall the implementation for.
+     */
     template<typename Method>
-    void uninstall_method_handler();
+    inline void uninstall_method_handler();
 
-    bool is_stub() const;
+    /**
+     * @brief Queries whether this object is a stub instance.
+     * @return true if this object is a stub instance, false otherwise.
+     */
+    inline bool is_stub() const;
 
   private:
     friend class Service;

@@ -25,28 +25,28 @@ namespace freedesktop
 namespace dbus
 {
 template<typename SignalDescription, typename Argument>
-Signal<SignalDescription, Argument>::~Signal() noexcept
+inline Signal<SignalDescription, Argument>::~Signal() noexcept
 {
     parent->signal_router.uninstall_route(Object::SignalKey{interface, name});
     parent->remove_match(rule);
 }
 
 template<typename SignalDescription, typename Argument>
-void
+inline void
 Signal<SignalDescription, Argument>::emit(void)
 {
     parent->emit_signal<SignalDescription>();
 }
 
 template<typename SignalDescription, typename Argument>
-signals::Connection
+inline signals::Connection
 Signal<SignalDescription, Argument>::connect(const Handler& h)
 {
     return signal.connect(h);
 }
 
 template<typename SignalDescription, typename Argument>
-std::shared_ptr<Signal<SignalDescription, void>>
+inline std::shared_ptr<Signal<SignalDescription, void>>
 Signal<SignalDescription, Argument>::make_signal(
     const std::shared_ptr<Object>& parent,
     const std::string& interface,
@@ -62,7 +62,7 @@ Signal<SignalDescription, Argument>::make_signal(
 }
 
 template<typename SignalDescription, typename Argument>
-Signal<SignalDescription, Argument>::Signal(
+inline Signal<SignalDescription, Argument>::Signal(
     const std::shared_ptr<Object>& parent,
     const std::string& interface,
     const std::string& name) : parent(parent),
@@ -80,14 +80,14 @@ Signal<SignalDescription, Argument>::Signal(
 }
 
 template<typename SignalDescription, typename Argument>
-void
+inline void
 Signal<SignalDescription, Argument>::operator()(const DBusMessage*)
 {
     signal();
 }
 
 template<typename SignalDescription>
-Signal<
+inline Signal<
     SignalDescription,
     typename std::enable_if<
         is_not_void<typename SignalDescription::ArgumentType>::value,
@@ -100,7 +100,7 @@ Signal<
 }
 
 template<typename SignalDescription>
-void
+inline void
 Signal<
     SignalDescription,
     typename std::enable_if<
@@ -112,7 +112,7 @@ Signal<
 }
 
 template<typename SignalDescription>
-signals::Connection
+inline signals::Connection
 Signal<
     SignalDescription,
     typename std::enable_if<
@@ -124,7 +124,7 @@ Signal<
 }
 
 template<typename SignalDescription>
-std::shared_ptr<Signal<SignalDescription,typename SignalDescription::ArgumentType>>
+inline std::shared_ptr<Signal<SignalDescription,typename SignalDescription::ArgumentType>>
 Signal<
     SignalDescription,
     typename std::enable_if<
@@ -145,7 +145,7 @@ Signal<
 }
 
 template<typename SignalDescription>
-Signal<
+inline Signal<
     SignalDescription,
     typename std::enable_if<
         is_not_void<typename SignalDescription::ArgumentType>::value,
@@ -165,7 +165,7 @@ Signal<
 }
 
 template<typename SignalDescription>
-void
+inline void
 Signal<
     SignalDescription,
     typename std::enable_if<
@@ -187,7 +187,7 @@ Signal<
 }
 
 template<typename SignalDescription>
-Signal<
+inline Signal<
     SignalDescription,
     typename std::enable_if<
         is_not_void<typename SignalDescription::ArgumentType>::value,

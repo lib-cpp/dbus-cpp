@@ -31,20 +31,40 @@ namespace freedesktop
 {
 namespace dbus
 {
+/**
+ * @brief Wraps a raw error instance as reported by the underlying DBus implementation.
+ */
 class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Error
 {
   public:
+    /**
+     * @brief Constructs a valid but empty Error instance.
+     * @post operator bool() returns false.
+     */
     Error();
     ~Error();
 
     Error(const Error&) = delete;
     Error& operator=(const Error&) = delete;
 
+    /**
+     * @brief Queries the name of the error. Non-empty if operator bool() returns true.
+     */
     std::string name() const;
+
+    /**
+     * @brief Queries the human readable description of the error. Non-empty if operator bool() returns true.
+     */
     std::string message() const;
 
+    /**
+     * @brief Checks if the error bit is set.
+     */
     operator bool() const;
 
+    /**
+     * @brief Provides mutable access to the underlying error as defined by the underlying DBus implementation.
+     */
     DBusError& raw();
 
   private:

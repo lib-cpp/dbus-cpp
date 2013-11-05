@@ -35,35 +35,60 @@ namespace freedesktop
 {
 namespace dbus
 {
-
+/**
+ * @brief The Message class wraps a raw DBus message
+ */
 class Message : public std::enable_shared_from_this<Message>
 {
 public:
     typedef std::shared_ptr<Message> Ptr;
 
+    /**
+     * @brief The Type enum models the type of the message.
+     */
     enum class Type : int
     {
-        invalid = DBUS_MESSAGE_TYPE_INVALID,
-        signal = DBUS_MESSAGE_TYPE_SIGNAL,
-        method_call = DBUS_MESSAGE_TYPE_METHOD_CALL,
-        method_return = DBUS_MESSAGE_TYPE_METHOD_RETURN,
-        error = DBUS_MESSAGE_TYPE_ERROR
+        invalid = DBUS_MESSAGE_TYPE_INVALID, ///< Invalid message type
+        signal = DBUS_MESSAGE_TYPE_SIGNAL, ///< A signal message
+        method_call = DBUS_MESSAGE_TYPE_METHOD_CALL, ///< A method-call message
+        method_return = DBUS_MESSAGE_TYPE_METHOD_RETURN, ///< A method-return message
+        error = DBUS_MESSAGE_TYPE_ERROR ///< An error message.
     };
 
+    /**
+     * @brief The Reader class allows type-safe reading of arguments from a message.
+     */
     class Reader
     {
     public:
         Reader(const Reader&) = default;
         Reader& operator=(const Reader&) = default;
 
+        /**
+         * @brief Reads an instance of type T from the underlying message and advances the iterator into the message.
+         * @tparam T The type to read from the underlying message.
+         * @param [out] t The instance of T to read to.
+         * @return The instance of the reader.
+         */
         template<typename T>
-        Reader& operator>>(T& t);
+        inline Reader& operator>>(T& t);
 
+        /**
+         * @brief Reads an instance of type T from the underlying message. Does not advance the iterator into the message.
+         * @tparam T The type to read from the underlying message.
+         * @param [out] t The instance of T to read to.
+         */
         template<typename T>
-        void peek(T& t);
+        inline void peek(T& t);
 
+        /**
+         * @brief Reads an instance of type T from the underlying message and advances the iterator into the message.
+         * @tparam T The type to read from the underlying message.
+         * @param [out] t The instance of T to read to.
+         * @return The instance of the reader.
+         */
         template<typename T>
-        Reader& pop(T& t);
+        inline Reader& pop(T& t);
 
     protected:
         friend class Message;
@@ -74,17 +99,32 @@ public:
         DBusMessageIter iter;
     };
 
+    /**
+     * @brief The Writer class allows type-safe serialization of input arguments to a message.
+     */
     class Writer
     {
     public:
         Writer(const Writer&) = default;
         Writer& operator=(const Writer&) = default;
 
+        /**
+         * @brief Writes an instance of type T to the underlying message and advances the iterator into the message.
+         * @tparam T The type to write to the underlying message.
+         * @param [out] t The instance of T to write.
+         * @return The instance of the Writer.
+         */
         template<typename T>
-        Writer& operator<<(const T& t);
+        inline Writer& operator<<(const T& t);
 
+        /**
+         * @brief Writes an instance of type T to the underlying message and advances the iterator into the message.
+         * @tparam T The type to write to the underlying message.
+         * @param [out] t The instance of T to write.
+         * @return The instance of the Writer.
+         */
         template<typename... Args>
-        Writer& append(const Args& ... args);
+        inline Writer& append(const Args& ... args);
 
     protected:
         friend class Message;
@@ -95,39 +135,113 @@ public:
         DBusMessageIter iter;
     };
 
-    static std::shared_ptr<Message> make_method_call(
+    /**
+     * @brief make_method_call creates an instance of Message with type Type::method_call.
+     * @param destination The name of the remote service to send the message to.
+     * @param path The name of the remote object to send the message to.
+     * @param interface The interface to route the message to.
+     * @param method The actual method that should be invoked
+     * @return An instance of message of type Type::method_call.
+     * @throw std::runtime_error if any of the parameters violates the DBus specification.
+     */
+    inline static std::shared_ptr<Message> make_method_call(
         const std::string& destination,
         const std::string& path,
         const std::string& interface,
         const std::string& method);
 
-    static std::shared_ptr<Message> make_method_return(DBusMessage* msg);
+    /**
+     * @brief make_method_return creates a message instance in response to a raw DBus message of type method-call.
+     * @param msg The message to reply to, must not be null. Must be of type Type::method_call.
+     * @return An instance of message of type Type::method_return.
+     */
+    inline static std::shared_ptr<Message> make_method_return(DBusMessage* msg);
 
-    static std::shared_ptr<Message> make_signal(
+    /**
+     * @brief make_signal creates a message instance wrapping a signal emission.
+     * @param path The path of the object emitting the signal.
+     * @param interface The interface containing the signal.
+     * @param signal The actual signal name.
+     * @return An instance of message of type Type::signal.
+     */
+    inline static std::shared_ptr<Message> make_signal(
         const std::string& path, 
         const std::string& interface, 
         const std::string& signal);
 
-    static std::shared_ptr<Message> make_error(
+    /**
+     * @brief make_error creates an error message instance in response to a raw DBus message of type method-call.
+     * @param in_reply_to The message to reply to, must not be null. Must be of type Type::method_call.
+     * @param error_name The name of the error.
+     * @param error_desc Human-readable description of the error.
+     * @return An instance of message of type Type::error.
+     */
+    inline static std::shared_ptr<Message> make_error(
         DBusMessage* in_reply_to, 
         const std::string& error_name, 
         const std::string& error_desc);
 
-    static std::shared_ptr<Message> from_raw_message(DBusMessage* msg);
+    /**
+     * @brief from_raw_message creates an instance of message from a raw message.
+     * @param msg The message to wrap.
+     * @return An instance of Message with a type corresponding to the type of the raw message.
+     */
+    inline static std::shared_ptr<Message> from_raw_message(DBusMessage* msg);
 
-    Type type() const;
-    bool expects_reply() const;
-    types::ObjectPath path() const;
-    std::string member() const;
-    std::string signature() const;
-    std::string interface() const;
-    std::string destination() const;
-    std::string sender() const;
+    /**
+     * @brief Queries the type of the message.
+     */
+    inline Type type() const;
 
-    Reader reader();
-    Writer writer();
+    /**
+     * @brief Checks if the message expects a reply, i.e., is of type Type::method_call.
+     */
+    inline bool expects_reply() const;
 
-    DBusMessage* get() const;
+    /**
+     * @brief Queries the path of the object that this message belongs to.
+     */
+    inline types::ObjectPath path() const;
+
+    /**
+     * @brief Queries the member name that this message corresponds to.
+     */
+    inline std::string member() const;
+
+    /**
+     * @brief Queries the type signature of this message.
+     */
+    inline std::string signature() const;
+
+    /**
+     * @brief Queries the interface name that this message corresponds to.
+     */
+    inline std::string interface() const;
+
+    /**
+     * @brief Queries the name of the destination that this message should go to.
+     */
+    inline std::string destination() const;
+
+    /**
+     * @brief Queries the name of the sender that this message originates from.
+     */
+    inline std::string sender() const;
+
+    /**
+     * @brief Creates a Reader instance to read from this message.
+     */
+    inline Reader reader();
+
+    /**
+     * @brief Creates a Writer instance to write to this message.
+     */
+    inline Writer writer();
+
+    /**
+     * @brief Extracts the raw DBus message contained within this instance. Use with care.
+     */
+    inline DBusMessage* get() const;
 
 private:
     Message(
@@ -137,7 +251,7 @@ private:
     std::shared_ptr<DBusMessage> dbus_message;
 };
 
-std::ostream& operator<<(std::ostream& out, const Message::Type& type);
+inline std::ostream& operator<<(std::ostream& out, const Message::Type& type);
 }
 }
 }

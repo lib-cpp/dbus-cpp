@@ -51,34 +51,46 @@ namespace freedesktop
 {
 namespace dbus
 {
-
 class Object;
 
 /**
-* \brief Represents a service available on the bus.
-* \example geoclue/main.cpp
-* Provides an example of accessing the Geoclue session service on the bus.
-* \example upower/main.cpp
-* Provides an example of access the UPower system service on the bus.
+ * \brief Represents a service available on the bus.
+ * \example geoclue/main.cpp
+ * Provides an example of accessing the Geoclue session service on the bus.
+ * \example upower/main.cpp
+ * Provides an example of access the UPower system service on the bus.
 */
 class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Service : public std::enable_shared_from_this<Service>
 {
-public:
+public: 
     typedef std::shared_ptr<Service> Ptr;
 
+    /**
+     * @brief The RequestNameFlag enum lists possible behavior when trying to acquire name on the bus.
+     */
     enum RequestNameFlag
     {
-        allow_replacement,
-        replace_existing,
-        do_not_queue
+        allow_replacement, ///< Allow for later replacement by another service implementation.
+        replace_existing, ///< Replace any existing instance on the bus.
+        do_not_queue ///< Blocking wait for service name to be acquired.
     };
 
     typedef std::bitset<3> RequestNameFlags;
 
+    /**
+     * @brief default_request_name_flags returns defaults flags when acquiring a name on the bus.
+     */
     static const RequestNameFlags& default_request_name_flags();
 
+    /**
+     * @brief Exposes a service on the bus.
+     * @returns An instance of Service or nullptr in case of errors.
+     * @tparam Interface Needs to a model of concept Service.
+     * @param [in] connection Bus to expose the service upon.
+     * @param [in] flags Flags specifying behavior when requesting a name on the bus.
+     */
     template<typename Interface>
-    static Ptr add_service(
+    inline static Ptr add_service(
         const Bus::Ptr& connection,
         const RequestNameFlags& flags = default_request_name_flags())
     {
@@ -90,19 +102,57 @@ public:
         return instance;
     }
 
+    /**
+     * @brief Provides access to a service on the bus via a proxy object.
+     * @returns An instance of Service or nullptr in case of errors.
+     * @tparam Interface Needs to be a model of concept Service.
+     * @param [in] connection Bus to access the service upon.
+     */
     template<typename Interface>
-    static Ptr use_service(const Bus::Ptr& connection)
+    inline static Ptr use_service(const Bus::Ptr& connection)
     {
         return use_service(connection, traits::Service<Interface>::interface_name());
     }
 
+    /**
+     * @brief Provides access to a service on the bus via a proxy object.
+     * @returns An instance of Service or nullptr in case of errors.
+     * @param [in] connection Bus to access the service upon.
+     * @param [in] name Well-known name of the service on the bus.
+     */
     static Ptr use_service(const Bus::Ptr& connection, const std::string& name);
+
+    /**
+     * @brief Provides access to a service on the bus via a proxy object.
+     * @returns An instance of Service.
+     * @throw std::runtime_error in case of errors.
+     * @param [in] connection Bus to access the service upon.
+     * @param [in] name Well-known name of the service on the bus.
+     */
     static Ptr use_service_or_throw_if_not_available(const Bus::Ptr& connection, const std::string& name);
 
+    /**
+     * @brief Provides access to the root object of this service instance.
+     */
     const std::shared_ptr<Object>& root_object();
+
+    /**
+     * @brief Access an existing object on the specified path.
+     * @param [in] path The path to access the object upon.
+     * @return An instance to the object or nullptr if no object on that path exists.
+     */
     std::shared_ptr<Object> object_for_path(const types::ObjectPath& path);
+
+    /**
+     * @brief Adds a new object on the specified path.
+     * @param [in] path The path to mount the object upon.
+     * @return An instance to the object or nullptr if the object could not be added.
+     */
     std::shared_ptr<Object> add_object_for_path(const types::ObjectPath& path);
 
+    /**
+     * @brief Non-mutable access to the name of the service.
+     */
     const std::string& get_name() const;
 
 protected:

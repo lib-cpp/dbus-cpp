@@ -26,11 +26,14 @@ namespace freedesktop
 {
 namespace dbus
 {
+/**
+ * @brief The WellKnownBus enum lists all the buses known to the underlying dbus reference implementation.
+ */
 enum class WellKnownBus
 {
-    session = DBUS_BUS_SESSION,
-    system = DBUS_BUS_SYSTEM,
-    starter = DBUS_BUS_STARTER
+    session = DBUS_BUS_SESSION, ///< The session bus
+    system = DBUS_BUS_SYSTEM, ///< The system bus
+    starter = DBUS_BUS_STARTER ///< The bus that started us
 };
 }
 }
