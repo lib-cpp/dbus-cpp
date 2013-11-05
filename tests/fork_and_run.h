@@ -19,6 +19,8 @@
 #ifndef FORK_AND_RUN_H_
 #define FORK_AND_RUN_H_
 
+#include <gtest/gtest.h>
+
 #include <cstring>
 #include <functional>
 #include <stdexcept>
@@ -34,28 +36,65 @@ bool is_child(pid_t pid)
     return pid == 0;
 }
 
-int fork_and_run(std::function<void()> child, std::function<void()> parent)
+int fork_and_run(const std::function<void()>& service, const std::function<void()>& client)
 {
-    auto pid = fork();
+    auto service_pid = fork();
 
-    if (pid < 0)
+    if (service_pid < 0)
     {
-        throw std::runtime_error(std::string("Could not fork child: ") + std::strerror(errno));
-    }
+        throw std::runtime_error(std::string("Could not fork child for service: ") + std::strerror(errno));
+    } else if (is_child(service_pid))
+    {
+        std::cout << "Running the service now: " << getpid() << std::endl;
+        service();
+        exit(EXIT_SUCCESS);
+    } else // parent
+    {
+        auto client_pid = fork();
 
-    if (is_child(pid))
-    {
-        child();
-        return EXIT_SUCCESS;
-    }
-    else
-    {
-        parent();
-        kill(pid, SIGKILL);
-        return EXIT_SUCCESS;
-    }
+        if (client_pid < 0)
+        {
+            throw std::runtime_error(std::string("Could not fork child for client: ") + std::strerror(errno));
+        } else if (is_child(client_pid))
+        {
+            std::cout << "Running the client now: " << getpid() << std::endl;
 
-    return EXIT_FAILURE;
+            try
+            {
+                client();
+            } catch(...)
+            {
+                exit(EXIT_FAILURE);
+            }
+
+            exit(::testing::Test::HasFatalFailure() || ::testing::Test::HasNonfatalFailure() ? EXIT_FAILURE : EXIT_SUCCESS);
+        } else // parent
+        {
+            std::cout << "In the test process: " << getpid() << std::endl;
+            int status;
+            auto result = waitpid(client_pid, &status, WUNTRACED);
+
+            if (result == -1)
+            {
+                throw std::runtime_error(std::string("Error waiting for child to complete: ") + std::strerror(errno));
+            }
+
+            ::kill(service_pid, SIGKILL);
+
+            int return_status;
+            if (WIFEXITED(status))
+            {
+                std::cout << "Client exited with status: " << WEXITSTATUS(status) << std::endl;
+                return_status = WEXITSTATUS(status) == EXIT_SUCCESS ? EXIT_SUCCESS : EXIT_FAILURE;
+            } else if (WIFSIGNALED(status))
+            {
+                return_status = EXIT_FAILURE;
+            }
+
+            EXPECT_EQ(EXIT_SUCCESS, return_status);
+            return return_status;
+        }
+    }
 }
 }
 

@@ -67,6 +67,7 @@ TEST(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
         bus->install_executor(org::freedesktop::dbus::asio::make_executor(bus));
         auto service = dbus::Service::add_service<test::Service>(bus);
         auto skeleton = service->add_object_for_path(dbus::types::ObjectPath("/this/is/unlikely/to/exist/Service"));
+        auto signal = skeleton->get_signal<test::Service::Signals::Dummy>();
         auto writable_property = skeleton->get_property<test::Service::Properties::Dummy>();
         writable_property->value(expected_value);
         skeleton->install_method_handler<test::Service::Method>([bus, skeleton, expected_value](DBusMessage* msg)

@@ -1,3 +1,27 @@
+dbus-cpp (0.0.1+13.10.20130904-0ubuntu3) UNRELEASED; urgency=low
+
+  * Add doxygen documentation for user-facing classes.
+  * Refactor into a shared library.
+  * Add a first iteration of a code generator that generates protocol header files.
+
+ -- Thomas Voß <thomas.voss@canonical.com>  Tue, 05 Nov 2013 10:36:50 +0100
+
+dbus-cpp (0.0.1+13.10.20130904-0ubuntu2) trusty; urgency=low
+
+  * No change rebuild for Boost 1.54 transition.
+
+ -- Dmitrijs Ledkovs <xnox@ubuntu.com>  Mon, 21 Oct 2013 14:52:42 +0100
+
+dbus-cpp (0.0.1+13.10.20130904-0ubuntu1) saucy; urgency=low
+
+  [ thomas-voss ]
+  * Drop lcov dependency. (LP: #1218896)
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 12
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 04 Sep 2013 02:32:09 +0000
+
 dbus-cpp (0.0.1daily13.06.18-0ubuntu1) saucy; urgency=low
 
   * Automatic snapshot from revision 10
