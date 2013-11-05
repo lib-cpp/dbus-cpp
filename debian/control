@@ -10,6 +10,7 @@ Build-Depends: cmake,
                libboost-program-options-dev,
                libdbus-1-dev,
                libgtest-dev,
+               libxml2-dev,
 Standards-Version: 3.9.4
 Section: libs
 Homepage: http://launchpad.net/dbus-cpp
