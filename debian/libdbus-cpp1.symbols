@@ -50,7 +50,6 @@ libdbus-cpp.so.1 libdbus-cpp1 #MINVER#
  (c++)"org::freedesktop::dbus::Service::is_stub() const@Base" 0replaceme
  (c++)"org::freedesktop::dbus::Service::get_name() const@Base" 0replaceme
  (c++)"boost::system::system_error::what() const@Base" 0replaceme
- (c++)"char* std::basic_string<char, std::char_traits<char>, std::allocator<char> >::_S_construct<char*>(char*, char*, std::allocator<char> const&, std::forward_iterator_tag)@Base" 0replaceme
  (c++)"std::logic_error::logic_error(std::logic_error const&)@Base" 0replaceme
  (c++)"std::logic_error::logic_error(std::logic_error const&)@Base" 0replaceme
  (c++)"std::unique_lock<std::mutex>::unlock()@Base" 0replaceme
@@ -111,3 +110,12 @@ libdbus-cpp.so.1 libdbus-cpp1 #MINVER#
  (c++)"non-virtual thunk to boost::exception_detail::error_info_injector<std::runtime_error>::~error_info_injector()@Base" 0replaceme
  (c++)"non-virtual thunk to boost::exception_detail::error_info_injector<boost::system::system_error>::~error_info_injector()@Base" 0replaceme
  (c++)"non-virtual thunk to boost::exception_detail::error_info_injector<boost::system::system_error>::~error_info_injector()@Base" 0replaceme
+ (c++|optional)"boost::exception_detail::error_info_injector<boost::system::system_error>::error_info_injector(boost::exception_detail::error_info_injector<boost::system::system_error> const&)@Base" 0replaceme
+ (c++|optional)"boost::exception_detail::error_info_injector<boost::system::system_error>::error_info_injector(boost::exception_detail::error_info_injector<boost::system::system_error> const&)@Base" 0replaceme
+ (c++|optional)"boost::exception_detail::error_info_injector<std::runtime_error>::error_info_injector(boost::exception_detail::error_info_injector<std::runtime_error> const&)@Base" 0replaceme
+ (c++|optional)"boost::exception_detail::error_info_injector<std::runtime_error>::error_info_injector(boost::exception_detail::error_info_injector<std::runtime_error> const&)@Base" 0replaceme
+ (c++|optional)"boost::system::system_error::system_error(boost::system::system_error const&)@Base" 0replaceme
+ (c++|optional)"boost::system::system_error::system_error(boost::system::system_error const&)@Base" 0replaceme
+ (c++|optional)"std::__weak_count<(__gnu_cxx::_Lock_policy)2>::operator=(std::__shared_count<(__gnu_cxx::_Lock_policy)2> const&)@Base" 0replaceme
+ (c++|optional)"std::basic_string<char, std::char_traits<char>, std::allocator<char> > std::operator+<char, std::char_traits<char>, std::allocator<char> >(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*)@Base" 0replaceme
+ (c++|optional)"char* std::basic_string<char, std::char_traits<char>, std::allocator<char> >::_S_construct<char*>(char*, char*, std::allocator<char> const&, std::forward_iterator_tag)@Base" 0replaceme
