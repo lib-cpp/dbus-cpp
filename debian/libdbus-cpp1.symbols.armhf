@@ -1,0 +1,115 @@
+libdbus-cpp.so.1 libdbus-cpp1 #MINVER#
+ (c++)"org::freedesktop::dbus::Bus::remove_match(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Bus::handle_message(DBusConnection*, DBusMessage*, void*)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Bus::install_executor(std::shared_ptr<org::freedesktop::dbus::Executor> const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Bus::has_owner_for_name(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Bus::access_signal_router()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Bus::install_message_filter(DBusHandlerResult (*)(DBusConnection*, DBusMessage*, void*), void*)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Bus::uninstall_message_filter(DBusHandlerResult (*)(DBusConnection*, DBusMessage*, void*), void*)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Bus::send_with_reply_and_timeout(DBusMessage*, std::chrono::duration<long, std::ratio<1ll, 1000ll> > const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Bus::send_with_reply_and_block_for_at_most(DBusMessage*, std::chrono::duration<long, std::ratio<1ll, 1000ll> > const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Bus::run()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Bus::send(DBusMessage*)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Bus::stop()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Bus::add_match(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Bus::Bus(org::freedesktop::dbus::WellKnownBus)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Bus::Bus(org::freedesktop::dbus::WellKnownBus)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Bus::~Bus()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Bus::~Bus()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::asio::make_executor(std::shared_ptr<org::freedesktop::dbus::Bus> const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Error::raw()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Error::Error()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Error::Error()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Error::~Error()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Error::~Error()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Service::root_object()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Service::use_service(std::shared_ptr<org::freedesktop::dbus::Bus> const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Service::remove_match(org::freedesktop::dbus::MatchRule const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Service::object_for_path(org::freedesktop::dbus::types::ObjectPath const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Service::add_object_for_path(org::freedesktop::dbus::types::ObjectPath const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Service::default_request_name_flags()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Service::use_service_or_throw_if_not_available(std::shared_ptr<org::freedesktop::dbus::Bus> const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Service::add_match(org::freedesktop::dbus::MatchRule const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Service::Service(std::shared_ptr<org::freedesktop::dbus::Bus> const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Service::Service(std::shared_ptr<org::freedesktop::dbus::Bus> const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::bitset<3u> const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Service::Service(std::shared_ptr<org::freedesktop::dbus::Bus> const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Service::Service(std::shared_ptr<org::freedesktop::dbus::Bus> const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::bitset<3u> const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Service::~Service()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Service::~Service()@Base" 0replaceme
+ (c++)"boost::exception_detail::error_info_injector<boost::system::system_error>::~error_info_injector()@Base" 0replaceme
+ (c++)"boost::exception_detail::error_info_injector<boost::system::system_error>::~error_info_injector()@Base" 0replaceme
+ (c++)"boost::exception_detail::error_info_injector<boost::system::system_error>::~error_info_injector()@Base" 0replaceme
+ (c++)"boost::exception_detail::error_info_injector<std::runtime_error>::~error_info_injector()@Base" 0replaceme
+ (c++)"boost::exception_detail::error_info_injector<std::runtime_error>::~error_info_injector()@Base" 0replaceme
+ (c++)"boost::exception_detail::error_info_injector<std::runtime_error>::~error_info_injector()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Bus::raw() const@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Error::name() const@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Error::message() const@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Error::operator bool() const@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Service::get_connection() const@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Service::is_stub() const@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Service::get_name() const@Base" 0replaceme
+ (c++)"boost::system::system_error::what() const@Base" 0replaceme
+ (c++)"std::logic_error::logic_error(std::logic_error const&)@Base" 0replaceme
+ (c++)"std::logic_error::logic_error(std::logic_error const&)@Base" 0replaceme
+ (c++)"std::unique_lock<std::mutex>::unlock()@Base" 0replaceme
+ (c++)"std::_Sp_counted_ptr<org::freedesktop::dbus::Service*, (__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 0replaceme
+ (c++)"std::_Sp_counted_ptr<org::freedesktop::dbus::Service*, (__gnu_cxx::_Lock_policy)2>::_M_dispose()@Base" 0replaceme
+ (c++)"std::_Sp_counted_ptr<org::freedesktop::dbus::Service*, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&)@Base" 0replaceme
+ (c++)"std::_Sp_counted_ptr<org::freedesktop::dbus::Service*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 0replaceme
+ (c++)"std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 0replaceme
+ (c++)"std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_release()@Base" 0replaceme
+ (c++)"std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_weak_release()@Base" 0replaceme
+ (c++)"std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::~_Sp_counted_base()@Base" 0replaceme
+ (c++)"std::map<org::freedesktop::dbus::Message::Type, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<org::freedesktop::dbus::Message::Type>, std::allocator<std::pair<org::freedesktop::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::at(org::freedesktop::dbus::Message::Type const&) const@Base" 0replaceme
+ (c++)"std::map<org::freedesktop::dbus::Message::Type, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<org::freedesktop::dbus::Message::Type>, std::allocator<std::pair<org::freedesktop::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::~map()@Base" 0replaceme
+ (c++)"std::map<org::freedesktop::dbus::Message::Type, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<org::freedesktop::dbus::Message::Type>, std::allocator<std::pair<org::freedesktop::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::~map()@Base" 0replaceme
+ (c++)"std::tuple<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >::~tuple()@Base" 0replaceme
+ (c++)"std::tuple<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >::~tuple()@Base" 0replaceme
+ (c++)"std::tuple<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >::~tuple()@Base" 0replaceme
+ (c++)"std::tuple<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >::~tuple()@Base" 0replaceme
+ (c++)"std::_Rb_tree<org::freedesktop::dbus::Message::Type, std::pair<org::freedesktop::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::_Select1st<std::pair<org::freedesktop::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::less<org::freedesktop::dbus::Message::Type>, std::allocator<std::pair<org::freedesktop::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::_M_get_insert_unique_pos(org::freedesktop::dbus::Message::Type const&)@Base" 0replaceme
+ (c++)"std::_Rb_tree<org::freedesktop::dbus::Message::Type, std::pair<org::freedesktop::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::_Select1st<std::pair<org::freedesktop::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::less<org::freedesktop::dbus::Message::Type>, std::allocator<std::pair<org::freedesktop::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::_M_get_insert_hint_unique_pos(std::_Rb_tree_const_iterator<std::pair<org::freedesktop::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, org::freedesktop::dbus::Message::Type const&)@Base" 0replaceme
+ (c++)"std::_Rb_tree<org::freedesktop::dbus::Message::Type, std::pair<org::freedesktop::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::_Select1st<std::pair<org::freedesktop::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::less<org::freedesktop::dbus::Message::Type>, std::allocator<std::pair<org::freedesktop::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::_M_erase(std::_Rb_tree_node<std::pair<org::freedesktop::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >*)@Base" 0replaceme
+ (c++)"std::basic_string<char, std::char_traits<char>, std::allocator<char> > std::operator+<char, std::char_traits<char>, std::allocator<char> >(std::basic_string<char, std::char_traits<char>, std::allocator<char> >&&, std::basic_string<char, std::char_traits<char>, std::allocator<char> >&&)@Base" 0replaceme
+ (c++)"typeinfo for org::freedesktop::dbus::Executor@Base" 0replaceme
+ (c++)"typeinfo for boost::exception_detail::clone_base@Base" 0replaceme
+ (c++)"typeinfo for boost::exception_detail::error_info_injector<boost::system::system_error>@Base" 0replaceme
+ (c++)"typeinfo for boost::exception_detail::error_info_injector<std::runtime_error>@Base" 0replaceme
+ (c++)"typeinfo for boost::system::system_error@Base" 0replaceme
+ (c++)"typeinfo for boost::exception@Base" 0replaceme
+ (c++)"typeinfo for std::_Mutex_base<(__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
+ (c++)"typeinfo for std::_Sp_counted_ptr<org::freedesktop::dbus::Service*, (__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
+ (c++)"typeinfo for std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
+ (c++)"typeinfo for std::_Sp_make_shared_tag@Base" 0replaceme
+ (c++)"typeinfo name for org::freedesktop::dbus::Executor@Base" 0replaceme
+ (c++)"typeinfo name for boost::exception_detail::clone_base@Base" 0replaceme
+ (c++)"typeinfo name for boost::exception_detail::error_info_injector<boost::system::system_error>@Base" 0replaceme
+ (c++)"typeinfo name for boost::exception_detail::error_info_injector<std::runtime_error>@Base" 0replaceme
+ (c++)"typeinfo name for boost::system::system_error@Base" 0replaceme
+ (c++)"typeinfo name for boost::exception@Base" 0replaceme
+ (c++)"typeinfo name for std::_Mutex_base<(__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
+ (c++)"typeinfo name for std::_Sp_counted_ptr<org::freedesktop::dbus::Service*, (__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
+ (c++)"typeinfo name for std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
+ (c++)"typeinfo name for std::_Sp_make_shared_tag@Base" 0replaceme
+ (c++)"vtable for org::freedesktop::dbus::Executor@Base" 0replaceme
+ (c++)"vtable for boost::exception_detail::clone_base@Base" 0replaceme
+ (c++)"vtable for boost::exception_detail::error_info_injector<boost::system::system_error>@Base" 0replaceme
+ (c++)"vtable for boost::exception_detail::error_info_injector<std::runtime_error>@Base" 0replaceme
+ (c++)"vtable for boost::system::system_error@Base" 0replaceme
+ (c++)"vtable for boost::exception@Base" 0replaceme
+ (c++)"vtable for std::_Sp_counted_ptr<org::freedesktop::dbus::Service*, (__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
+ (c++)"vtable for std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
+ (c++)"non-virtual thunk to boost::exception_detail::error_info_injector<std::runtime_error>::~error_info_injector()@Base" 0replaceme
+ (c++)"non-virtual thunk to boost::exception_detail::error_info_injector<std::runtime_error>::~error_info_injector()@Base" 0replaceme
+ (c++)"non-virtual thunk to boost::exception_detail::error_info_injector<boost::system::system_error>::~error_info_injector()@Base" 0replaceme
+ (c++)"non-virtual thunk to boost::exception_detail::error_info_injector<boost::system::system_error>::~error_info_injector()@Base" 0replaceme
+ (c++|optional)"boost::exception_detail::error_info_injector<boost::system::system_error>::error_info_injector(boost::exception_detail::error_info_injector<boost::system::system_error> const&)@Base" 0replaceme
+ (c++|optional)"boost::exception_detail::error_info_injector<boost::system::system_error>::error_info_injector(boost::exception_detail::error_info_injector<boost::system::system_error> const&)@Base" 0replaceme
+ (c++|optional)"boost::exception_detail::error_info_injector<std::runtime_error>::error_info_injector(boost::exception_detail::error_info_injector<std::runtime_error> const&)@Base" 0replaceme
+ (c++|optional)"boost::exception_detail::error_info_injector<std::runtime_error>::error_info_injector(boost::exception_detail::error_info_injector<std::runtime_error> const&)@Base" 0replaceme
+ (c++|optional)"boost::system::system_error::system_error(boost::system::system_error const&)@Base" 0replaceme
+ (c++|optional)"boost::system::system_error::system_error(boost::system::system_error const&)@Base" 0replaceme
+ (c++|optional)"std::__weak_count<(__gnu_cxx::_Lock_policy)2>::operator=(std::__shared_count<(__gnu_cxx::_Lock_policy)2> const&)@Base" 0replaceme
+ (c++|optional)"std::basic_string<char, std::char_traits<char>, std::allocator<char> > std::operator+<char, std::char_traits<char>, std::allocator<char> >(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*)@Base" 0replaceme
+ (c++|optional)"char* std::basic_string<char, std::char_traits<char>, std::allocator<char> >::_S_construct<char*>(char*, char*, std::allocator<char> const&, std::forward_iterator_tag)@Base" 0replaceme
