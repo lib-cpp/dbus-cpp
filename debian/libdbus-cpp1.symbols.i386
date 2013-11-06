@@ -6,8 +6,8 @@ libdbus-cpp.so.1 libdbus-cpp1 #MINVER#
  (c++)"org::freedesktop::dbus::Bus::access_signal_router()@Base" 0replaceme
  (c++)"org::freedesktop::dbus::Bus::install_message_filter(DBusHandlerResult (*)(DBusConnection*, DBusMessage*, void*), void*)@Base" 0replaceme
  (c++)"org::freedesktop::dbus::Bus::uninstall_message_filter(DBusHandlerResult (*)(DBusConnection*, DBusMessage*, void*), void*)@Base" 0replaceme
- (c++)"org::freedesktop::dbus::Bus::send_with_reply_and_timeout(DBusMessage*, std::chrono::duration<long, std::ratio<1ll, 1000ll> > const&)@Base" 0replaceme
- (c++)"org::freedesktop::dbus::Bus::send_with_reply_and_block_for_at_most(DBusMessage*, std::chrono::duration<long, std::ratio<1ll, 1000ll> > const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Bus::send_with_reply_and_timeout(DBusMessage*, std::chrono::duration<long long, std::ratio<1ll, 1000ll> > const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Bus::send_with_reply_and_block_for_at_most(DBusMessage*, std::chrono::duration<long long, std::ratio<1ll, 1000ll> > const&)@Base" 0replaceme
  (c++)"org::freedesktop::dbus::Bus::run()@Base" 0replaceme
  (c++)"org::freedesktop::dbus::Bus::send(DBusMessage*)@Base" 0replaceme
  (c++)"org::freedesktop::dbus::Bus::stop()@Base" 0replaceme
