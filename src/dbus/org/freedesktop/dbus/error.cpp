@@ -20,6 +20,8 @@
 
 #include <dbus/dbus.h>
 
+#include <iostream>
+
 namespace org
 {
 namespace freedesktop
@@ -33,6 +35,12 @@ struct Error::Private
     {
         dbus_error_init(std::addressof(error));
     }
+
+    ~Private()
+    {
+        dbus_error_free(std::addressof(error));
+    }
+
     DBusError error;
 };
 
@@ -40,9 +48,18 @@ Error::Error() : d(new Private())
 {
 }
 
+Error::Error(Error&& that) : d(std::move(that.d))
+{
+}
+
 Error::~Error()
 {
-    dbus_error_free(std::addressof(d->error));
+}
+
+Error& Error::operator=(Error&& rhs)
+{
+    d = std::move(rhs.d);
+    return *this;
 }
 
 std::string Error::name() const
@@ -53,6 +70,11 @@ std::string Error::name() const
 std::string Error::message() const
 {
     return d->error.message;
+}
+
+std::string Error::print() const
+{
+    return name() + ": " + message();
 }
 
 Error::operator bool() const

@@ -22,6 +22,63 @@ libdbus-cpp.so.1 libdbus-cpp1 #MINVER#
  (c++)"org::freedesktop::dbus::Error::Error()@Base" 0replaceme
  (c++)"org::freedesktop::dbus::Error::~Error()@Base" 0replaceme
  (c++)"org::freedesktop::dbus::Error::~Error()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Error::Error(org::freedesktop::dbus::Error&&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Error::Error(org::freedesktop::dbus::Error&&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Error::operator=(org::freedesktop::dbus::Error&&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::make_error(DBusMessage*, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::make_signal(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::from_raw_message(DBusMessage*)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::make_method_call(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::make_method_return(DBusMessage*)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::Reader::Reader(std::shared_ptr<org::freedesktop::dbus::Message> const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::Reader::Reader(std::shared_ptr<org::freedesktop::dbus::Message> const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::Writer::Writer(std::shared_ptr<org::freedesktop::dbus::Message> const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::Writer::Writer(std::shared_ptr<org::freedesktop::dbus::Message> const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::reader()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::writer()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::Message(DBusMessage*, bool)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::Message(DBusMessage*, bool)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::~Message()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::~Message()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Error::print() const@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::destination() const@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::expects_reply() const@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::get() const@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::path() const@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::type() const@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::error() const@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::member() const@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::sender() const@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::interface() const@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::signature() const@Base" 0replaceme
+ (c++)"std::_Sp_counted_ptr<org::freedesktop::dbus::Message*, (__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 0replaceme
+ (c++)"std::_Sp_counted_ptr<org::freedesktop::dbus::Message*, (__gnu_cxx::_Lock_policy)2>::_M_dispose()@Base" 0replaceme
+ (c++)"std::_Sp_counted_ptr<org::freedesktop::dbus::Message*, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&)@Base" 0replaceme
+ (c++)"std::_Sp_counted_ptr<org::freedesktop::dbus::Message*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 0replaceme
+ (c++)"std::_Sp_counted_ptr<org::freedesktop::dbus::Message*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 0replaceme
+ (c++)"std::_Sp_counted_ptr<org::freedesktop::dbus::Message*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 0replaceme
+ (c++)"std::_Rb_tree_iterator<std::pair<org::freedesktop::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > std::_Rb_tree<org::freedesktop::dbus::Message::Type, std::pair<org::freedesktop::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::_Select1st<std::pair<org::freedesktop::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::less<org::freedesktop::dbus::Message::Type>, std::allocator<std::pair<org::freedesktop::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::_M_insert_unique_<std::pair<org::freedesktop::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > const&>(std::_Rb_tree_const_iterator<std::pair<org::freedesktop::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::pair<org::freedesktop::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > const&)@Base" 0replaceme
+ (c++)"typeinfo for std::_Sp_counted_ptr<org::freedesktop::dbus::Message*, (__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
+ (c++)"typeinfo name for std::_Sp_counted_ptr<org::freedesktop::dbus::Message*, (__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
+ (c++)"vtable for std::_Sp_counted_ptr<org::freedesktop::dbus::Message*, (__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::MatchRule::path(org::freedesktop::dbus::types::ObjectPath const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::MatchRule::type(org::freedesktop::dbus::Message::Type)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::MatchRule::member(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::MatchRule::sender(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::MatchRule::interface(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::MatchRule::MatchRule(org::freedesktop::dbus::MatchRule const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::MatchRule::MatchRule()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::MatchRule::MatchRule(org::freedesktop::dbus::MatchRule const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::MatchRule::MatchRule()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::MatchRule::~MatchRule()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::MatchRule::~MatchRule()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::MatchRule::operator=(org::freedesktop::dbus::MatchRule const&)@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::MatchRule::path(org::freedesktop::dbus::types::ObjectPath const&) const@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::MatchRule::type(org::freedesktop::dbus::Message::Type) const@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::MatchRule::member(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) const@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::MatchRule::sender(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) const@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::MatchRule::as_string() const@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::MatchRule::interface(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) const@Base" 0replaceme
  (c++)"org::freedesktop::dbus::Service::root_object()@Base" 0replaceme
  (c++)"org::freedesktop::dbus::Service::use_service(std::shared_ptr<org::freedesktop::dbus::Bus> const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
  (c++)"org::freedesktop::dbus::Service::remove_match(org::freedesktop::dbus::MatchRule const&)@Base" 0replaceme

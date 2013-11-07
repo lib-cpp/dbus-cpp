@@ -118,7 +118,7 @@ public:
     {
         auto result = object->invoke_method_synchronously<IBenchmarkService::MethodInt64, int64_t>(arg);
         if (result.is_error())
-            throw std::runtime_error(result.error());
+            throw std::runtime_error(result.error().print());
 
         return result.value();
     }
@@ -127,7 +127,7 @@ public:
     {
         auto result = object->invoke_method_synchronously<IBenchmarkService::MethodVectorInt32, std::vector<int32_t>>(arg);
         if (result.is_error())
-            throw std::runtime_error(result.error());
+            throw std::runtime_error(result.error().print());
 
         return result.value();
     }

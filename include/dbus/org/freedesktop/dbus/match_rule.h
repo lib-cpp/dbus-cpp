@@ -18,11 +18,12 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_MATCH_RULE_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_MATCH_RULE_H_
 
-#include "org/freedesktop/dbus/message.h"
-#include "org/freedesktop/dbus/types/object_path.h"
+#include <org/freedesktop/dbus/message.h>
+#include <org/freedesktop/dbus/visibility.h>
 
-#include <map>
-#include <sstream>
+#include <org/freedesktop/dbus/types/object_path.h>
+
+#include <memory>
 #include <string>
 
 namespace org
@@ -34,188 +35,96 @@ namespace dbus
 /**
  * @brief Wraps a DBus match rule.
  */
-class MatchRule
+class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC MatchRule
 {
-private:
-    struct Comma
-    {
-        Comma() : is_required(false)
-        {
-        }
-
-        friend std::ostream& operator<<(std::ostream& out, const Comma& c)
-        {
-            if (c.is_required)
-                out << ",";
-            c.is_required = !c.is_required;
-            return out;
-        }
-
-        mutable bool is_required;
-    };
 public:
     /**
-     * @brief Constructs an empty match rule.
+     * @brief Constructs an invalid match rule.
      */
-    inline MatchRule()
-    {
-    }
+    MatchRule();
+    ~MatchRule();
+    MatchRule(const MatchRule& rhs);
+    MatchRule& operator=(const MatchRule& rhs);
 
     /**
      * @brief Adjusts the message type that this rule applies to.
      * @param t The new type
      * @return The match rule instance.
      */
-    inline MatchRule& type(Message::Type t)
-    {
-        d.type = t;
-        return *this;
-    }
+    MatchRule& type(Message::Type t);
 
     /**
      * @brief Adjusts the message type that this rule applies to.
      * @param t The new type
      * @return A new match rule instance.
      */
-    inline MatchRule type(Message::Type t) const
-    {
-        MatchRule result {*this};
-        result.d.type = t;
-        return result;
-    }
+    MatchRule type(Message::Type t) const;
 
     /**
      * @brief Adjusts the sender that this rule applies to.
      * @param s The new sender
      * @return The match rule instance.
      */
-    inline MatchRule& sender(const std::string& s)
-    {
-        d.sender = s;
-        return *this;
-    }
+    MatchRule& sender(const std::string& s);
 
     /**
      * @brief Adjusts the sender that this rule applies to.
      * @param s The new sender
      * @return A new match rule instance.
      */
-    inline MatchRule sender(const std::string& s) const
-    {
-        MatchRule result {*this};
-        result.d.sender = s;
-        return result;
-    }
+    MatchRule sender(const std::string& s) const;
 
     /**
      * @brief Adjusts the interface that this rule applies to.
      * @param i The new interface.
      * @return The match rule instance.
      */
-    inline MatchRule& interface(const std::string& i)
-    {
-        d.interface = i;
-        return *this;
-    }
+    MatchRule& interface(const std::string& i);
 
     /**
      * @brief Adjusts the interface that this rule applies to.
      * @param i The new interface.
      * @return A new match rule instance.
      */
-    inline MatchRule interface(const std::string& i) const
-    {
-        MatchRule result {*this};
-        result.d.interface = i;
-        return result;
-    }
+    MatchRule interface(const std::string& i) const;
 
     /**
      * @brief Adjusts the member that this rule applies to.
      * @param m The new member.
      * @return The match rule instance.
      */
-    inline MatchRule& member(const std::string& m)
-    {
-        d.member = m;
-        return *this;
-    }
+    MatchRule& member(const std::string& m);
 
     /**
      * @brief Adjusts the member that this rule applies to.
      * @param m The new member.
      * @return A new match rule instance.
      */
-    inline MatchRule member(const std::string& m) const
-    {
-        MatchRule result {*this};
-        result.d.member = m;
-        return result;
-    }
+    MatchRule member(const std::string& m) const;
 
     /**
      * @brief Adjusts the path that this rule applies to.
      * @param p The new path.
      * @return The match rule instance.
      */
-    inline MatchRule& path(const types::ObjectPath& p)
-    {
-        d.path = p;
-        return *this;
-    }
+    MatchRule& path(const types::ObjectPath& p);
 
     /**
      * @brief Adjusts the path that this rule applies to.
      * @param p The new path.
      * @return A new match rule instance.
      */
-    inline MatchRule path(const types::ObjectPath& p) const
-    {
-        MatchRule result {*this};
-        return result.path(p);
-    }
+    MatchRule path(const types::ObjectPath& p) const;
 
     /**
      * @brief Constructs a valid match rule string from this instance.
      * @return A string formatted according to DBus match rule rules.
      */
-    inline std::string as_string() const
-    {
-        static const std::map<Message::Type, std::string> lut =
-        {
-            {Message::Type::signal, "signal"},
-            {Message::Type::method_call, "method_call"},
-            {Message::Type::method_return, "method_return"},
-            {Message::Type::error, "error"}
-        };
-        Comma comma;
-        std::stringstream ss;
-        if (d.type != Message::Type::invalid)
-            ss << "type='" << lut.at(d.type) << "'" << comma;
-        if (!d.sender.empty())
-            ss << comma << "sender='" << d.sender << "'" << comma;
-        if (!d.interface.empty())
-            ss << comma << "interface='" << d.interface << "'" << comma;
-        if (!d.member.empty())
-            ss << comma << "member='" << d.member << "'" << comma;
-        if (!d.path.empty())
-            ss << comma << "path='" << d.path.as_string() << "'" << comma;
+    std::string as_string() const;
 
-        return ss.str();
-    }
 private:
-    struct Private
-    {
-        Private() : type(Message::Type::invalid)
-        {
-        }
-
-        Message::Type type;
-        std::string sender;
-        std::string interface;
-        std::string member;
-        types::ObjectPath path;
-    } d;
+    struct Private;
+    std::unique_ptr<Private> d;
 };
 }
 }

@@ -30,6 +30,8 @@ add_library(
 
   bus.cpp
   error.cpp
+  match_rule.cpp
+  message.cpp
   service.cpp
 
   asio/executor.cpp

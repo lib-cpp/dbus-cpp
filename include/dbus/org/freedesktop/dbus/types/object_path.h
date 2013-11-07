@@ -32,6 +32,9 @@ namespace dbus
 {
 namespace types
 {
+/**
+ * @brief The ObjectPath class encapsulates a DBus object path.
+ */
 class ObjectPath
 {
 public:
@@ -44,7 +47,7 @@ public:
     // However, this is spurious and 
     //   http://stackoverflow.com/questions/10750299/if-i-specify-a-default-value-for-an-argument-of-type-stdstring-in-c-cou
     // gives some insight.
-    ObjectPath(const std::string& path = ObjectPath::root()) : path(path)
+    inline ObjectPath(const std::string& path = ObjectPath::root()) : path(path)
     {
         DBusError error;
         dbus_error_init(std::addressof(error));
@@ -52,28 +55,28 @@ public:
             throw std::runtime_error("Invalid object path: " + std::string(error.message));
     }
 
-    bool empty() const
+    inline bool empty() const
     {
         return path.empty();
     }
 
-    const std::string& as_string() const
+    inline const std::string& as_string() const
     {
         return path;
     }
 
-    bool operator<(const ObjectPath& rhs) const
+    inline bool operator<(const ObjectPath& rhs) const
     {
         return path < rhs.path;
     }
 
-    bool operator==(const ObjectPath& rhs) const
+    inline bool operator==(const ObjectPath& rhs) const
     {
         return path == rhs.path;
     }
+
 private:
     friend struct Codec<types::ObjectPath>;
-
     std::string path;
 };
 inline std::ostream& operator<<(std::ostream& out, const ObjectPath& path)
@@ -135,7 +138,7 @@ namespace std
 template<>
 struct hash<org::freedesktop::dbus::types::ObjectPath>
 {
-    size_t operator()(const org::freedesktop::dbus::types::ObjectPath& p) const
+    inline size_t operator()(const org::freedesktop::dbus::types::ObjectPath& p) const
     {
         static const std::hash<std::string> h {};
         return h(p.as_string());

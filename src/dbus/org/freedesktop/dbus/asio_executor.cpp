@@ -376,5 +376,3 @@ class Executor : public org::freedesktop::dbus::Executor
 }
 }
 }
-
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_ASIO_EXECUTOR_H_

@@ -18,7 +18,9 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_RESULT_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_RESULT_H_
 
-#include "org/freedesktop/dbus/codec.h"
+#include <org/freedesktop/dbus/codec.h>
+#include <org/freedesktop/dbus/error.h>
+#include <org/freedesktop/dbus/message.h>
 
 #include <dbus/dbus.h>
 
@@ -36,55 +38,39 @@ namespace dbus
  * @tparam T Result type.
  */
 template<typename T>
-struct Result
+class Result
 {
+public:
     /**
      * @brief from_message parses the result from a raw dbus message.
      * @throw std::runtime_error in case of errors.
      * @param msg The message to parse the result from.
      */
-    inline void from_message(DBusMessage* msg)
+    inline static Result from_message(DBusMessage* msg)
     {
-        if (dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_METHOD_CALL)
+        Result result;
+
+        auto message = Message::from_raw_message(msg);
+
+        switch(message->type())
+        {
+        case Message::Type::method_call:
             throw std::runtime_error("Cannot construct result from method call");
-        if (dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_SIGNAL)
+            break;
+        case Message::Type::signal:
             throw std::runtime_error("Cannot construct result from signal");
-
-        if (dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_ERROR)
-        {
-            struct Scope
-            {
-                Scope()
-                {
-                    dbus_error_init(std::addressof(error));
-                }
-
-                ~Scope()
-                {
-                    dbus_error_free(std::addressof(error));
-                }
-
-                DBusError error;
-            } scope;
-
-            dbus_set_error_from_message(std::addressof(scope.error), msg);
-            set_error(std::string(scope.error.name) + ": " + std::string(scope.error.message));
+            break;
+        case Message::Type::error:
+            result.d.error = message->error();
+            break;
+        case Message::Type::method_return:
+            message->reader() >> result.d.value;
+            break;
+        default:
+            break;
         }
-        else if (dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_METHOD_RETURN)
-        {
-            reset_error();
-            DBusMessageIter it;
-            if (!dbus_message_iter_init(msg, std::addressof(it)))
-                throw std::runtime_error("Could not initialize message iterator");
-            try
-            {
-                decode_message(std::addressof(it), d.value);
-            }
-            catch (const std::runtime_error& e)
-            {
-                set_error(e);
-            }
-        }
+
+        return std::move(result);
     }
 
     /**
@@ -93,45 +79,16 @@ struct Result
      */
     inline bool is_error() const
     {
-        return d.is_error;
+        return static_cast<bool>(d.error);
     }
 
     /**
      * @brief Accesses the contained error message if any.
      * @return A string describing the error state. Can be empty if no error occured.
      */
-    inline const std::string& error() const
+    inline const Error& error() const
     {
-        return d.what;
-    }
-
-    /**
-     * @brief Adjusts the error contained within this object.
-     * @param [in] The new error description.
-     */
-    inline void set_error(const std::runtime_error& error)
-    {
-        set_error(error.what());
-    }
-
-    /**
-     * @brief Adjusts the error contained within this object.
-     * @param [in] The new error description.
-     */
-    inline void set_error(const std::string& error)
-    {
-        d.is_error = true;
-        d.what = error;
-    }
-
-    /**
-     * @brief Resets the error state.
-     * @post is_error() returns false and error() returns an empty string.
-     */
-    inline void reset_error()
-    {
-        d.is_error = false;
-        d.what.clear();
+        return d.error;
     }
 
     /**
@@ -143,14 +100,10 @@ struct Result
         return d.value;
     }
 
+private:
     struct Private
     {
-        Private() : is_error(false), value()
-        {
-        }
-
-        bool is_error;
-        std::string what;
+        Error error;
         T value;
     } d;
 };
@@ -159,49 +112,36 @@ struct Result
  * @brief Wraps a remote method invocation and its error state. Template specialization for void results.
  */
 template<>
-struct Result<void>
+class Result<void>
 {
+public:
     /**
      * @brief from_message parses the result from a raw dbus message.
      * @throw std::runtime_error in case of errors.
      * @param msg The message to parse the result from.
      */
-    inline void from_message(DBusMessage* msg)
+    inline static Result from_message(DBusMessage* msg)
     {
-        if (dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_METHOD_CALL)
+        Result result;
+        auto message = Message::from_raw_message(msg);
+
+        switch(message->type())
+        {
+        case Message::Type::method_call:
             throw std::runtime_error("Cannot construct result from method call");
-        if (dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_SIGNAL)
+            break;
+        case Message::Type::signal:
             throw std::runtime_error("Cannot construct result from signal");
-
-        if (dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_ERROR)
-        {
-            struct Scope
-            {
-                Scope()
-                {
-                    dbus_error_init(std::addressof(error));
-                }
-
-                ~Scope()
-                {
-                    dbus_error_free(std::addressof(error));
-                }
-
-                DBusError error;
-            } scope;
-
-            dbus_set_error_from_message(std::addressof(scope.error), msg);
-            set_error(std::string(scope.error.name) + ": " + std::string(scope.error.message));
+            break;
+        case Message::Type::error:
+            result.d.error = message->error();
+            break;
+        case Message::Type::method_return:
+        default:
+            break;
         }
-        else if (dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_METHOD_RETURN)
-        {
-            reset_error();
-            DBusMessageIter iter;
-            if (dbus_message_iter_init(msg, std::addressof(iter)))
-            {
-                throw std::runtime_error("Expected an empty reply, received one containing values.");
-            }
-        }
+
+        return std::move(result);
     }
 
     /**
@@ -210,55 +150,22 @@ struct Result<void>
      */
     inline bool is_error() const
     {
-        return d.is_error;
+        return static_cast<bool>(d.error);
     }
 
     /**
      * @brief Accesses the contained error message if any.
      * @return A string describing the error state. Can be empty if no error occured.
      */
-    inline const std::string& error() const
+    inline const Error& error() const
     {
-        return d.what;
+        return d.error;
     }
 
-    /**
-     * @brief Adjusts the error contained within this object.
-     * @param [in] The new error description.
-     */
-    inline void set_error(const std::runtime_error& error)
-    {
-        set_error(error.what());
-    }
-
-    /**
-     * @brief Adjusts the error contained within this object.
-     * @param [in] The new error description.
-     */
-    inline void set_error(const std::string& s)
-    {
-        d.is_error = true;
-        d.what = s;
-    }
-
-    /**
-     * @brief Resets the error state.
-     * @post is_error() returns false and error() returns an empty string.
-     */
-    inline void reset_error()
-    {
-        d.is_error = false;
-        d.what.clear();
-    }
-
+private:
     struct Private
     {
-        Private() : is_error(false)
-        {
-        }
-
-        bool is_error;
-        std::string what;
+        Error error;
     } d;
 };
 }

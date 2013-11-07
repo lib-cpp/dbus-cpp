@@ -18,8 +18,10 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_H_
 
-#include "org/freedesktop/dbus/codec.h"
-#include "org/freedesktop/dbus/types/object_path.h"
+#include <org/freedesktop/dbus/codec.h>
+#include <org/freedesktop/dbus/visibility.h>
+
+#include <org/freedesktop/dbus/types/object_path.h>
 
 #include <dbus/dbus.h>
 
@@ -35,10 +37,12 @@ namespace freedesktop
 {
 namespace dbus
 {
+class Error;
+
 /**
  * @brief The Message class wraps a raw DBus message
  */
-class Message : public std::enable_shared_from_this<Message>
+class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Message : public std::enable_shared_from_this<Message>
 {
 public:
     typedef std::shared_ptr<Message> Ptr;
@@ -144,7 +148,7 @@ public:
      * @return An instance of message of type Type::method_call.
      * @throw std::runtime_error if any of the parameters violates the DBus specification.
      */
-    inline static std::shared_ptr<Message> make_method_call(
+    static std::shared_ptr<Message> make_method_call(
         const std::string& destination,
         const std::string& path,
         const std::string& interface,
@@ -155,7 +159,7 @@ public:
      * @param msg The message to reply to, must not be null. Must be of type Type::method_call.
      * @return An instance of message of type Type::method_return.
      */
-    inline static std::shared_ptr<Message> make_method_return(DBusMessage* msg);
+    static std::shared_ptr<Message> make_method_return(DBusMessage* msg);
 
     /**
      * @brief make_signal creates a message instance wrapping a signal emission.
@@ -164,7 +168,7 @@ public:
      * @param signal The actual signal name.
      * @return An instance of message of type Type::signal.
      */
-    inline static std::shared_ptr<Message> make_signal(
+    static std::shared_ptr<Message> make_signal(
         const std::string& path, 
         const std::string& interface, 
         const std::string& signal);
@@ -176,7 +180,7 @@ public:
      * @param error_desc Human-readable description of the error.
      * @return An instance of message of type Type::error.
      */
-    inline static std::shared_ptr<Message> make_error(
+    static std::shared_ptr<Message> make_error(
         DBusMessage* in_reply_to, 
         const std::string& error_name, 
         const std::string& error_desc);
@@ -186,62 +190,68 @@ public:
      * @param msg The message to wrap.
      * @return An instance of Message with a type corresponding to the type of the raw message.
      */
-    inline static std::shared_ptr<Message> from_raw_message(DBusMessage* msg);
+    static std::shared_ptr<Message> from_raw_message(DBusMessage* msg);
 
     /**
      * @brief Queries the type of the message.
      */
-    inline Type type() const;
+    Type type() const;
 
     /**
      * @brief Checks if the message expects a reply, i.e., is of type Type::method_call.
      */
-    inline bool expects_reply() const;
+    bool expects_reply() const;
 
     /**
      * @brief Queries the path of the object that this message belongs to.
      */
-    inline types::ObjectPath path() const;
+    types::ObjectPath path() const;
 
     /**
      * @brief Queries the member name that this message corresponds to.
      */
-    inline std::string member() const;
+    std::string member() const;
 
     /**
      * @brief Queries the type signature of this message.
      */
-    inline std::string signature() const;
+    std::string signature() const;
 
     /**
      * @brief Queries the interface name that this message corresponds to.
      */
-    inline std::string interface() const;
+    std::string interface() const;
 
     /**
      * @brief Queries the name of the destination that this message should go to.
      */
-    inline std::string destination() const;
+    std::string destination() const;
 
     /**
      * @brief Queries the name of the sender that this message originates from.
      */
-    inline std::string sender() const;
+    std::string sender() const;
+
+    /**
+      * @brief Extracts error information from the message.
+      * @throw std::runtime_error if not an error message.
+      */
+    Error error() const;
 
     /**
      * @brief Creates a Reader instance to read from this message.
      */
-    inline Reader reader();
+    Reader reader();
 
     /**
      * @brief Creates a Writer instance to write to this message.
      */
-    inline Writer writer();
+    Writer writer();
 
     /**
      * @brief Extracts the raw DBus message contained within this instance. Use with care.
      */
-    inline DBusMessage* get() const;
+    DBusMessage* get() const;
 
 private:
     Message(
@@ -251,7 +261,7 @@ private:
     std::shared_ptr<DBusMessage> dbus_message;
 };
 
-inline std::ostream& operator<<(std::ostream& out, const Message::Type& type);
+std::ostream& operator<<(std::ostream& out, const Message::Type& type);
 }
 }
 }

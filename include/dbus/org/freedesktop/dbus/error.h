@@ -18,7 +18,7 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_ERROR_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_ERROR_H_
 
-#include "org/freedesktop/dbus/visibility.h"
+#include <org/freedesktop/dbus/visibility.h>
 
 #include <memory>
 #include <string>
@@ -42,10 +42,12 @@ class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Error
      * @post operator bool() returns false.
      */
     Error();
+    Error(const Error&) = delete;
+    Error(Error&&);
     ~Error();
 
-    Error(const Error&) = delete;
     Error& operator=(const Error&) = delete;
+    Error& operator=(Error&&);
 
     /**
      * @brief Queries the name of the error. Non-empty if operator bool() returns true.
@@ -56,6 +58,11 @@ class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Error
      * @brief Queries the human readable description of the error. Non-empty if operator bool() returns true.
      */
     std::string message() const;
+
+    /**
+     * @brief Pretty prints name and message for consumption by humans.
+     */
+    std::string print() const;
 
     /**
      * @brief Checks if the error bit is set.

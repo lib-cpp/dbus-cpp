@@ -76,8 +76,7 @@ inline Result<ResultType> Object::invoke_method_synchronously(const Args& ... ar
         parent->get_connection()->send_with_reply_and_block_for_at_most(
             msg->get(), Method::default_timeout()));
     
-    Result<ResultType> result;
-    result.from_message(reply->get());
+    Result<ResultType> result = Result<ResultType>::from_message(reply->get());
     return result;
 }
 
@@ -107,8 +106,7 @@ inline std::future<Result<ResultType>> Object::invoke_method_asynchronously(cons
                 auto msg = dbus_pending_call_steal_reply(pending);
                 if (msg)
                 {
-                    Result<ResultType> result;
-                    result.from_message(msg);
+                    auto result = Result<ResultType>::from_message(msg);
                     promise->set_value(result);
                 }
                 else
