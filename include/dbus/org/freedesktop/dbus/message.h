@@ -354,6 +354,8 @@ public:
      */
     static std::shared_ptr<Message> from_raw_message(DBusMessage* msg);
 
+    ~Message();
+
     /**
      * @brief Queries the type of the message.
      */
@@ -418,7 +420,7 @@ public:
 private:
     Message(
         DBusMessage* msg, 
-        bool ref_on_construction = false);
+        bool ref_on_construction = false);    
     
     std::shared_ptr<DBusMessage> dbus_message;
 };

@@ -47,6 +47,10 @@ struct Message::Reader::Private
         ::memset(std::addressof(iter), 0, sizeof(iter));
     }
 
+    ~Private()
+    {
+    }
+
     void ensure_argument_type_or_throw(ArgumentType expected_type)
     {
         auto actual_type = static_cast<ArgumentType>(dbus_message_iter_get_arg_type(std::addressof(iter)));
@@ -650,6 +654,10 @@ Message::Message(
 
     if (ref_on_construction)
         dbus_message_ref(msg);
+}
+
+Message::~Message()
+{
 }
 }
 }

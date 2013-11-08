@@ -164,7 +164,7 @@ const double default_double
     std::numeric_limits<double>::min()
 };
 
-std::shared_ptr<org::freedesktop::dbus::Message> a_method_call()
+org::freedesktop::dbus::Message::Ptr a_method_call()
 {
     return org::freedesktop::dbus::Message::make_method_call(
                 DBUS_SERVICE_DBUS,
@@ -174,7 +174,7 @@ std::shared_ptr<org::freedesktop::dbus::Message> a_method_call()
 }
 
 std::tuple<
-    std::shared_ptr<org::freedesktop::dbus::Message>,
+    org::freedesktop::dbus::Message::Ptr,
     std::function<const char*()>
     > a_method_call_with_basic_types_as_arguments()
 {
@@ -200,9 +200,11 @@ std::tuple<
 }
 
 template<typename T>
-void check_value(org::freedesktop::dbus::Message::Reader& reader, const T& expected_value)
+::testing::AssertionResult check_value(org::freedesktop::dbus::Message::Reader& reader, const T& expected_value)
 {
-    ASSERT_EQ(expected_value, org::freedesktop::dbus::decode_argument<T>(reader));
+    return expected_value == org::freedesktop::dbus::decode_argument<T>(reader) ?
+                ::testing::AssertionSuccess() :
+                ::testing::AssertionFailure();
 }
 }
 
@@ -217,16 +219,16 @@ TEST(Codec, DecodingAMessageOfBasicTypesYieldsCorrectValues)
     auto tuple = a_method_call_with_basic_types_as_arguments();
     auto reader = std::get<0>(tuple)->reader();
 
-    ASSERT_NO_FATAL_FAILURE(check_value(reader, default_bool););
-    ASSERT_NO_FATAL_FAILURE(check_value(reader, default_int8););
-    ASSERT_NO_FATAL_FAILURE(check_value(reader, default_int16););
-    ASSERT_NO_FATAL_FAILURE(check_value(reader, default_uint16););
-    ASSERT_NO_FATAL_FAILURE(check_value(reader, default_int32););
-    ASSERT_NO_FATAL_FAILURE(check_value(reader, default_uint32););
-    ASSERT_NO_FATAL_FAILURE(check_value(reader, default_int64););
-    ASSERT_NO_FATAL_FAILURE(check_value(reader, default_uint64););
-    ASSERT_NO_FATAL_FAILURE(check_value(reader, default_float););
-    ASSERT_NO_FATAL_FAILURE(check_value(reader, default_double););
+    EXPECT_TRUE(check_value(reader, default_bool));
+    EXPECT_TRUE(check_value(reader, default_int8));
+    EXPECT_TRUE(check_value(reader, default_int16));
+    EXPECT_TRUE(check_value(reader, default_uint16));
+    EXPECT_TRUE(check_value(reader, default_int32));
+    EXPECT_TRUE(check_value(reader, default_uint32));
+    EXPECT_TRUE(check_value(reader, default_int64));
+    EXPECT_TRUE(check_value(reader, default_uint64));
+    EXPECT_TRUE(check_value(reader, default_float));
+    EXPECT_TRUE(check_value(reader, default_double));
 }
 
 TEST(ObjectPath, TypeMapperSpecializationReturnsCorrectValues)
