@@ -61,11 +61,11 @@ TEST(Executor, ABusRunByAnExecutorReceivesSignals)
         auto service = dbus::Service::add_service<test::Service>(bus);
         auto skeleton = service->add_object_for_path(dbus::types::ObjectPath("/this/is/unlikely/to/exist/Service"));
         skeleton->install_method_handler<test::Service::Method>(
-            [bus, skeleton, expected_value](DBusMessage* msg)
+            [bus, skeleton, expected_value](const dbus::Message::Ptr& msg)
         {
             auto reply = dbus::Message::make_method_return(msg);
             reply->writer() << expected_value;
-            bus->send(reply->get());
+            bus->send(reply);
             skeleton->emit_signal<test::Service::Signals::Dummy, int64_t>(expected_value);
         });
         cross_process_sync.signal_ready();
@@ -88,7 +88,7 @@ TEST(Executor, ABusRunByAnExecutorReceivesSignals)
             received_signal_value = value;
             bus->stop();
         });
-        auto result = stub->invoke_method_synchronously<test::Service::Method, int32_t>();
+        auto result = stub->invoke_method_synchronously<test::Service::Method, int64_t>();
 
         if (t.joinable())
             t.join();

@@ -66,13 +66,17 @@ TEST(Message, AccessingAWriterOnAnyMessageSucceeds)
     const std::string interface = DBUS_SERVICE_DBUS;
     const std::string member = "ListNames";
 
-    auto msg = org::freedesktop::dbus::Message::make_method_call(destination, path, interface, member);
+    auto msg = org::freedesktop::dbus::Message::make_method_call(
+                destination,
+                path,
+                interface,
+                member);
 
     EXPECT_NO_THROW(auto writer = msg->writer());
 
     {
-        auto writer = msg->writer();
-        writer << 43 << 42.;
+        msg->writer().push_int16(43);
+        msg->writer().push_int16(42);
     }
 
     EXPECT_NO_THROW(auto writer = msg->writer(););
@@ -85,7 +89,11 @@ TEST(Message, WriteAndSuccessiveReadAreIdempotent)
     const std::string interface = DBUS_SERVICE_DBUS;
     const std::string member = "ListNames";
 
-    auto msg = org::freedesktop::dbus::Message::make_method_call(destination, path, interface, member);
+    auto msg = org::freedesktop::dbus::Message::make_method_call(
+                destination,
+                path,
+                interface,
+                member);
 
     const unsigned int expected_integer_value
     {
@@ -98,13 +106,13 @@ TEST(Message, WriteAndSuccessiveReadAreIdempotent)
 
     {
         auto writer = msg->writer();
-        writer << expected_integer_value << expected_floating_point_value;
+        writer.push_int32(expected_integer_value);
+        writer.push_floating_point(expected_floating_point_value);
     }
 
-    unsigned int i;
-    double d;
     auto reader = msg->reader();
-    reader >> i >> d;
+    auto i = reader.pop_int32();
+    auto d = reader.pop_floating_point();
 
     EXPECT_EQ(expected_integer_value, i);
     EXPECT_EQ(expected_floating_point_value, d);

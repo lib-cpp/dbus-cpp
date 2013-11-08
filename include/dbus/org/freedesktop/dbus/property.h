@@ -67,8 +67,8 @@ private:
         const std::string& name,
         bool writable);
 
-    inline void handle_get(DBusMessage* msg);
-    inline void handle_set(DBusMessage* msg);
+    inline void handle_get(const Message::Ptr& msg);
+    inline void handle_set(const Message::Ptr& msg);
 
     std::shared_ptr<Object> parent;
     std::string interface;

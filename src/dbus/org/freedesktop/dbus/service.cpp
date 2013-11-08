@@ -86,12 +86,12 @@ const Bus::Ptr& Service::get_connection() const
 
 void Service::add_match(const MatchRule& rule)
 {
-    connection->add_match(rule.as_string());
+    connection->add_match(rule);
 }
 
 void Service::remove_match(const MatchRule& rule)
 {
-    connection->remove_match(rule.as_string());
+    connection->remove_match(rule);
 }
 
 Service::Service(const Bus::Ptr& connection, const std::string& name)

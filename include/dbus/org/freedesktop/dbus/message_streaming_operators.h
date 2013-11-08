@@ -15,15 +15,10 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_TYPES_VARIANT_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_TYPES_VARIANT_H_
+#ifndef DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_STREAMING_OPERATORS_H_
+#define DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_STREAMING_OPERATORS_H_
 
-#include <org/freedesktop/dbus/types/any.h>
-
-#include <cstring>
-
-#include <memory>
-#include <stdexcept>
+#include <org/freedesktop/dbus/codec.h>
 
 namespace org
 {
@@ -31,35 +26,21 @@ namespace freedesktop
 {
 namespace dbus
 {
-namespace types
+template<typename T>
+Message::Reader operator>>(Message::Reader reader, T& out)
 {
-template<typename T = org::freedesktop::dbus::types::Any>
-class Variant
+    decode_argument(reader, out);
+    return std::move(reader);
+}
+
+template<typename T>
+Message::Writer operator<<(Message::Writer writer, const T& out)
 {
-public:
-    explicit Variant(const T& value = T()) : value(value)
-    {
-    }
+    encode_argument(writer, out);
+    return std::move(writer);
+}
+}
+}
+}
 
-    const T& get() const
-    {
-        return value;
-    }
-
-    void set(const T& new_value)
-    {
-        value = new_value;
-    }
-
-    bool operator==(const Variant<T>& rhs) const
-    {
-        return value == rhs.value;
-    }
-private:
-    T value;
-};
-}
-}
-}
-}
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_TYPES_VARIANT_H_
+#endif // DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_STREAMING_OPERATORS_H_

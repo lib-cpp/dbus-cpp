@@ -117,17 +117,17 @@ Property<PropertyType>::Property(
 
 template<typename PropertyType>
 void
-Property<PropertyType>::handle_get(DBusMessage* msg)
+Property<PropertyType>::handle_get(const Message::Ptr& msg)
 {
     auto reply = Message::make_method_return(msg);
     reply->writer() << property_value;
 
-    parent->parent->get_connection()->send(reply->get());
+    parent->parent->get_connection()->send(reply);
 }
 
 template<typename PropertyType>
 void
-Property<PropertyType>::handle_set(DBusMessage* msg)
+Property<PropertyType>::handle_set(const Message::Ptr& msg)
 {
     if (!writable)
     {
@@ -136,15 +136,14 @@ Property<PropertyType>::handle_set(DBusMessage* msg)
             traits::Service<interfaces::Properties>::interface_name() + ".NotWritableError",
             name + "is not writable");
 
-        parent->parent->get_connection()->send(error->get());
+        parent->parent->get_connection()->send(error);
         return;
     }
 
     std::string s;
-    auto m = Message::from_raw_message(msg);
     try
     {
-        m->reader() >> s >> s >> property_value;
+        msg->reader() >> s >> s >> property_value;
     }
     catch (...)
     {
@@ -153,12 +152,12 @@ Property<PropertyType>::handle_set(DBusMessage* msg)
             traits::Service<interfaces::Properties>::interface_name() + ".NotWritableError",
             name + "is not writable");
 
-        parent->parent->get_connection()->send(error->get());
+        parent->parent->get_connection()->send(error);
         return;
     }
 
     auto reply = Message::make_method_return(msg);
-    parent->parent->get_connection()->send(reply->get());
+    parent->parent->get_connection()->send(reply);
 }
 }
 }

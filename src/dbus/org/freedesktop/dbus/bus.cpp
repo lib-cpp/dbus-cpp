@@ -16,10 +16,29 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include "org/freedesktop/dbus/bus.h"
+#include <org/freedesktop/dbus/bus.h>
 
-#include "org/freedesktop/dbus/traits/timeout.h"
-#include "org/freedesktop/dbus/traits/watch.h"
+#include <org/freedesktop/dbus/match_rule.h>
+
+#include <org/freedesktop/dbus/traits/timeout.h>
+#include <org/freedesktop/dbus/traits/watch.h>
+
+namespace
+{
+DBusHandlerResult static_handle_message(
+        DBusConnection* connection,
+        DBusMessage* message,
+        void* user_data)
+{
+    (void) connection;
+    auto thiz =
+            static_cast<org::freedesktop::dbus::Bus*>(user_data);
+    return static_cast<DBusHandlerResult>(
+                thiz->handle_message(
+                    org::freedesktop::dbus::Message::from_raw_message(
+                        message)));
+}
+}
 
 namespace org
 {
@@ -27,18 +46,16 @@ namespace freedesktop
 {
 namespace dbus
 {
-DBusHandlerResult Bus::handle_message(DBusConnection*, DBusMessage* message, void* data)
+Bus::MessageHandlerResult Bus::handle_message(const Message::Ptr& message)
 {
-    auto thiz = static_cast<Bus*>(data);
-    thiz->message_type_router(message);
-
-    return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+    message_type_router(message);
+    return Bus::MessageHandlerResult::not_yet_handled;
 }
 
 Bus::Bus(WellKnownBus bus)
-        : connection(nullptr),
-          message_type_router([](DBusMessage* msg) { return dbus_message_get_type(msg); }),
-          signal_router([](DBusMessage* msg){ return types::ObjectPath {dbus_message_get_path(msg)}; })
+    : connection(nullptr),
+      message_type_router([](const Message::Ptr& msg) { return msg->type(); }),
+      signal_router([](const Message::Ptr& msg){ return msg->path(); })
 {
     static std::once_flag once;
     std::call_once(once, []() { dbus_threads_init_default(); std::atexit(dbus_shutdown); });
@@ -46,54 +63,71 @@ Bus::Bus(WellKnownBus bus)
     Error se;
 
     connection.reset(
-        dbus_bus_get_private(static_cast<DBusBusType>(bus), std::addressof(se.raw())),
-        [](DBusConnection*){}
-                     );
+                dbus_bus_get_private(static_cast<DBusBusType>(bus), std::addressof(se.raw())),
+                [](DBusConnection*){}
+    );
 
     if (!connection)
-        throw std::runtime_error(se.raw().message);
+        throw std::runtime_error(se.print());
 
     message_type_router.install_route(
-        DBUS_MESSAGE_TYPE_SIGNAL, 
-        std::bind(
-            &Bus::SignalRouter::operator(), 
-            std::ref(signal_router), 
-            std::placeholders::_1));
-    install_message_filter(handle_message, this);
+                Message::Type::signal,
+                std::bind(
+                    &Bus::SignalRouter::operator(),
+                    std::ref(signal_router),
+                    std::placeholders::_1));
+
+    dbus_connection_add_filter(
+                    connection.get(),
+                    static_handle_message,
+                    this,
+                    nullptr);
 }
 
 Bus::~Bus() noexcept
 {
-    uninstall_message_filter(handle_message, this);
+    dbus_connection_remove_filter(connection.get(), static_handle_message, this);
     dbus_connection_close(connection.get());
     dbus_connection_unref(connection.get());
 }
 
-uint32_t Bus::send(DBusMessage* msg)
+uint32_t Bus::send(const std::shared_ptr<Message>& msg)
 {
     dbus_uint32_t serial;
-    if (!dbus_connection_send(connection.get(), msg, std::addressof(serial)))
+    if (!dbus_connection_send(connection.get(), msg->get(), std::addressof(serial)))
         throw std::runtime_error("Problem sending message");
 
     return serial;
 }
 
-DBusMessage* Bus::send_with_reply_and_block_for_at_most(DBusMessage* msg, const std::chrono::milliseconds& milliseconds)
+std::shared_ptr<Message> Bus::send_with_reply_and_block_for_at_most(
+        const std::shared_ptr<Message>& msg,
+        const std::chrono::milliseconds& milliseconds)
 {
     Error se;
 
-    auto result = dbus_connection_send_with_reply_and_block(connection.get(), msg, milliseconds.count(), std::addressof(se.raw()));
+    auto result = dbus_connection_send_with_reply_and_block(
+                connection.get(),
+                msg->get(),
+                milliseconds.count(),
+                std::addressof(se.raw()));
 
     if (!result)
-        throw std::runtime_error(se.raw().message);
+        throw std::runtime_error(se.print());
 
-    return result;
+    return Message::from_raw_message(result);
 }
 
-DBusPendingCall* Bus::send_with_reply_and_timeout(DBusMessage* msg, const std::chrono::milliseconds& timeout)
+DBusPendingCall* Bus::send_with_reply_and_timeout(
+        const std::shared_ptr<Message>& msg,
+        const std::chrono::milliseconds& timeout)
 {
     DBusPendingCall* pending_call;
-    auto result = dbus_connection_send_with_reply(connection.get(), msg, std::addressof(pending_call), timeout.count());
+    auto result = dbus_connection_send_with_reply(
+                connection.get(),
+                msg->get(),
+                std::addressof(pending_call),
+                timeout.count());
 
     if (!result)
         throw std::runtime_error("Could not send message, not enough memory");
@@ -104,30 +138,20 @@ DBusPendingCall* Bus::send_with_reply_and_timeout(DBusMessage* msg, const std::c
     return pending_call;
 }
 
-bool Bus::install_message_filter(DBusHandleMessageFunction filter, void* cookie) noexcept
-{
-    return dbus_connection_add_filter(connection.get(), filter, cookie, nullptr);
-}
-
-void Bus::uninstall_message_filter(DBusHandleMessageFunction filter, void* cookie) noexcept
-{
-    dbus_connection_remove_filter(connection.get(), filter, cookie);
-}
-
-void Bus::add_match(const std::string& rule)
+void Bus::add_match(const MatchRule& rule)
 {
     Error se;
-    dbus_bus_add_match(connection.get(), rule.c_str(), std::addressof(se.raw()));
-    if (dbus_error_is_set(std::addressof(se.raw())))
-        throw std::runtime_error(se.raw().message);
+    dbus_bus_add_match(connection.get(), rule.as_string().c_str(), std::addressof(se.raw()));
+    if (se)
+        throw std::runtime_error(se.print());
 }
 
-void Bus::remove_match(const std::string& rule)
+void Bus::remove_match(const MatchRule& rule)
 {
     Error se;
-    dbus_bus_remove_match(connection.get(), rule.c_str(), std::addressof(se.raw()));
-    if (dbus_error_is_set(std::addressof(se.raw())))
-        throw std::runtime_error(se.raw().message);
+    dbus_bus_remove_match(connection.get(), rule.as_string().c_str(), std::addressof(se.raw()));
+    if (se)
+        throw std::runtime_error(se.print());
 }
 
 bool Bus::has_owner_for_name(const std::string& name)

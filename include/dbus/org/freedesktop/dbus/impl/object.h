@@ -18,19 +18,19 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_IMPL_OBJECT_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_IMPL_OBJECT_H_
 
-#include "org/freedesktop/dbus/bus.h"
-#include "org/freedesktop/dbus/codec.h"
-#include "org/freedesktop/dbus/match_rule.h"
-#include "org/freedesktop/dbus/message_router.h"
-#include "org/freedesktop/dbus/result.h"
-#include "org/freedesktop/dbus/signal.h"
-#include "org/freedesktop/dbus/interfaces/properties.h"
-#include "org/freedesktop/dbus/traits/service.h"
-#include "org/freedesktop/dbus/types/any.h"
-#include "org/freedesktop/dbus/types/object_path.h"
-#include "org/freedesktop/dbus/types/variant.h"
-#include "org/freedesktop/dbus/types/stl/map.h"
-#include "org/freedesktop/dbus/types/stl/string.h"
+#include <org/freedesktop/dbus/bus.h>
+#include <org/freedesktop/dbus/match_rule.h>
+#include <org/freedesktop/dbus/message_router.h>
+#include <org/freedesktop/dbus/message_streaming_operators.h>
+#include <org/freedesktop/dbus/result.h>
+#include <org/freedesktop/dbus/signal.h>
+#include <org/freedesktop/dbus/interfaces/properties.h>
+#include <org/freedesktop/dbus/traits/service.h>
+#include <org/freedesktop/dbus/types/any.h>
+#include <org/freedesktop/dbus/types/object_path.h>
+#include <org/freedesktop/dbus/types/variant.h>
+#include <org/freedesktop/dbus/types/stl/map.h>
+#include <org/freedesktop/dbus/types/stl/string.h>
 
 #include <functional>
 #include <future>
@@ -54,8 +54,9 @@ inline void Object::emit_signal(const Args& ... args)
     if (!msg)
         throw std::runtime_error("No memory available to allocate DBus message");
 
-    msg->writer().append(args...);
-    parent->get_connection()->send(msg->get());
+    auto writer = msg->writer();
+    encode_message(writer, args...);
+    parent->get_connection()->send(msg);
 }
 
 template<typename Method, typename ResultType, typename... Args>
@@ -70,13 +71,14 @@ inline Result<ResultType> Object::invoke_method_synchronously(const Args& ... ar
     if (!msg)
         throw std::runtime_error("No memory available to allocate DBus message");
     
-    msg->writer().append(args...);
+    auto writer = msg->writer();
+    encode_message(writer, args...);
     
-    auto reply = Message::from_raw_message(
-        parent->get_connection()->send_with_reply_and_block_for_at_most(
-            msg->get(), Method::default_timeout()));
+    auto reply = parent->get_connection()->send_with_reply_and_block_for_at_most(
+                msg,
+                Method::default_timeout());
     
-    Result<ResultType> result = Result<ResultType>::from_message(reply->get());
+    Result<ResultType> result = Result<ResultType>::from_message(reply);
     return result;
 }
 
@@ -203,7 +205,7 @@ inline void Object::unregister_object_path(DBusConnection*, void*)
 inline DBusHandlerResult Object::on_new_message(DBusConnection*, DBusMessage* message, void* user_data)
 {
     auto thiz = static_cast<Object*>(user_data);
-    return thiz->method_router(message) ? DBUS_HANDLER_RESULT_HANDLED : DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+    return thiz->method_router(Message::from_raw_message(message)) ? DBUS_HANDLER_RESULT_HANDLED : DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
 }
 
 inline Object::Object(
@@ -213,35 +215,33 @@ inline Object::Object(
           object_path(path),
           signal_router
           {
-              [](DBusMessage* msg)
+              [](const Message::Ptr& msg)
               {
-                  return SignalKey {dbus_message_get_interface(msg), dbus_message_get_member(msg)};
+                  return SignalKey {msg->interface(), msg->member()};
               }
           },
           method_router
           {
-              [](DBusMessage* msg)
+              [](const Message::Ptr& msg)
               {
-                  return MethodKey {dbus_message_get_interface(msg), dbus_message_get_member(msg)};
+                  return MethodKey {msg->interface(), msg->member()};
               }
           },
           get_property_router
           {
-              [](DBusMessage* msg)
+              [](const Message::Ptr& msg)
               {
                   std::string interface, member;
-                  auto m = Message::from_raw_message(msg);
-                  m->reader() >> interface >> member;
-                  return PropertyKey {interface, member};
+                  msg->reader() >> interface >> member;
+                  return PropertyKey{interface, member};
               }
           },
           set_property_router
           {
-              [](DBusMessage* msg)
+              [](const Message::Ptr& msg)
               {
                   std::string interface, member;
-                  auto m = Message::from_raw_message(msg);
-                  m->reader() >> interface >> member;
+                  msg->reader() >> interface >> member;
                   return PropertyKey {interface, member};
               }
           }

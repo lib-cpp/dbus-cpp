@@ -80,77 +80,59 @@ struct TypeMapper<std::map<T, U>>
 template<typename T, typename U>
 struct Codec<std::pair<T, U>>
 {
-    static void encode_argument(DBusMessageIter* out, const std::pair<T, U>& arg)
+    static void encode_argument(Message::Writer& out, const std::pair<T, U>& arg)
     {
-        DBusMessageIter sub;
-        if (!dbus_message_iter_open_container(
-                    out,
-                    DBUS_TYPE_DICT_ENTRY,
-                    nullptr,
-                    std::addressof(sub)))
-            throw std::runtime_error("Problem opening container");
-
-        Codec<typename std::decay<T>::type>::encode_argument(std::addressof(sub), arg.first);
-        Codec<typename std::decay<U>::type>::encode_argument(std::addressof(sub), arg.second);
-
-        if (!dbus_message_iter_close_container(out, std::addressof(sub)))
-            throw std::runtime_error("Problem closing container");
+        Codec<typename std::decay<T>::type>::encode_argument(out, arg.first);
+        Codec<typename std::decay<U>::type>::encode_argument(out, arg.second);
     }
 
-    static void decode_argument(DBusMessageIter* out, std::pair<T, U>& arg)
+    static void decode_argument(Message::Reader& in, std::pair<T, U>& arg)
     {
-        DBusMessageIter sub;
-        dbus_message_iter_recurse(out, std::addressof(sub));
-
-        Codec<T>::decode_argument(std::addressof(sub), arg.first);
-        dbus_message_iter_next(std::addressof(sub));
-        Codec<U>::decode_argument(std::addressof(sub), arg.second);
-        dbus_message_iter_next(std::addressof(sub));
+        Codec<T>::decode_argument(in, arg.first);
+        Codec<U>::decode_argument(in, arg.second);
     }
 };
 
 template<typename T, typename U>
 struct Codec<std::map<T, U>>
 {
-    static void encode_argument(DBusMessageIter* out, const std::map<T, U>& arg)
+    static void encode_argument(Message::Writer& out, const std::map<T, U>& arg)
     {
-        DBusMessageIter sub;
-        if (!dbus_message_iter_open_container(
-                    out,
-                    DBUS_TYPE_ARRAY,
-                    helper::TypeMapper<typename std::map<T, U>::value_type>::signature().c_str(),
-                    std::addressof(sub)))
-            throw std::runtime_error("Problem opening container");
-
-        std::for_each(
-            arg.begin(),
-            arg.end(),
-            std::bind(Codec<std::pair<T,U>>::encode_argument, std::addressof(sub), std::placeholders::_1));
-
-        if (!dbus_message_iter_close_container(out, std::addressof(sub)))
-            throw std::runtime_error("Problem closing container");
+        auto aw = out.open_array(
+                    types::Signature(
+                        helper::TypeMapper<typename std::map<T, U>::value_type>::signature()));
+        {
+            for (auto element : arg)
+            {
+                auto de = aw.open_dict_entry();
+                {
+                    Codec<std::pair<T,U>>::encode_argument(de, element);
+                }
+                aw.close_dict_entry(de);
+            }
+        }
+        out.close_array(aw);
     }
 
-    static void decode_argument(DBusMessageIter* in, std::map<T,U>& out)
+    static void decode_argument(Message::Reader& in, std::map<T,U>& out)
     {
-        if (dbus_message_iter_get_arg_type(in) != static_cast<int>(ArgumentType::array))
-            throw std::runtime_error("Incompatible argument type: dbus_message_iter_get_arg_type(in) != ArgumentType::array");
+        auto array_reader = in.pop_array();
 
-        if (dbus_message_iter_get_element_type(in) != static_cast<int>(ArgumentType::dictionary_entry))
-            throw std::runtime_error("Incompatible element type");
-
-        int current_type;
-        DBusMessageIter sub;
-        dbus_message_iter_recurse(in, std::addressof(sub));
-        while ((current_type = dbus_message_iter_get_arg_type (std::addressof(sub))) != DBUS_TYPE_INVALID)
+        while (true)
         {
-            std::pair<T, U> v;
-            Codec<std::pair<T, U>>::decode_argument(std::addressof(sub), v);
-            bool inserted = false;
-            std::tie(std::ignore, inserted) = out.insert(v);
-            if (!inserted)
-                throw std::runtime_error("Could not insert decoded element into map");
-            dbus_message_iter_next(std::addressof(sub));
+            try
+            {
+                auto de = array_reader.pop_dict_entry();
+                std::pair<T, U> v;
+                Codec<std::pair<T, U>>::decode_argument(de, v);
+                bool inserted = false;
+                std::tie(std::ignore, inserted) = out.insert(v);
+                if (!inserted)
+                    throw std::runtime_error("Could not insert decoded element into map");
+            } catch(...)
+            {
+                return;
+            }
         }
     }
 };

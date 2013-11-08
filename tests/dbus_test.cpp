@@ -57,15 +57,14 @@ TEST(DBus, QueryingUnixProcessIdReturnsCorrectResult)
 
         uint32_t sender_pid = 0, sender_uid = 0;
 
-        auto handler = [&daemon, &sender_pid, &sender_uid, bus](DBusMessage* msg)
+        auto handler = [&daemon, &sender_pid, &sender_uid, bus](const dbus::Message::Ptr& msg)
         {
-            auto tmp = dbus::Message::from_raw_message(msg); 
-            auto sender = tmp->sender();
+            auto sender = msg->sender();
             sender_pid = daemon.get_connection_unix_process_id(sender);
             sender_uid = daemon.get_connection_unix_user(sender);
 
             auto reply = dbus::Message::make_method_return(msg);
-            bus->send(reply->get());
+            bus->send(reply);
             bus->stop();
         };
 

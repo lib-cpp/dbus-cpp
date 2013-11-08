@@ -70,12 +70,12 @@ TEST(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
         auto signal = skeleton->get_signal<test::Service::Signals::Dummy>();
         auto writable_property = skeleton->get_property<test::Service::Properties::Dummy>();
         writable_property->value(expected_value);
-        skeleton->install_method_handler<test::Service::Method>([bus, skeleton, expected_value](DBusMessage* msg)
+        skeleton->install_method_handler<test::Service::Method>([bus, skeleton, expected_value](const dbus::Message::Ptr& msg)
         {
             std::cout << __PRETTY_FUNCTION__ << std::endl;
             auto reply = dbus::Message::make_method_return(msg);
             reply->writer() << expected_value;
-            bus->send(reply->get());
+            bus->send(reply);
             skeleton->emit_signal<test::Service::Signals::Dummy, int64_t>(expected_value);
         });
         std::thread t{[bus](){ bus->run(); }};
@@ -101,7 +101,7 @@ TEST(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
             received_signal_value = value;
             bus->stop();
         });
-        auto result = stub->invoke_method_synchronously<test::Service::Method, int32_t>();
+        auto result = stub->invoke_method_synchronously<test::Service::Method, int64_t>();
         ASSERT_FALSE(result.is_error());
         ASSERT_EQ(expected_value, result.value());
         ASSERT_EQ(expected_value, writable_property->value());
@@ -158,7 +158,7 @@ TEST(VoidResult, FromMethodCallYieldsException)
     auto msg = dbus::Message::make_method_call(DBUS_SERVICE_DBUS, DBUS_PATH_DBUS, DBUS_SERVICE_DBUS, "ListNames");
     dbus::Result<void> result;
 
-    EXPECT_ANY_THROW(result.from_message(msg->get()));
+    EXPECT_ANY_THROW(result.from_message(msg));
 }
 
 TEST(VoidResult, FromErrorYieldsError)
@@ -168,8 +168,8 @@ TEST(VoidResult, FromErrorYieldsError)
 
     auto msg = dbus::Message::make_method_call(DBUS_SERVICE_DBUS, DBUS_PATH_DBUS, DBUS_SERVICE_DBUS, "ListNames");
     dbus_message_set_serial(msg->get(), 1);
-    auto error_reply = dbus::Message::make_error(msg->get(), error_name, error_description);
-    dbus::Result<void> result = dbus::Result<void>::from_message(error_reply->get());
+    auto error_reply = dbus::Message::make_error(msg, error_name, error_description);
+    dbus::Result<void> result = dbus::Result<void>::from_message(error_reply);
     EXPECT_TRUE(result.is_error());
     EXPECT_EQ(error_name + ": " + error_description, result.error().print());
 }
@@ -178,12 +178,12 @@ TEST(VoidResult, FromNonEmptyMethodReturnYieldsException)
 {
     auto msg = dbus::Message::make_method_call(DBUS_SERVICE_DBUS, DBUS_PATH_DBUS, DBUS_SERVICE_DBUS, "ListNames");
     dbus_message_set_serial(msg->get(), 1);
-    auto reply = dbus::Message::make_method_return(msg->get());
+    auto reply = dbus::Message::make_method_return(msg);
     reply->writer() << 42;
 
     dbus::Result<void> result;
 
-    EXPECT_NO_THROW(result.from_message(reply->get()));
+    EXPECT_NO_THROW(result.from_message(reply));
 }
 
 TEST(NonVoidResult, DefaultConstructionYieldsANonErrorResult)
@@ -197,7 +197,7 @@ TEST(NonVoidResult, FromMethodCallYieldsException)
     auto msg = dbus::Message::make_method_call(DBUS_SERVICE_DBUS, DBUS_PATH_DBUS, DBUS_SERVICE_DBUS, "ListNames");
     dbus::Result<int32_t> result;
 
-    EXPECT_ANY_THROW(result.from_message(msg->get()));
+    EXPECT_ANY_THROW(result.from_message(msg));
 }
 
 TEST(NonVoidResult, FromErrorYieldsError)
@@ -207,8 +207,8 @@ TEST(NonVoidResult, FromErrorYieldsError)
 
     auto msg = dbus::Message::make_method_call(DBUS_SERVICE_DBUS, DBUS_PATH_DBUS, DBUS_SERVICE_DBUS, "ListNames");
     dbus_message_set_serial(msg->get(), 1);
-    auto error_reply = dbus::Message::make_error(msg->get(), error_name, error_description);
-    auto result = dbus::Result<int32_t>::from_message(error_reply->get());
+    auto error_reply = dbus::Message::make_error(msg, error_name, error_description);
+    auto result = dbus::Result<int32_t>::from_message(error_reply);
 
     EXPECT_TRUE(result.is_error());
     EXPECT_EQ(error_name + ": " + error_description, result.error().print());
@@ -216,11 +216,16 @@ TEST(NonVoidResult, FromErrorYieldsError)
 
 TEST(NonVoidResult, FromEmptyMethodReturnYieldsException)
 {
-    auto msg = dbus::Message::make_method_call(DBUS_SERVICE_DBUS, DBUS_PATH_DBUS, DBUS_SERVICE_DBUS, "ListNames");
+    auto msg = dbus::Message::make_method_call(
+                DBUS_SERVICE_DBUS,
+                DBUS_PATH_DBUS,
+                DBUS_SERVICE_DBUS,
+                "ListNames");
+
     dbus_message_set_serial(msg->get(), 1);
-    auto reply = dbus::Message::make_method_return(msg->get());
+    auto reply = dbus::Message::make_method_return(msg);
 
     dbus::Result<int32_t> result;
 
-    EXPECT_ANY_THROW(result.from_message(reply->get()));
+    EXPECT_ANY_THROW(result.from_message(reply));
 }

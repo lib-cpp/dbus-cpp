@@ -39,7 +39,7 @@ class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC MatchRule
 {
 public:
     /**
-     * @brief Constructs an invalid match rule.
+     * @brief Constructs a valid match rule.
      */
     MatchRule();
     ~MatchRule();

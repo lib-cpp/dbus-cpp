@@ -18,13 +18,14 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_BUS_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_BUS_H_
 
-#include "org/freedesktop/dbus/error.h"
-#include "org/freedesktop/dbus/executor.h"
-#include "org/freedesktop/dbus/message_router.h"
-#include "org/freedesktop/dbus/visibility.h"
-#include "org/freedesktop/dbus/well_known_bus.h"
+#include <org/freedesktop/dbus/error.h>
+#include <org/freedesktop/dbus/executor.h>
+#include <org/freedesktop/dbus/message.h>
+#include <org/freedesktop/dbus/message_router.h>
+#include <org/freedesktop/dbus/visibility.h>
+#include <org/freedesktop/dbus/well_known_bus.h>
 
-#include "org/freedesktop/dbus/types/object_path.h"
+#include <org/freedesktop/dbus/types/object_path.h>
 
 #include <cstring>
 
@@ -48,6 +49,7 @@ namespace freedesktop
 {
 namespace dbus
 {
+class MatchRule;
 /**
  * @brief The Bus class constitutes a very thin wrapper and the starting point to expose low-level DBus functionality for internal purposes.
  */
@@ -55,7 +57,20 @@ class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Bus
 {
   public:
     typedef std::shared_ptr<Bus> Ptr;
+    typedef MessageRouter<Message::Type> MessageTypeRouter;
     typedef MessageRouter<types::ObjectPath> SignalRouter;
+
+    /**
+     * @brief The MessageHandlerResult enum summarizes possible replies of a MessageHandler.
+     */
+    enum class MessageHandlerResult
+    {
+        handled = DBUS_HANDLER_RESULT_HANDLED, ///< Message has had its effect - no need to run more handlers.
+        not_yet_handled = DBUS_HANDLER_RESULT_NOT_YET_HANDLED, ///< Message has not had any effect - see if other handlers want it.
+        need_memory = DBUS_HANDLER_RESULT_NEED_MEMORY ///< Need more memory, please try again later with more memory.
+    };
+
+    typedef std::function<MessageHandlerResult(const Message::Ptr& msg)> MessageHandler;
 
     /**
      * @brief Creates a connection to a well-known bus. The implementation takes care of setting up thread-safety flags for DBus.
@@ -63,6 +78,7 @@ class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Bus
      */
     explicit Bus(WellKnownBus bus);
 
+    // A Bus instance is not copy-able.
     Bus(const Bus&) = delete;
 
     /**
@@ -79,7 +95,7 @@ class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Bus
      * @return A reply serial.
      * @throw std::runtime_error in case of errors.
      */
-    uint32_t send(DBusMessage* msg);
+    uint32_t send(const std::shared_ptr<Message>& msg);
 
     /**
      * @brief Invokes a function and blocks for a specified amount of time waiting for a result.
@@ -88,8 +104,8 @@ class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Bus
      * @return The reply message or null in case of errors.
      * @throw std::runtime_error if a timeout occurs.
      */
-    DBusMessage* send_with_reply_and_block_for_at_most(
-        DBusMessage* msg, 
+    std::shared_ptr<Message> send_with_reply_and_block_for_at_most(
+        const std::shared_ptr<Message>& msg,
         const std::chrono::milliseconds& milliseconds);
 
     /**
@@ -99,39 +115,20 @@ class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Bus
      * @return The waitable, pending call for this method invocation or null in case of errors.
      */
     DBusPendingCall* send_with_reply_and_timeout(
-        DBusMessage* msg, 
-        const std::chrono::milliseconds& timeout);
-
-    /**
-     * @brief Installs a message callback to the underlying DBus connection.
-     * @param filter The callback to install.
-     * @param cookie The cookie/context to be passed to the callback invocation.
-     * @return true if installing the filter was successful, false otherwise.
-     */
-    bool install_message_filter(
-        DBusHandleMessageFunction filter, 
-        void* cookie) noexcept;
-
-    /**
-     * @brief Uninstalls a message callback from the underlying DBus connection.
-     * @param filter The callback to be uninstalled.
-     * @param cookie The cookie that further specifies the callback instance.
-     */
-    void uninstall_message_filter(
-        DBusHandleMessageFunction filter, 
-        void* cookie) noexcept;
+        const std::shared_ptr<Message>& msg,
+        const std::chrono::milliseconds& timeout);    
 
     /**
      * @brief Installs a match rule to the underlying DBus connection.
      * @param rule The match rule to be installed, has to be a valid match rule.
      */
-    void add_match(const std::string& rule);
+    void add_match(const MatchRule& rule);
 
     /**
      * @brief Uninstalls a match rule to the underlying DBus connection.
      * @param rule The match rule to be uninstalled.
      */
-    void remove_match(const std::string& rule);
+    void remove_match(const MatchRule& rule);
 
     /**
      * @brief Checks if the given name is owned on this bus connection.
@@ -166,15 +163,15 @@ class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Bus
      */
     DBusConnection* raw() const;
 
-  private:
-    static DBusHandlerResult handle_message(
-        DBusConnection*, 
-        DBusMessage* message, 
-        void* data);
+    /**
+      * @brief Hands over a message to the internal message and signal routers.
+      */
+    MessageHandlerResult handle_message(const Message::Ptr& msg);
 
+  private:
     std::shared_ptr<DBusConnection> connection;
     Executor::Ptr executor;
-    MessageRouter<int> message_type_router;
+    MessageTypeRouter message_type_router;
     SignalRouter signal_router;
 };
 }

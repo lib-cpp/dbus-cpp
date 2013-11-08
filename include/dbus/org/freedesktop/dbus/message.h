@@ -18,10 +18,13 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_H_
 
-#include <org/freedesktop/dbus/codec.h>
 #include <org/freedesktop/dbus/visibility.h>
 
+#include <org/freedesktop/dbus/types/any.h>
 #include <org/freedesktop/dbus/types/object_path.h>
+#include <org/freedesktop/dbus/types/signature.h>
+#include <org/freedesktop/dbus/types/unix_fd.h>
+#include <org/freedesktop/dbus/types/variant.h>
 
 #include <dbus/dbus.h>
 
@@ -65,42 +68,109 @@ public:
     class Reader
     {
     public:
-        Reader(const Reader&) = default;
-        Reader& operator=(const Reader&) = default;
+        ~Reader();
+
+        Reader(const Reader&) = delete;
+        Reader& operator=(const Reader&) = delete;
+
+        Reader(Reader&&);
+        Reader& operator=(Reader&&);
 
         /**
-         * @brief Reads an instance of type T from the underlying message and advances the iterator into the message.
-         * @tparam T The type to read from the underlying message.
-         * @param [out] t The instance of T to read to.
-         * @return The instance of the reader.
+         * @brief Reads a byte from the underlying message.
          */
-        template<typename T>
-        inline Reader& operator>>(T& t);
+        std::int8_t pop_byte();
 
         /**
-         * @brief Reads an instance of type T from the underlying message. Does not advance the iterator into the message.
-         * @tparam T The type to read from the underlying message.
-         * @param [out] t The instance of T to read to.
+         * @brief Reads a boolean from the underlying message.
          */
-        template<typename T>
-        inline void peek(T& t);
+        bool pop_boolean();
 
         /**
-         * @brief Reads an instance of type T from the underlying message and advances the iterator into the message.
-         * @tparam T The type to read from the underlying message.
-         * @param [out] t The instance of T to read to.
-         * @return The instance of the reader.
+         * @brief Reads an int16 from the underlying message.
          */
-        template<typename T>
-        inline Reader& pop(T& t);
+        std::int16_t pop_int16();
 
-    protected:
+        /**
+         * @brief Reads a uint16 from the underlying message.
+         */
+        std::uint16_t pop_uint16();
+
+        /**
+         * @brief Reads an int32 from the underlying message.
+         */
+        std::int32_t pop_int32();
+
+        /**
+         * @brief Reads a uint32 from the underlying message.
+         */
+        std::uint32_t pop_uint32();
+
+        /**
+         * @brief Reads an int64 from the underlying message.
+         */
+        std::int64_t pop_int64();
+
+        /**
+         * @brief Reads a uint64 from the underlying message.
+         */
+        std::uint64_t pop_uint64();
+
+        /**
+         * @brief Reads a floating point value from the underlying message.
+         */
+        double pop_floating_point();
+
+        /**
+         * @brief Reads a string from the underlying message.
+         */
+        const char* pop_string();
+
+        /**
+         * @brief Reads an object_path from the underlying message.
+         */
+        types::ObjectPath pop_object_path();
+
+        /**
+         * @brief Reads a signature from the underlying message.
+         */
+        types::Signature pop_signature();
+
+        /**
+         * @brief Reads a unix fd from the underlying message.
+         */
+        types::UnixFd pop_unix_fd();
+
+        /**
+         * @brief Prepares reading of an array from the underlying message.
+         * @return A reader pointing to the array.
+         */
+        Reader pop_array();
+
+        /**
+         * @brief Prepares reading of a structure from the underlying message.
+         * @return A reader pointing into the structure.
+         */
+        Reader pop_structure();
+
+        /**
+         * @brief Prepares reading of a variant from the underlying message.
+         * @return A reader pointing into the variant.
+         */
+        Reader pop_variant();
+
+        /**
+         * @brief Prepares reading of a dict entry from the underlying message.
+         * @return A reader pointing to the array.
+         */
+        Reader pop_dict_entry();
+
+    private:
         friend class Message;
         explicit Reader(const std::shared_ptr<Message>& msg);
 
-    private:
-        std::shared_ptr<Message> message;
-        DBusMessageIter iter;
+        struct Private;
+        std::unique_ptr<Private> d;
     };
 
     /**
@@ -109,34 +179,126 @@ public:
     class Writer
     {
     public:
-        Writer(const Writer&) = default;
-        Writer& operator=(const Writer&) = default;
+        ~Writer();
+        Writer(const Writer&) = delete;
+        Writer& operator=(const Writer&) = delete;
+
+        Writer(Writer&&);
+        Writer& operator=(Writer&&);
 
         /**
-         * @brief Writes an instance of type T to the underlying message and advances the iterator into the message.
-         * @tparam T The type to write to the underlying message.
-         * @param [out] t The instance of T to write.
-         * @return The instance of the Writer.
+         * @brief Writes a byte from the underlying message.
          */
-        template<typename T>
-        inline Writer& operator<<(const T& t);
+        void push_byte(std::int8_t value);
 
         /**
-         * @brief Writes an instance of type T to the underlying message and advances the iterator into the message.
-         * @tparam T The type to write to the underlying message.
-         * @param [out] t The instance of T to write.
-         * @return The instance of the Writer.
+         * @brief Writes a boolean from the underlying message.
          */
-        template<typename... Args>
-        inline Writer& append(const Args& ... args);
+        void push_boolean(bool value);
 
-    protected:
+        /**
+         * @brief Writes an int16 from the underlying message.
+         */
+        void push_int16(std::int16_t value);
+
+        /**
+         * @brief Writes a uint16 from the underlying message.
+         */
+        void push_uint16(std::uint16_t value);
+
+        /**
+         * @brief Writes an int32 from the underlying message.
+         */
+        void push_int32(std::int32_t value);
+
+        /**
+         * @brief Writes a uint32 from the underlying message.
+         */
+        void push_uint32(std::uint32_t value);
+
+        /**
+         * @brief Writes an int64 from the underlying message.
+         */
+        void push_int64(std::int64_t value);
+
+        /**
+         * @brief Writes a uint64 from the underlying message.
+         */
+        void push_uint64(std::uint64_t value);
+
+        /**
+         * @brief Writes a floating point value from the underlying message.
+         */
+        void push_floating_point(double value);
+
+        /**
+         * @brief Writes a string from the underlying message.
+         */
+        void push_stringn(const char* value, std::size_t size);
+
+        /**
+         * @brief Writes an object_path from the underlying message.
+         */
+        void push_object_path(const types::ObjectPath& value);
+
+        /**
+         * @brief Writes a signature from the underlying message.
+         */
+        void push_signature(const types::Signature& value);
+
+        /**
+         * @brief Writes a unix fd from the underlying message.
+         */
+        void push_unix_fd(const types::UnixFd& value);
+
+        /**
+         * @brief Prepares writing of an array to the underlying message.
+         * @param [in] signature The signature of the contained data type.
+         */
+        Writer open_array(const types::Signature& signature);
+
+        /**
+         * @brief Finalizes writing of an array to the underlying message.
+         */
+        void close_array(Writer writer);
+
+        /**
+         * @brief Prepares writing of a structure to the underlying message.
+         */
+        Writer open_structure();
+
+        /**
+         * @brief Finalizes writing of a structure to the underlying message.
+         */
+        void close_structure(Writer writer);
+
+        /**
+         * @brief Prepares writing of a variant to the underlying message.
+         * @param [in] signature The signature of the contained data type.
+         */
+        Writer open_variant(const types::Signature& signature);
+
+        /**
+         * @brief Finalizes writing of a variant to the underlying message.
+         */
+        void close_variant(Writer writer);
+
+        /**
+         * @brief Prepares writing of a dict entry to the underlying message.
+         */
+        Writer open_dict_entry();
+
+        /**
+         * @brief Finalizes writing of a dict entry to the underlying message.
+         */
+        void close_dict_entry(Writer writer);
+
+    private:
         friend class Message;
         explicit Writer(const std::shared_ptr<Message>& msg);
 
-    private:
-        std::shared_ptr<Message> message;
-        DBusMessageIter iter;
+        struct Private;
+        std::unique_ptr<Private> d;
     };
 
     /**
@@ -159,7 +321,7 @@ public:
      * @param msg The message to reply to, must not be null. Must be of type Type::method_call.
      * @return An instance of message of type Type::method_return.
      */
-    static std::shared_ptr<Message> make_method_return(DBusMessage* msg);
+    static std::shared_ptr<Message> make_method_return(const Message::Ptr& msg);
 
     /**
      * @brief make_signal creates a message instance wrapping a signal emission.
@@ -181,7 +343,7 @@ public:
      * @return An instance of message of type Type::error.
      */
     static std::shared_ptr<Message> make_error(
-        DBusMessage* in_reply_to, 
+        const Message::Ptr& in_reply_to,
         const std::string& error_name, 
         const std::string& error_desc);
 
@@ -260,8 +422,6 @@ private:
     
     std::shared_ptr<DBusMessage> dbus_message;
 };
-
-std::ostream& operator<<(std::ostream& out, const Message::Type& type);
 }
 }
 }

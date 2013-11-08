@@ -18,8 +18,8 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_OBJECT_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_OBJECT_H_
 
-#include "org/freedesktop/dbus/bus.h"
-#include "org/freedesktop/dbus/service.h"
+#include <org/freedesktop/dbus/bus.h>
+#include <org/freedesktop/dbus/service.h>
 
 #include <functional>
 #include <future>
@@ -91,7 +91,7 @@ class Object : public std::enable_shared_from_this<Object>
 
   public:
     typedef std::shared_ptr<Object> Ptr;
-    typedef std::function<void(DBusMessage*)> MethodHandler;
+    typedef std::function<void(const Message::Ptr&)> MethodHandler;
 
     /**
      * @brief Emits a signal with arguments for this object.

@@ -164,37 +164,32 @@ const double default_double
     std::numeric_limits<double>::min()
 };
 
-std::shared_ptr<DBusMessage> a_method_call()
+std::shared_ptr<org::freedesktop::dbus::Message> a_method_call()
 {
-    return std::shared_ptr<DBusMessage>(
-               dbus_message_new_method_call(DBUS_SERVICE_DBUS, DBUS_PATH_DBUS, DBUS_SERVICE_DBUS, "ListNames"),
-               [](DBusMessage* msg)
-    {
-        dbus_message_unref(msg);
-    });
+    return org::freedesktop::dbus::Message::make_method_call(
+                DBUS_SERVICE_DBUS,
+                DBUS_PATH_DBUS,
+                DBUS_SERVICE_DBUS,
+                "ListNames");
 }
 
 std::tuple<
-std::shared_ptr<DBusMessage>,
+    std::shared_ptr<org::freedesktop::dbus::Message>,
     std::function<const char*()>
     > a_method_call_with_basic_types_as_arguments()
 {
     auto msg = a_method_call();
-
-    DBusMessageIter iter;
-    dbus_message_iter_init_append(msg.get(), std::addressof(iter));
-    {
-        EXPECT_NO_THROW(org::freedesktop::dbus::Codec<bool>::encode_argument(std::addressof(iter), default_bool););
-        EXPECT_NO_THROW(org::freedesktop::dbus::Codec<int8_t>::encode_argument(std::addressof(iter), default_int8););
-        EXPECT_NO_THROW(org::freedesktop::dbus::Codec<int16_t>::encode_argument(std::addressof(iter), default_int16););
-        EXPECT_NO_THROW(org::freedesktop::dbus::Codec<uint16_t>::encode_argument(std::addressof(iter), default_uint16););
-        EXPECT_NO_THROW(org::freedesktop::dbus::Codec<int32_t>::encode_argument(std::addressof(iter), default_int32););
-        EXPECT_NO_THROW(org::freedesktop::dbus::Codec<uint32_t>::encode_argument(std::addressof(iter), default_uint32););
-        EXPECT_NO_THROW(org::freedesktop::dbus::Codec<int64_t>::encode_argument(std::addressof(iter), default_int64););
-        EXPECT_NO_THROW(org::freedesktop::dbus::Codec<uint64_t>::encode_argument(std::addressof(iter), default_uint64););
-        EXPECT_NO_THROW(org::freedesktop::dbus::Codec<float>::encode_argument(std::addressof(iter), default_float););
-        EXPECT_NO_THROW(org::freedesktop::dbus::Codec<double>::encode_argument(std::addressof(iter), default_double););
-    }
+    auto writer = msg->writer();
+    EXPECT_NO_THROW(org::freedesktop::dbus::Codec<bool>::encode_argument(writer, default_bool););
+    EXPECT_NO_THROW(org::freedesktop::dbus::Codec<int8_t>::encode_argument(writer, default_int8););
+    EXPECT_NO_THROW(org::freedesktop::dbus::Codec<int16_t>::encode_argument(writer, default_int16););
+    EXPECT_NO_THROW(org::freedesktop::dbus::Codec<uint16_t>::encode_argument(writer, default_uint16););
+    EXPECT_NO_THROW(org::freedesktop::dbus::Codec<int32_t>::encode_argument(writer, default_int32););
+    EXPECT_NO_THROW(org::freedesktop::dbus::Codec<uint32_t>::encode_argument(writer, default_uint32););
+    EXPECT_NO_THROW(org::freedesktop::dbus::Codec<int64_t>::encode_argument(writer, default_int64););
+    EXPECT_NO_THROW(org::freedesktop::dbus::Codec<uint64_t>::encode_argument(writer, default_uint64););
+    EXPECT_NO_THROW(org::freedesktop::dbus::Codec<float>::encode_argument(writer, default_float););
+    EXPECT_NO_THROW(org::freedesktop::dbus::Codec<double>::encode_argument(writer, default_double););
 
     std::function<const char*()> signature = []()
     {
@@ -205,43 +200,40 @@ std::shared_ptr<DBusMessage>,
 }
 
 template<typename T>
-void check_value_and_advance(DBusMessageIter* iter, const T& expected_value)
+void check_value(org::freedesktop::dbus::Message::Reader& reader, const T& expected_value)
 {
-    ASSERT_EQ(expected_value, org::freedesktop::dbus::decode_argument<T>(iter));
-    dbus_message_iter_next(iter);
+    ASSERT_EQ(expected_value, org::freedesktop::dbus::decode_argument<T>(reader));
 }
 }
 
 TEST(Codec, EncodingOfBasicTypeYieldsCorrectMessageSignatures)
 {
     auto tuple = a_method_call_with_basic_types_as_arguments();
-    EXPECT_STREQ(dbus_message_get_signature(std::get<0>(tuple).get()), std::get<1>(tuple)());
+    EXPECT_EQ(std::get<0>(tuple)->signature(), std::get<1>(tuple)());
 }
 
 TEST(Codec, DecodingAMessageOfBasicTypesYieldsCorrectValues)
 {
     auto tuple = a_method_call_with_basic_types_as_arguments();
+    auto reader = std::get<0>(tuple)->reader();
 
-    DBusMessageIter iter;
-    EXPECT_EQ(TRUE, dbus_message_iter_init(std::get<0>(tuple).get(), std::addressof(iter)));
-
-    ASSERT_NO_FATAL_FAILURE(check_value_and_advance(std::addressof(iter), default_bool););
-    ASSERT_NO_FATAL_FAILURE(check_value_and_advance(std::addressof(iter), default_int8););
-    ASSERT_NO_FATAL_FAILURE(check_value_and_advance(std::addressof(iter), default_int16););
-    ASSERT_NO_FATAL_FAILURE(check_value_and_advance(std::addressof(iter), default_uint16););
-    ASSERT_NO_FATAL_FAILURE(check_value_and_advance(std::addressof(iter), default_int32););
-    ASSERT_NO_FATAL_FAILURE(check_value_and_advance(std::addressof(iter), default_uint32););
-    ASSERT_NO_FATAL_FAILURE(check_value_and_advance(std::addressof(iter), default_int64););
-    ASSERT_NO_FATAL_FAILURE(check_value_and_advance(std::addressof(iter), default_uint64););
-    ASSERT_NO_FATAL_FAILURE(check_value_and_advance(std::addressof(iter), default_float););
-    ASSERT_NO_FATAL_FAILURE(check_value_and_advance(std::addressof(iter), default_double););
+    ASSERT_NO_FATAL_FAILURE(check_value(reader, default_bool););
+    ASSERT_NO_FATAL_FAILURE(check_value(reader, default_int8););
+    ASSERT_NO_FATAL_FAILURE(check_value(reader, default_int16););
+    ASSERT_NO_FATAL_FAILURE(check_value(reader, default_uint16););
+    ASSERT_NO_FATAL_FAILURE(check_value(reader, default_int32););
+    ASSERT_NO_FATAL_FAILURE(check_value(reader, default_uint32););
+    ASSERT_NO_FATAL_FAILURE(check_value(reader, default_int64););
+    ASSERT_NO_FATAL_FAILURE(check_value(reader, default_uint64););
+    ASSERT_NO_FATAL_FAILURE(check_value(reader, default_float););
+    ASSERT_NO_FATAL_FAILURE(check_value(reader, default_double););
 }
 
 TEST(ObjectPath, TypeMapperSpecializationReturnsCorrectValues)
 {
     namespace dbus = org::freedesktop::dbus;
     ASSERT_EQ(dbus::ArgumentType::object_path, dbus::helper::TypeMapper<dbus::types::ObjectPath>::type_value());
-    ASSERT_FALSE(dbus::helper::TypeMapper<dbus::types::ObjectPath>::is_basic_type());
+    ASSERT_TRUE(dbus::helper::TypeMapper<dbus::types::ObjectPath>::is_basic_type());
     ASSERT_TRUE(dbus::helper::TypeMapper<dbus::types::ObjectPath>::requires_signature());
     ASSERT_STREQ(DBUS_TYPE_OBJECT_PATH_AS_STRING, dbus::helper::TypeMapper<dbus::types::ObjectPath>::signature().c_str());
 }
@@ -254,22 +246,18 @@ TEST(ObjectPath, EncodingAndDecodingWorksCorrectly)
         DBUS_PATH_DBUS
     };
     auto msg = a_method_call();
-    DBusMessageIter iter;
-    dbus_message_iter_init_append(msg.get(), std::addressof(iter));
+    auto writer = msg->writer();
+    ASSERT_NO_THROW(dbus::encode_argument(writer, expected_value););
 
-    {
-        ASSERT_NO_THROW(dbus::encode_argument(std::addressof(iter), expected_value););
-    }
-
-    dbus_message_iter_init(msg.get(), std::addressof(iter));
-    ASSERT_EQ(expected_value, dbus::decode_argument<dbus::types::ObjectPath>(std::addressof(iter)));
+    auto reader = msg->reader();
+    ASSERT_EQ(expected_value, dbus::decode_argument<dbus::types::ObjectPath>(reader));
 }
 
 TEST(Unixfd, TypeMapperSpecializationReturnsCorrectValues)
 {
     namespace dbus = org::freedesktop::dbus;
     ASSERT_EQ(dbus::ArgumentType::unix_fd, dbus::helper::TypeMapper<dbus::types::UnixFd>::type_value());
-    ASSERT_FALSE(dbus::helper::TypeMapper<dbus::types::UnixFd>::is_basic_type());
+    ASSERT_TRUE(dbus::helper::TypeMapper<dbus::types::UnixFd>::is_basic_type());
     ASSERT_TRUE(dbus::helper::TypeMapper<dbus::types::UnixFd>::requires_signature());
     ASSERT_STREQ(DBUS_TYPE_UNIX_FD_AS_STRING, dbus::helper::TypeMapper<dbus::types::UnixFd>::signature().c_str());
 }
@@ -284,15 +272,12 @@ TEST(UnixFd, EncodingAndDecodingWorksCorrectly)
         eventfd(0,0)
     };
     auto msg = a_method_call();
-    DBusMessageIter iter;
-    dbus_message_iter_init_append(msg.get(), std::addressof(iter));
+    auto writer = msg->writer();
 
-    {
-        ASSERT_NO_THROW(dbus::encode_argument(std::addressof(iter), expected_value););
-    }
+    ASSERT_NO_THROW(dbus::encode_argument(writer, expected_value););
 
-    dbus_message_iter_init(msg.get(), std::addressof(iter));
-    auto fd = dbus::decode_argument<dbus::types::UnixFd>(std::addressof(iter));
+    auto reader = msg->reader();
+    auto fd = dbus::decode_argument<dbus::types::UnixFd>(reader);
 
     // We cannot just check for equality of fd and expected_value as libdbus duplicates the fd.
     static const uint64_t magic_value
@@ -309,7 +294,7 @@ TEST(Variant, TypeMapperSpecializationReturnsCorrectValues)
 {
     namespace dbus = org::freedesktop::dbus;
     ASSERT_EQ(dbus::ArgumentType::variant, dbus::helper::TypeMapper<dbus::types::Variant<double>>::type_value());
-    ASSERT_FALSE(dbus::helper::TypeMapper<dbus::types::ObjectPath>::is_basic_type());
+    ASSERT_TRUE(dbus::helper::TypeMapper<dbus::types::ObjectPath>::is_basic_type());
     ASSERT_TRUE(dbus::helper::TypeMapper<dbus::types::ObjectPath>::requires_signature());
     ASSERT_STREQ(DBUS_TYPE_VARIANT_AS_STRING DBUS_TYPE_DOUBLE_AS_STRING, dbus::helper::TypeMapper<dbus::types::Variant<double>>::signature().c_str());
 }
@@ -319,22 +304,19 @@ TEST(Variant, EncodingAndDecodingWorksCorrectly)
     namespace dbus = org::freedesktop::dbus;
     const dbus::types::Variant<double> expected_value {42.};
     auto msg = a_method_call();
-    DBusMessageIter iter;
-    dbus_message_iter_init_append(msg.get(), std::addressof(iter));
+    auto writer = msg->writer();
 
-    {
-        ASSERT_NO_THROW(dbus::encode_argument(std::addressof(iter), expected_value););
-    }
+    ASSERT_NO_THROW(dbus::encode_argument(writer, expected_value););
 
-    dbus_message_iter_init(msg.get(), std::addressof(iter));
-    ASSERT_EQ(expected_value, dbus::decode_argument<dbus::types::Variant<double>>(std::addressof(iter)));
+    auto reader = msg->reader();
+    ASSERT_EQ(expected_value, dbus::decode_argument<dbus::types::Variant<double>>(reader));
 }
 
 TEST(Signature, TypeMapperSpecializationReturnsCorrectValues)
 {
     namespace dbus = org::freedesktop::dbus;
     ASSERT_EQ(dbus::ArgumentType::signature, dbus::helper::TypeMapper<dbus::types::Signature>::type_value());
-    ASSERT_FALSE(dbus::helper::TypeMapper<dbus::types::Signature>::is_basic_type());
+    ASSERT_TRUE(dbus::helper::TypeMapper<dbus::types::Signature>::is_basic_type());
     ASSERT_TRUE(dbus::helper::TypeMapper<dbus::types::Signature>::requires_signature());
     ASSERT_STREQ(DBUS_TYPE_SIGNATURE_AS_STRING, dbus::helper::TypeMapper<dbus::types::Signature>::signature().c_str());
 }
@@ -343,16 +325,15 @@ TEST(Signature, EncodingAndDecodingWorksCorrectly)
 {
     namespace dbus = org::freedesktop::dbus;
     const dbus::types::Signature expected_value
-    {"(ii)"
+    {
+        "(ii)"
     };
     auto msg = a_method_call();
-    DBusMessageIter iter;
-    dbus_message_iter_init_append(msg.get(), std::addressof(iter));
-
+    auto writer = msg->writer();
     {
-        ASSERT_NO_THROW(dbus::encode_argument(std::addressof(iter), expected_value););
+        ASSERT_NO_THROW(dbus::encode_argument(writer, expected_value););
     }
-
-    dbus_message_iter_init(msg.get(), std::addressof(iter));
-    ASSERT_EQ(expected_value, dbus::decode_argument<dbus::types::Signature>(std::addressof(iter)));
+    auto reader = msg->reader();
+    auto signature = dbus::decode_argument<dbus::types::Signature>(reader);
+    ASSERT_EQ(expected_value, signature);
 }

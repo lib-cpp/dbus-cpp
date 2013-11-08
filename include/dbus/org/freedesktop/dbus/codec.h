@@ -18,7 +18,8 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_CODEC_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_CODEC_H_
 
-#include "org/freedesktop/dbus/helper/type_mapper.h"
+#include <org/freedesktop/dbus/message.h>
+#include <org/freedesktop/dbus/helper/type_mapper.h>
 
 #include <dbus/dbus.h>
 
@@ -41,25 +42,11 @@ struct Codec
 {
     /**
      * @brief Encodes an argument to a DBus message
-     * @param out Output iterator into the outgoing message.
+     * @param out Output writer into the outgoing message.
      * @param arg The argument to encode.
      * @throw std::runtime_error in case of errors.
      */
-    inline static void encode_argument(DBusMessageIter* out, const T& arg)
-    {
-        static_assert(helper::TypeMapper<T>::is_basic_type(), "Default codec only defined for basic types");
-        if (std::is_same<T, typename helper::DBusTypeMapper<helper::TypeMapper<T>::type_value()>::Type>::value)
-        {
-            if (!dbus_message_iter_append_basic(out, static_cast<int>(helper::TypeMapper<T>::type_value()), std::addressof(arg)))
-                throw std::runtime_error("Not enough memory when appending basic type to message");
-        }
-        else
-        {
-            typename helper::DBusTypeMapper<helper::TypeMapper<T>::type_value()>::Type value {arg};
-            if (!dbus_message_iter_append_basic(out, static_cast<int>(helper::TypeMapper<T>::type_value()), std::addressof(value)))
-                throw std::runtime_error("Not enough memory when appending basic type to message");
-        }
-    }
+    static void encode_argument(Message::Writer& out, const T& arg);
 
     /**
      * @brief Decodes an argument from a DBus message.
@@ -67,20 +54,7 @@ struct Codec
      * @param arg The argument to decode to.
      * @throw std::runtime_error in case of errors.
      */
-    inline static void decode_argument(DBusMessageIter* in, T& arg)
-    {
-        static_assert(helper::TypeMapper<T>::is_basic_type(), "Default codec only defined for basic types");
-        if (std::is_same<T, typename helper::DBusTypeMapper<helper::TypeMapper<T>::type_value()>::Type>::value)
-        {
-            dbus_message_iter_get_basic(in, std::addressof(arg));
-        }
-        else
-        {
-            typename helper::DBusTypeMapper<helper::TypeMapper<T>::type_value()>::Type value {};
-            dbus_message_iter_get_basic(in, std::addressof(value));
-            arg = value;
-        }
-    }
+    static void decode_argument(Message::Reader& in, T& arg);
 };
 
 /**
@@ -92,47 +66,279 @@ struct Codec<void>
     /**
      * @brief Does nothing
      */
-    inline static void encode_argument(DBusMessageIter*)
+    inline static void encode_argument(Message::Writer&)
     {
     }
 
     /**
      * @brief Does nothing
      */
-    inline static void decode_argument(DBusMessageIter*)
+    inline static void decode_argument(Message::Reader&)
     {
     }
 };
 
 /**
- * @brief Template specialization for bool argument types.
+ * @brief Template specialization for byte argument types.
+ */
+template<>
+struct Codec<std::int8_t>
+{
+    inline static void encode_argument(Message::Writer& out, const std::int8_t& value)
+    {
+        out.push_byte(value);
+    }
+
+    inline static void decode_argument(Message::Reader& in, std::int8_t& value)
+    {
+        value = in.pop_byte();
+    }
+};
+
+/**
+ * @brief Template specialization for boolean argument types.
  */
 template<>
 struct Codec<bool>
 {
-    /**
-     * @brief Encodes the boolean argument as a DBUS_TYPE_BOOLEAN.
-     * @param out Output iterator to write to.
-     * @param arg The boolean argument.
-     * @throw std::runtime_error if not enough memory is available to append a boolean argument to the message/iterator.
-     */
-    inline static void encode_argument(DBusMessageIter* out, const bool& arg)
+    inline static void encode_argument(Message::Writer& out, bool value)
     {
-        dbus_bool_t value = arg ? TRUE : FALSE;
-        if (!dbus_message_iter_append_basic(out, DBUS_TYPE_BOOLEAN, std::addressof(value)))
-            throw std::runtime_error("Not enough memory when appending basic type to message");
+        out.push_boolean(value);
     }
 
-    /**
-     * @brief Decodes a boolean argument from the message and stores it into the supplied bool.
-     * @param in The input iterator into the message.
-     * @param arg The argument to store the decoded value into.
-     */
-    inline static void decode_argument(DBusMessageIter* in, bool& arg)
+    inline static void decode_argument(Message::Reader& in, bool& value)
     {
-        dbus_bool_t value;
-        dbus_message_iter_get_basic(in, std::addressof(value));
-        arg = value == TRUE;
+        value = in.pop_boolean();
+    }
+};
+
+/**
+ * @brief Template specialization for int16 argument types.
+ */
+template<>
+struct Codec<std::int16_t>
+{
+    inline static void encode_argument(Message::Writer& out, std::int16_t value)
+    {
+        out.push_int16(value);
+    }
+
+    inline static void decode_argument(Message::Reader& in, std::int16_t& value)
+    {
+        value = in.pop_int16();
+    }
+};
+
+/**
+ * @brief Template specialization for uint16 argument types.
+ */
+template<>
+struct Codec<std::uint16_t>
+{
+    inline static void encode_argument(Message::Writer& out, std::uint16_t value)
+    {
+        out.push_uint16(value);
+    }
+
+    inline static void decode_argument(Message::Reader& in, std::uint16_t& value)
+    {
+        value = in.pop_uint16();
+    }
+};
+
+/**
+ * @brief Template specialization for int32 argument types.
+ */
+template<>
+struct Codec<std::int32_t>
+{
+    inline static void encode_argument(Message::Writer& out, std::int32_t value)
+    {
+        out.push_int32(value);
+    }
+
+    inline static void decode_argument(Message::Reader& in, std::int32_t& value)
+    {
+        value = in.pop_int32();
+    }
+};
+
+/**
+ * @brief Template specialization for uint32 argument types.
+ */
+template<>
+struct Codec<std::uint32_t>
+{
+    inline static void encode_argument(Message::Writer& out, std::uint32_t value)
+    {
+        out.push_uint32(value);
+    }
+
+    inline static void decode_argument(Message::Reader& in, std::uint32_t& value)
+    {
+        value = in.pop_uint32();
+    }
+};
+
+/**
+ * @brief Template specialization for int64 argument types.
+ */
+template<>
+struct Codec<std::int64_t>
+{
+    inline static void encode_argument(Message::Writer& out, std::int64_t value)
+    {
+        out.push_int64(value);
+    }
+
+    inline static void decode_argument(Message::Reader& in, std::int64_t& value)
+    {
+        value = in.pop_int64();
+    }
+};
+
+/**
+ * @brief Template specialization for uint64 argument types.
+ */
+template<>
+struct Codec<std::uint64_t>
+{
+    inline static void encode_argument(Message::Writer& out, std::uint64_t value)
+    {
+        out.push_uint64(value);
+    }
+
+    inline static void decode_argument(Message::Reader& in, std::uint64_t& value)
+    {
+        value = in.pop_uint64();
+    }
+};
+
+/**
+ * @brief Template specialization for floating point argument types.
+ */
+template<>
+struct Codec<double>
+{
+    inline static void encode_argument(Message::Writer& out, double value)
+    {
+        out.push_floating_point(value);
+    }
+
+    inline static void decode_argument(Message::Reader& in, double& value)
+    {
+        value = in.pop_floating_point();
+    }
+};
+
+/**
+ * @brief Template specialization for floating point argument types.
+ */
+template<>
+struct Codec<float>
+{
+    inline static void encode_argument(Message::Writer& out, float value)
+    {
+        out.push_floating_point(value);
+    }
+
+    inline static void decode_argument(Message::Reader& in, float& value)
+    {
+        value = in.pop_floating_point();
+    }
+};
+
+/**
+ * @brief Template specialization for object path argument types.
+ */
+template<>
+struct Codec<types::ObjectPath>
+{
+    inline static void encode_argument(Message::Writer& out, const types::ObjectPath& value)
+    {
+        out.push_object_path(value);
+    }
+
+    inline static void decode_argument(Message::Reader& in, types::ObjectPath& value)
+    {
+        value = in.pop_object_path();
+    }
+};
+
+/**
+ * @brief Template specialization for object path argument types.
+ */
+template<>
+struct Codec<types::Signature>
+{
+    inline static void encode_argument(Message::Writer& out, const types::Signature& value)
+    {
+        out.push_signature(value);
+    }
+
+    inline static void decode_argument(Message::Reader& in, types::Signature& value)
+    {
+        value = in.pop_signature();
+    }
+};
+
+/**
+ * @brief Template specialization for object path argument types.
+ */
+template<>
+struct Codec<types::UnixFd>
+{
+    inline static void encode_argument(Message::Writer& out, const types::UnixFd& value)
+    {
+        out.push_unix_fd(value);
+    }
+
+    inline static void decode_argument(Message::Reader& in, types::UnixFd& value)
+    {
+        value = in.pop_unix_fd();
+    }
+};
+
+/**
+ * @brief Template specialization for variant argument types.
+ */
+template<typename T>
+struct Codec<types::Variant<T>>
+{
+    inline static void encode_argument(Message::Writer& out, const types::Variant<T>& value)
+    {
+        auto vw = out.open_variant(
+                    types::Signature(helper::TypeMapper<T>::signature()));
+        {
+            Codec<T>::encode_argument(vw, value.get());
+        }
+        out.close_variant(std::move(vw));
+    }
+
+    inline static void decode_argument(Message::Reader& in, types::Variant<T>& value)
+    {
+        auto vr = in.pop_variant(); T inner_value;
+        Codec<T>::decode_argument(vr, inner_value);
+        value.set(inner_value);
+    }
+};
+
+/**
+ * @brief Template specialization for any argument types.
+ */
+template<>
+struct Codec<types::Any>
+{
+    inline static void encode_argument(Message::Writer& out, const types::Any& value)
+    {
+        (void) out;
+        (void) value;
+    }
+
+    inline static void decode_argument(Message::Reader& in, types::Any& value)
+    {
+        (void) in;
+        (void) value;
     }
 };
 
@@ -144,7 +350,7 @@ struct Codec<bool>
  * @throw std::runtime_error as thrown by Codec<T>::encode_argument.
  */
 template<typename T>
-inline void encode_argument(DBusMessageIter* out, const T& arg)
+inline void encode_argument(Message::Writer& out, const T& arg)
 {
     Codec<typename std::decay<T>::type>::encode_argument(out, arg);
 }
@@ -152,7 +358,7 @@ inline void encode_argument(DBusMessageIter* out, const T& arg)
 /**
  * @brief Special overload to end compile-time recursion.
  */
-inline void encode_message(DBusMessageIter*) {}
+inline void encode_message(Message::Writer&) {}
 
 /**
  * @brief Compile-time recursion to encode a parameter pack into a DBus message.
@@ -161,7 +367,7 @@ inline void encode_message(DBusMessageIter*) {}
  * @throw std::runtime_error as propagated by Codec<Arg>::encode_argument.
  */
 template<typename Arg, typename... Args>
-inline void encode_message(DBusMessageIter* out, const Arg& arg, Args... params)
+inline void encode_message(Message::Writer& out, const Arg& arg, Args... params)
 {
     encode_argument(out, arg);
     encode_message(out, params...);
@@ -175,7 +381,7 @@ inline void encode_message(DBusMessageIter* out, const Arg& arg, Args... params)
  * @throw std::runtime_error as thrown by Codec<T>::decode_argument.
  */
 template<typename T>
-inline void decode_argument(DBusMessageIter* out, T& arg)
+inline void decode_argument(Message::Reader& out, T& arg)
 {
     Codec<T>::decode_argument(out, arg);
 }
@@ -188,7 +394,7 @@ inline void decode_argument(DBusMessageIter* out, T& arg)
  * @throw std::runtime_error as thrown by Codec<T>::decode_argument.
  */
 template<typename T>
-inline T decode_argument(DBusMessageIter* out)
+inline T decode_argument(Message::Reader& out)
 {
     T arg;
     Codec<T>::decode_argument(out, arg);
@@ -199,7 +405,7 @@ inline T decode_argument(DBusMessageIter* out)
 /**
  * @brief Special overload to end compile-time recursion.
  */
-inline void decode_message(DBusMessageIter*) {}
+inline void decode_message(Message::Reader&) {}
 
 /**
  * @brief Compile-time recursion to decode a parameter pack from a DBus message.
@@ -208,11 +414,9 @@ inline void decode_message(DBusMessageIter*) {}
  * @throw std::runtime_error as propagated by Codec<Arg>::decode_argument.
  */
 template<typename Arg, typename... Args>
-inline void decode_message(DBusMessageIter* out, Arg& arg, Args& ... params)
+inline void decode_message(Message::Reader& out, Arg& arg, Args& ... params)
 {
-    decode_argument(out, arg);
-    dbus_message_iter_next(out);
-    decode_message(out, params...);
+    decode_argument(out, arg); decode_message(out, params...);
 }
 }
 }

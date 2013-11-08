@@ -19,63 +19,6 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_IMPL_MESSAGE_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_IMPL_MESSAGE_H_
 
-#include <org/freedesktop/dbus/codec.h>
-
-#include <org/freedesktop/dbus/types/object_path.h>
-
-#include <dbus/dbus.h>
-
-#include <exception>
-#include <map>
-#include <memory>
-#include <ostream>
-#include <stdexcept>
-
-namespace org
-{
-namespace freedesktop
-{
-namespace dbus
-{
-
-template<typename T>
-inline Message::Reader& Message::Reader::operator>>(T& t)
-{
-    return pop(t);
-}
-
-template<typename T>
-void Message::Reader::peek(T& t)
-{
-    decode_argument(std::addressof(iter), t);
-}
-
-template<typename T>
-inline Message::Reader& Message::Reader::pop(T& t)
-{
-    peek(t);
-    dbus_message_iter_next(std::addressof(iter));
-
-    return *this;
-}
-
-template<typename T>
-inline Message::Writer& Message::Writer::operator<<(const T& t)
-{
-    encode_argument(std::addressof(iter), t);
-    return *this;
-}
-
-template<typename... Args>
-inline Message::Writer& Message::Writer::append(const Args& ... args)
-{
-    encode_message(std::addressof(iter), args...);
-    return *this;
-}    
-}
-}
-}
-
 namespace std
 {
 template<>

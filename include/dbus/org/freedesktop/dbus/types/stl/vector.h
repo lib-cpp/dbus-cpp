@@ -18,8 +18,8 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_TYPES_STL_VECTOR_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_TYPES_STL_VECTOR_H_
 
-#include "org/freedesktop/dbus/codec.h"
-#include "org/freedesktop/dbus/helper/type_mapper.h"
+#include <org/freedesktop/dbus/codec.h>
+#include <org/freedesktop/dbus/helper/type_mapper.h>
 
 #include <algorithm>
 #include <vector>
@@ -58,42 +58,31 @@ struct TypeMapper<std::vector<T>>
 template<typename T>
 struct Codec<std::vector<T>>
 {
-    static void encode_argument(DBusMessageIter* out, const std::vector<T>& arg)
+    static void encode_argument(Message::Writer& out, const std::vector<T>& arg)
     {
-        DBusMessageIter sub;
-        if (!dbus_message_iter_open_container(
-                    out,
-                    DBUS_TYPE_ARRAY,
-                    helper::TypeMapper<T>::requires_signature() ? helper::signature<T>(T()).c_str() : NULL,
-                    std::addressof(sub)))
-            throw std::runtime_error("Problem opening container");
-
-        std::for_each(
-            arg.begin(),
-            arg.end(),
-            std::bind(Codec<T>::encode_argument, std::addressof(sub), std::placeholders::_1));
-
-        if (!dbus_message_iter_close_container(out, std::addressof(sub)))
-            throw std::runtime_error("Problem closing container");
+        auto vw = out.open_array(
+                    types::Signature(helper::TypeMapper<T>::signature()));
+        {
+            for(auto element : arg)
+                org::freedesktop::dbus::encode_argument(vw, element);
+        }
+        out.close_array(std::move(vw));
     }
 
-    static void decode_argument(DBusMessageIter* in, std::vector<T>& out)
+    static void decode_argument(Message::Reader& in, std::vector<T>& out)
     {
-        if (dbus_message_iter_get_arg_type(in) != static_cast<int>(ArgumentType::array))
-            throw std::runtime_error("Incompatible argument type: dbus_message_iter_get_arg_type(in) != ArgumentType::array");
+        Message::Reader ar = in.pop_array();
 
-        if (dbus_message_iter_get_element_type(in) != static_cast<int>(helper::TypeMapper<T>::type_value()))
-            throw std::runtime_error("Incompatible element type");
-
-        int current_type;
-        DBusMessageIter sub;
-        dbus_message_iter_recurse(in, std::addressof(sub));
-        while ((current_type = dbus_message_iter_get_arg_type (std::addressof(sub))) != DBUS_TYPE_INVALID)
+        while (true)
         {
-            out.emplace_back();
-            Codec<T>::decode_argument(std::addressof(sub), out.back());
-
-            dbus_message_iter_next(std::addressof(sub));
+            try
+            {
+                auto value = org::freedesktop::dbus::decode_argument<T>(ar);
+                out.push_back(value);
+            } catch(...)
+            {
+                break;
+            }
         }
     }
 };

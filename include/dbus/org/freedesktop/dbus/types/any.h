@@ -18,9 +18,8 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_TYPES_ANY_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_TYPES_ANY_H_
 
-#include "org/freedesktop/dbus/argument_type.h"
-#include "org/freedesktop/dbus/codec.h"
-#include "org/freedesktop/dbus/helper/apply_visitor.h"
+#include <org/freedesktop/dbus/argument_type.h>
+#include <org/freedesktop/dbus/helper/apply_visitor.h>
 
 #include <cstring>
 #include <functional>
@@ -129,43 +128,6 @@ inline std::ostream& operator<<(std::ostream& out, const Any& any)
     return out;
 }
 }
-namespace helper
-{
-template<>
-struct TypeMapper<org::freedesktop::dbus::types::Any>
-{
-    constexpr inline static ArgumentType type_value()
-    {
-        return ArgumentType::invalid;
-    }
-    constexpr inline static bool is_basic_type()
-    {
-        return false;
-    }
-    constexpr inline static bool requires_signature()
-    {
-        return false;
-    }
-
-    inline static std::string signature()
-    {
-        return "";
-    }
-};
-}
-template<>
-struct Codec<types::Any>
-{
-    inline static void encode_argument(DBusMessageIter*, const types::Any&)
-    {
-    }
-
-    inline static void decode_argument(DBusMessageIter* in, types::Any& any)
-    {
-        helper::apply_visitor(in, std::ref(any));
-    };
-};
-
 }
 }
 }

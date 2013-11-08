@@ -18,9 +18,6 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_TYPES_SIGNATURE_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_TYPES_SIGNATURE_H_
 
-#include "org/freedesktop/dbus/codec.h"
-#include "org/freedesktop/dbus/helper/type_mapper.h"
-
 #include <stdexcept>
 #include <string>
 
@@ -54,55 +51,9 @@ public:
         return signature == rhs.signature;
     }
 private:
-    friend struct Codec<types::Signature>;
-
     std::string signature;
 };
 }
-namespace helper
-{
-template<>
-struct TypeMapper<org::freedesktop::dbus::types::Signature>
-{
-    constexpr inline static ArgumentType type_value()
-    {
-        return ArgumentType::signature;
-    }
-    constexpr inline static bool is_basic_type()
-    {
-        return false;
-    }
-    constexpr inline static bool requires_signature()
-    {
-        return true;
-    }
-
-    inline static std::string signature()
-    {
-        return DBUS_TYPE_SIGNATURE_AS_STRING;
-    }
-};
-}
-template<>
-struct Codec<types::Signature>
-{
-    inline static void encode_argument(DBusMessageIter* out, const types::Signature& arg)
-    {
-        const char* s = arg.signature.c_str();
-        dbus_message_iter_append_basic(out, static_cast<int>(ArgumentType::signature), &s);
-    }
-
-    inline static void decode_argument(DBusMessageIter* in, types::Signature& arg)
-    {
-        if (dbus_message_iter_get_arg_type(in) != static_cast<int>(ArgumentType::signature))
-            throw std::runtime_error("Incompatible argument type: dbus_message_iter_get_arg_type(in) != ArgumentType::signature");
-        char* c = nullptr;
-        dbus_message_iter_get_basic(in, std::addressof(c));
-
-        if (c != nullptr)
-            arg.signature = c;
-    }
-};
 }
 }
 }

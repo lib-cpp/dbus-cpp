@@ -18,7 +18,7 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_ROUTER_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_ROUTER_H_
 
-#include <dbus/dbus.h>
+#include <org/freedesktop/dbus/message.h>
 
 #include <functional>
 #include <iostream>
@@ -42,12 +42,12 @@ public:
     /**
      * @brief Mapper takes a raw DBus Message and maps it to the Key type of the router.
      */
-    typedef std::function<Key(DBusMessage*)> Mapper;
+    typedef std::function<Key(const Message::Ptr&)> Mapper;
 
     /**
      * @brief Handler is a function type that handles raw DBus messages.
      */
-    typedef std::function<void(DBusMessage*)> Handler;
+    typedef std::function<void(const Message::Ptr&)> Handler;
 
     /**
      * @brief Constructs an empty router with the specified mapper instance.
@@ -86,7 +86,7 @@ public:
      * @param msg The message to map and route, must not be null.
      * @return true if the message has been routes successfully, false otherwise.
      */
-    inline bool operator()(DBusMessage* msg)
+    inline bool operator()(const Message::Ptr& msg)
     {
         std::unique_lock<std::mutex> ul(guard);
         auto it = router.find(mapper(msg));

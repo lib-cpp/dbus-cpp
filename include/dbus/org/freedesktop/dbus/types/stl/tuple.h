@@ -87,15 +87,14 @@ namespace detail
 template<typename Tuple, size_t n, size_t size>
 struct CodecApply
 {
-    static void decode_argument(DBusMessageIter* out, Tuple& t)
+    static void decode_argument(Message::Reader& in, Tuple& t)
     {
         typedef decltype(std::get<size-n-1>(t)) ElementType;
-        Codec<typename std::decay<ElementType>::type>::decode_argument(out, std::get<size-n-1>(t));
-        if (dbus_message_iter_next(out) == TRUE)
-            CodecApply<Tuple, n-1, size>::decode_argument(out, t);
+        Codec<typename std::decay<ElementType>::type>::decode_argument(in, std::get<size-n-1>(t));
+        CodecApply<Tuple, n-1, size>::decode_argument(in, t);
     }
 
-    static void encode_argument(DBusMessageIter* out, const Tuple& t)
+    static void encode_argument(Message::Writer& out, const Tuple& t)
     {
         typedef decltype(std::get<size-n-1>(t)) ElementType;
         Codec<typename std::decay<ElementType>::type>::encode_argument(out, std::get<size-n-1>(t));
@@ -106,13 +105,13 @@ struct CodecApply
 template<typename Tuple, size_t size>
 struct CodecApply<Tuple, 0, size>
 {
-    static void decode_argument(DBusMessageIter* out, Tuple& t)
+    static void decode_argument(Message::Reader& in, Tuple& t)
     {
         typedef decltype(std::get<size-1>(t)) ElementType;
-        Codec<typename std::decay<ElementType>::type>::decode_argument(out, std::get<size-1>(t));
+        Codec<typename std::decay<ElementType>::type>::decode_argument(in, std::get<size-1>(t));
     }
 
-    static void encode_argument(DBusMessageIter* out, const Tuple& t)
+    static void encode_argument(Message::Writer& out, const Tuple& t)
     {
         typedef decltype(std::get<size-1>(t)) ElementType;
         Codec<typename std::decay<ElementType>::type>::encode_argument(out, std::get<size-1>(t));
@@ -123,12 +122,12 @@ struct CodecApply<Tuple, 0, size>
 template<typename... Args>
 struct Codec<std::tuple<Args...>>
 {
-    static void encode_argument(DBusMessageIter* out, const std::tuple<Args...>& arg)
+    static void encode_argument(Message::Writer& out, const std::tuple<Args...>& arg)
     {
         detail::CodecApply<std::tuple<Args...>, sizeof...(Args)-1, sizeof...(Args)>::encode_argument(out, arg);
     }
 
-    static void decode_argument(DBusMessageIter* in, std::tuple<Args...>& out)
+    static void decode_argument(Message::Reader& in, std::tuple<Args...>& out)
     {
         detail::CodecApply<std::tuple<Args...>, sizeof...(Args)-1, sizeof...(Args)>::decode_argument(in, out);
     }

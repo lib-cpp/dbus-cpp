@@ -18,9 +18,9 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_TYPES_OBJECT_PATH_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_TYPES_OBJECT_PATH_H_
 
-#include "org/freedesktop/dbus/codec.h"
-#include "org/freedesktop/dbus/helper/type_mapper.h"
+#include <dbus/dbus.h>
 
+#include <iostream>
 #include <stdexcept>
 #include <string>
 
@@ -76,59 +76,16 @@ public:
     }
 
 private:
-    friend struct Codec<types::ObjectPath>;
     std::string path;
 };
+
 inline std::ostream& operator<<(std::ostream& out, const ObjectPath& path)
 {
     out << path.as_string() << std::endl;
     return out;
 }
+
 }
-namespace helper
-{
-template<>
-struct TypeMapper<org::freedesktop::dbus::types::ObjectPath>
-{
-    constexpr inline static ArgumentType type_value()
-    {
-        return ArgumentType::object_path;
-    }
-    constexpr inline static bool is_basic_type()
-    {
-        return false;
-    }
-    constexpr inline static bool requires_signature()
-    {
-        return true;
-    }
-
-    inline static std::string signature()
-    {
-        return DBUS_TYPE_OBJECT_PATH_AS_STRING;
-    }
-};
-}
-template<>
-struct Codec<types::ObjectPath>
-{
-    inline static void encode_argument(DBusMessageIter* out, const types::ObjectPath& arg)
-    {
-        const char* s = arg.path.c_str();
-        dbus_message_iter_append_basic(out, static_cast<int>(ArgumentType::object_path), &s);
-    }
-
-    inline static void decode_argument(DBusMessageIter* in, types::ObjectPath& arg)
-    {
-        if (dbus_message_iter_get_arg_type(in) != static_cast<int>(ArgumentType::object_path))
-            throw std::runtime_error("Incompatible argument type: dbus_message_iter_get_arg_type(in) != ArgumentType::object_path");
-        char* c = nullptr;
-        dbus_message_iter_get_basic(in, std::addressof(c));
-
-        if (c != nullptr)
-            arg.path = c;
-    }
-};
 }
 }
 }

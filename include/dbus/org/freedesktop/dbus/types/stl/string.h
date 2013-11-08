@@ -56,21 +56,16 @@ struct TypeMapper<std::string>
 template<>
 struct Codec<std::string>
 {
-    static void encode_argument(DBusMessageIter* out, const std::string& arg)
+    static void encode_argument(Message::Writer& out, const std::string& arg)
     {
-        const char* s = arg.c_str();
-        dbus_message_iter_append_basic(out, static_cast<int>(helper::TypeMapper<std::string>::type_value()), &s);
+        out.push_stringn(arg.c_str(), arg.size());
     }
 
-    static void decode_argument(DBusMessageIter* in, std::string& arg)
+    static void decode_argument(Message::Reader& in, std::string& arg)
     {
-        if (dbus_message_iter_get_arg_type(in) != static_cast<int>(ArgumentType::string))
-            throw std::runtime_error("Incompatible argument type: dbus_message_iter_get_arg_type(in) != ArgumentType::string");
-        char* c = nullptr;
-        dbus_message_iter_get_basic(in, std::addressof(c));
-
-        if (c != nullptr)
-            arg = c;
+        const char* s = in.pop_string();
+        if (s != nullptr)
+            arg = s;
     }
 };
 }

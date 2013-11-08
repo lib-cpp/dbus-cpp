@@ -18,6 +18,8 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_IMPL_SIGNAL_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_IMPL_SIGNAL_H_
 
+#include <org/freedesktop/dbus/message_streaming_operators.h>
+
 namespace org
 {
 namespace freedesktop
@@ -81,7 +83,7 @@ inline Signal<SignalDescription, Argument>::Signal(
 
 template<typename SignalDescription, typename Argument>
 inline void
-Signal<SignalDescription, Argument>::operator()(const DBusMessage*)
+Signal<SignalDescription, Argument>::operator()(const Message::Ptr&)
 {
     signal();
 }
@@ -171,13 +173,11 @@ Signal<
     typename std::enable_if<
         is_not_void<typename SignalDescription::ArgumentType>::value,
         typename SignalDescription::ArgumentType>::type
-    >::operator()(DBusMessage* msg) noexcept
+    >::operator()(const Message::Ptr& msg) noexcept
 {
-    DBusMessageIter iter;
-    dbus_message_iter_init(msg, std::addressof(iter));
     try
     {
-        decode_message(std::addressof(iter), d->value);
+        msg->reader() >> d->value;
         d->signal(d->value);
     }
     catch (const std::runtime_error& e)

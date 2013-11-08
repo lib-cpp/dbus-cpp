@@ -68,27 +68,19 @@ struct TypeMapper<org::freedesktop::dbus::types::Struct<T>>
 template<typename T>
 struct Codec<types::Struct<T>>
 {
-    inline static void encode_argument(DBusMessageIter* out, const types::Struct<T>& arg)
+    inline static void encode_argument(Message::Writer& out, const types::Struct<T>& arg)
     {
-        DBusMessageIter sub;
-        if (!dbus_message_iter_open_container(
-                    out,
-                    DBUS_TYPE_STRUCT,
-                    nullptr,
-                    std::addressof(sub)))
-            throw std::runtime_error("Problem opening container");
-
-        Codec<T>::encode_argument(std::addressof(sub), arg.value);
-
-        if (!dbus_message_iter_close_container(out, std::addressof(sub)))
-            throw std::runtime_error("Problem closing container");
+        auto sw = out.open_structure();
+        {
+            Codec<T>::encode_argument(sw, arg.value);
+        }
+        out.close_structure(sw);
     }
 
-    inline static void decode_argument(DBusMessageIter* in, types::Struct<T>& out)
+    inline static void decode_argument(Message::Reader& in, types::Struct<T>& out)
     {
-        DBusMessageIter sub;
-        dbus_message_iter_recurse(in, std::addressof(sub));
-        Codec<T>::decode_argument(std::addressof(sub), out.value);
+        auto struct_reader = in.pop_structure();
+        Codec<T>::decode_argument(struct_reader, out.value);
     }
 };
 }

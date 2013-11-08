@@ -18,7 +18,12 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_HELPER_TYPE_MAPPER_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_HELPER_TYPE_MAPPER_H_
 
-#include "org/freedesktop/dbus/argument_type.h"
+#include <org/freedesktop/dbus/argument_type.h>
+
+#include <org/freedesktop/dbus/types/object_path.h>
+#include <org/freedesktop/dbus/types/signature.h>
+#include <org/freedesktop/dbus/types/unix_fd.h>
+#include <org/freedesktop/dbus/types/variant.h>
 
 #include <cstdint>
 
@@ -323,6 +328,94 @@ struct TypeMapper<double>
     inline static std::string signature()
     {
         return DBUS_TYPE_DOUBLE_AS_STRING;
+    }
+};
+
+template<>
+struct TypeMapper<types::ObjectPath>
+{
+    constexpr inline static ArgumentType type_value()
+    {
+        return ArgumentType::object_path;
+    }
+    constexpr inline static bool is_basic_type()
+    {
+        return true;
+    }
+    constexpr inline static bool requires_signature()
+    {
+        return true;
+    }
+
+    inline static std::string signature()
+    {
+        return DBUS_TYPE_OBJECT_PATH_AS_STRING;
+    }
+};
+
+template<>
+struct TypeMapper<types::Signature>
+{
+    constexpr inline static ArgumentType type_value()
+    {
+        return ArgumentType::signature;
+    }
+    constexpr inline static bool is_basic_type()
+    {
+        return true;
+    }
+    constexpr inline static bool requires_signature()
+    {
+        return true;
+    }
+
+    inline static std::string signature()
+    {
+        return DBUS_TYPE_SIGNATURE_AS_STRING;
+    }
+};
+
+template<>
+struct TypeMapper<types::UnixFd>
+{
+    constexpr inline static ArgumentType type_value()
+    {
+        return ArgumentType::unix_fd;
+    }
+    constexpr inline static bool is_basic_type()
+    {
+        return true;
+    }
+    constexpr inline static bool requires_signature()
+    {
+        return true;
+    }
+
+    inline static std::string signature()
+    {
+        return DBUS_TYPE_UNIX_FD_AS_STRING;
+    }
+};
+
+template<typename T>
+struct TypeMapper<types::Variant<T>>
+{
+    constexpr inline static ArgumentType type_value()
+    {
+        return ArgumentType::variant;
+    }
+    constexpr inline static bool is_basic_type()
+    {
+        return true;
+    }
+    constexpr inline static bool requires_signature()
+    {
+        return true;
+    }
+
+    inline static std::string signature()
+    {
+        return DBUS_TYPE_VARIANT_AS_STRING + TypeMapper<T>::signature();
     }
 };
 }

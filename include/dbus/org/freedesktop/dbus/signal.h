@@ -18,6 +18,7 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_SIGNAL_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_SIGNAL_H_
 
+#include <org/freedesktop/dbus/message.h>
 #include <org/freedesktop/dbus/visibility.h>
 
 #include <boost/signals2.hpp>
@@ -56,7 +57,7 @@ struct is_not_void<void>
  * @tparam Argument The type of the argument that is emitted by this signal.
  */
 template<typename SignalDescription, typename Argument = void>
-class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Signal
+class Signal
 {
 public:
     typedef std::shared_ptr<Signal<SignalDescription, void>> Ptr;
@@ -81,7 +82,7 @@ private:
                   const std::string& interface,
                   const std::string& name);
 
-    void operator()(const DBusMessage*);
+    void operator()(const Message::Ptr&);
 
     std::shared_ptr<Object> parent;
     std::string interface;
@@ -128,7 +129,7 @@ private:
         const std::string& interface,
         const std::string& name);
 
-    inline void operator()(DBusMessage* msg) noexcept;
+    inline void operator()(const Message::Ptr&) noexcept;
 
     struct ORG_FREEDESKTOP_DBUS_DLL_LOCAL Shared
     {

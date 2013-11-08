@@ -22,8 +22,6 @@
 #include <org/freedesktop/dbus/error.h>
 #include <org/freedesktop/dbus/message.h>
 
-#include <dbus/dbus.h>
-
 #include <stdexcept>
 #include <string>
 
@@ -46,11 +44,9 @@ public:
      * @throw std::runtime_error in case of errors.
      * @param msg The message to parse the result from.
      */
-    inline static Result from_message(DBusMessage* msg)
+    inline static Result from_message(const Message::Ptr& message)
     {
         Result result;
-
-        auto message = Message::from_raw_message(msg);
 
         switch(message->type())
         {
@@ -120,10 +116,9 @@ public:
      * @throw std::runtime_error in case of errors.
      * @param msg The message to parse the result from.
      */
-    inline static Result from_message(DBusMessage* msg)
+    inline static Result from_message(const Message::Ptr& message)
     {
         Result result;
-        auto message = Message::from_raw_message(msg);
 
         switch(message->type())
         {
