@@ -117,14 +117,6 @@ TEST(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
     EXPECT_NO_FATAL_FAILURE(test::fork_and_run(child, parent));
 }
 
-TEST(Service, DefaultRequestNameFlagsEnforceReplacingExistingService)
-{
-    auto flags = dbus::Service::default_request_name_flags();
-    EXPECT_FALSE(flags.test(dbus::Service::allow_replacement));
-    EXPECT_TRUE(flags.test(dbus::Service::replace_existing));
-    EXPECT_FALSE(flags.test(dbus::Service::do_not_queue));
-}
-
 TEST(Service, AddingANonExistingServiceDoesNotThrow)
 {
     auto bus = the_session_bus();
@@ -142,8 +134,7 @@ TEST(Service, AddingAnExistingServiceThrowsForSpecificFlags)
     {
         "org.freedesktop.DBus"
     };
-    dbus::Service::RequestNameFlags flags;
-    flags.set(dbus::Service::replace_existing, false);
+    dbus::Service::RequestNameFlag flags{dbus::Service::RequestNameFlag::not_set};
     ASSERT_ANY_THROW(auto service = dbus::Service::add_service<dbus::DBus>(bus, flags););
 }
 

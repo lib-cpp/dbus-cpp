@@ -68,19 +68,18 @@ public:
     /**
      * @brief The RequestNameFlag enum lists possible behavior when trying to acquire name on the bus.
      */
-    enum RequestNameFlag
+    enum class RequestNameFlag
     {
-        allow_replacement, ///< Allow for later replacement by another service implementation.
-        replace_existing, ///< Replace any existing instance on the bus.
-        do_not_queue ///< Blocking wait for service name to be acquired.
+        not_set = 0,
+        allow_replacement = 1 << 0, ///< Allow for later replacement by another service implementation.
+        replace_existing = 1 << 1, ///< Replace any existing instance on the bus.
+        do_not_queue = 1 << 2 ///< Blocking wait for service name to be acquired.
     };
-
-    typedef std::bitset<3> RequestNameFlags;
 
     /**
      * @brief default_request_name_flags returns defaults flags when acquiring a name on the bus.
      */
-    static const RequestNameFlags& default_request_name_flags();
+    static RequestNameFlag default_request_name_flags();
 
     /**
      * @brief Exposes a service on the bus.
@@ -92,7 +91,7 @@ public:
     template<typename Interface>
     inline static Ptr add_service(
         const Bus::Ptr& connection,
-        const RequestNameFlags& flags = default_request_name_flags())
+        const RequestNameFlag& flags = default_request_name_flags())
     {
         static Ptr instance(
             new Service(
@@ -161,7 +160,7 @@ protected:
     template<typename T> friend class Property;
 
     Service(const Bus::Ptr& connection, const std::string& name);
-    Service(const Bus::Ptr& connection, const std::string& name, const RequestNameFlags& flags);
+    Service(const Bus::Ptr& connection, const std::string& name, const RequestNameFlag& flags);
 
     bool is_stub() const;
 
@@ -176,6 +175,8 @@ private:
     std::shared_ptr<Object> root;
     bool stub;
 };
+
+Service::RequestNameFlag operator|(Service::RequestNameFlag lhs, Service::RequestNameFlag rhs);
 }
 }
 }

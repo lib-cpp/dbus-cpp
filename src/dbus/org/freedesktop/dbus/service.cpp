@@ -51,10 +51,14 @@ namespace freedesktop
 {
 namespace dbus
 {
-const Service::RequestNameFlags& Service::default_request_name_flags()
+Service::RequestNameFlag operator|(Service::RequestNameFlag lhs, Service::RequestNameFlag rhs)
 {
-    static const RequestNameFlags flags{"010"};
-    return flags;
+    return static_cast<Service::RequestNameFlag>(static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs));
+}
+
+Service::RequestNameFlag Service::default_request_name_flags()
+{
+    return RequestNameFlag::do_not_queue;
 }
 
 Service::Ptr Service::use_service(const Bus::Ptr& connection, const std::string& name)
@@ -102,13 +106,13 @@ Service::Service(const Bus::Ptr& connection, const std::string& name)
 
 }
 
-Service::Service(const Bus::Ptr& connection, const std::string& name, const Service::RequestNameFlags& flags)
+Service::Service(const Bus::Ptr& connection, const std::string& name, const Service::RequestNameFlag& flags)
     : connection(connection),
       name(name),
       stub(false)
 {
     Error error;
-    dbus_bus_request_name(connection->raw(), name.c_str(), flags.to_ulong(), std::addressof(error.raw()));
+    dbus_bus_request_name(connection->raw(), name.c_str(), static_cast<unsigned int>(flags), std::addressof(error.raw()));
 
     if (error)
         throw std::runtime_error(error.name() + ": " + error.message());
