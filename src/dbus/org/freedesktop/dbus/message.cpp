@@ -100,6 +100,18 @@ Message::Reader::~Reader()
 {
 }
 
+ArgumentType Message::Reader::type() const
+{
+    return static_cast<ArgumentType>(
+                dbus_message_iter_get_arg_type(
+                    std::addressof(d->iter)));
+}
+
+void Message::Reader::pop()
+{
+    dbus_message_iter_next(std::addressof(d->iter));
+}
+
 std::int8_t Message::Reader::pop_byte()
 {
     d->ensure_argument_type_or_throw(ArgumentType::byte);
@@ -278,6 +290,11 @@ Message::Reader Message::Reader::pop_dict_entry()
                 std::addressof(result.d->iter));
     dbus_message_iter_next(std::addressof(d->iter));
     return std::move(result);
+}
+
+const std::shared_ptr<Message>& Message::Reader::access_message()
+{
+    return d->msg;
 }
 
 struct Message::Writer::Private
@@ -474,6 +491,9 @@ void Message::Writer::close_structure(Message::Writer w)
 
 Message::Writer Message::Writer::open_variant(const types::Signature& signature)
 {
+    // TODO(tvoss): We really should check that the signature refers to a
+    // single complete type here.
+
     Writer w(d->msg);
     if (!dbus_message_iter_open_container(
                 std::addressof(d->iter),
@@ -514,7 +534,7 @@ void Message::Writer::close_dict_entry(Message::Writer w)
 
 std::shared_ptr<Message> Message::make_method_call(
         const std::string& destination,
-        const std::string& path,
+        const types::ObjectPath& path,
         const std::string& interface,
         const std::string& method)
 {
@@ -522,7 +542,7 @@ std::shared_ptr<Message> Message::make_method_call(
                 new Message(
                     dbus_message_new_method_call(
                         destination.c_str(),
-                        path.c_str(),
+                        path.as_string().c_str(),
                         interface.c_str(),
                         method.c_str())));
 }
@@ -658,6 +678,14 @@ Message::Message(
 
 Message::~Message()
 {
+}
+
+std::shared_ptr<Message> Message::clone()
+{
+    static const bool do_not_ref_on_construction = false;
+    return std::shared_ptr<Message>(new Message(
+                                        dbus_message_copy(dbus_message.get()),
+                                        do_not_ref_on_construction));
 }
 }
 }

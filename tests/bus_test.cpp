@@ -17,6 +17,7 @@
  */
 
 #include "org/freedesktop/dbus/bus.h"
+#include "org/freedesktop/dbus/dbus.h"
 #include "org/freedesktop/dbus/match_rule.h"
 
 #include "org/freedesktop/dbus/asio/executor.h"
@@ -51,9 +52,9 @@ TEST(Bus, BlockingMethodInvocationSucceedsForValidMessage)
 {
     static const char* expected_signature = DBUS_TYPE_ARRAY_AS_STRING DBUS_TYPE_STRING_AS_STRING;
     auto msg = org::freedesktop::dbus::Message::make_method_call(
-                DBUS_SERVICE_DBUS,
-                DBUS_PATH_DBUS,
-                DBUS_SERVICE_DBUS,
+                dbus::DBus::name(),
+                dbus::DBus::path(),
+                dbus::DBus::name(),
                 "ListNames");
 
     auto bus = the_session_bus();
@@ -71,43 +72,27 @@ TEST(Bus, BlockingMethodInvocationSucceedsForValidMessage)
 
 TEST(Bus, NonBlockingMethodInvocationSucceedsForValidMessage)
 {
-    static const char* expected_signature = DBUS_TYPE_ARRAY_AS_STRING DBUS_TYPE_STRING_AS_STRING;
     auto msg = org::freedesktop::dbus::Message::make_method_call(
-                DBUS_SERVICE_DBUS,
-                DBUS_PATH_DBUS,
-                DBUS_SERVICE_DBUS,
+                dbus::DBus::name(),
+                dbus::DBus::path(),
+                dbus::DBus::name(),
                 "ListNames");
 
     auto bus = the_session_bus();
     const std::chrono::milliseconds timeout = std::chrono::seconds(10);
-    std::shared_ptr<DBusPendingCall> call;
 
-    EXPECT_NO_THROW(
-        call = std::shared_ptr<DBusPendingCall>(
-                   bus->send_with_reply_and_timeout(msg, timeout),
-                   [](DBusPendingCall* call)
-    {
-        dbus_pending_call_unref(call);
-    }));
-
-    dbus_pending_call_block(call.get());
-    std::shared_ptr<DBusMessage> reply(
-        dbus_pending_call_steal_reply(call.get()),
-        [](DBusMessage* msg)
-    {
-        dbus_message_unref(msg);
-    });
-
-    EXPECT_NE(nullptr, reply);
-    EXPECT_EQ(DBUS_MESSAGE_TYPE_METHOD_RETURN, dbus_message_get_type(reply.get()));
-    EXPECT_STREQ(expected_signature, dbus_message_get_signature(reply.get()));
+    auto call = bus->send_with_reply_and_timeout(msg, timeout);
+    auto reply = call->wait_for_reply();
+    EXPECT_EQ(dbus::Message::Type::method_return, reply->type());
+    std::vector<std::string> result; reply->reader() >> result;
+    EXPECT_TRUE(result.size() > 0);
 }
 
 TEST(Bus, HasOwnerForNameReturnsTrueForExistingName)
 {
     org::freedesktop::dbus::Bus bus(org::freedesktop::dbus::WellKnownBus::session);
 
-    EXPECT_TRUE(bus.has_owner_for_name(DBUS_SERVICE_DBUS));
+    EXPECT_TRUE(bus.has_owner_for_name(dbus::DBus::name()));
 }
 
 TEST(Bus, HasOwnerForNameReturnsFalseForNonExistingName)

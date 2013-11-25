@@ -108,10 +108,10 @@ struct Codec<std::map<T, U>>
                 {
                     Codec<std::pair<T,U>>::encode_argument(de, element);
                 }
-                aw.close_dict_entry(de);
+                aw.close_dict_entry(std::move(de));
             }
         }
-        out.close_array(aw);
+        out.close_array(std::move(aw));
     }
 
     static void decode_argument(Message::Reader& in, std::map<T,U>& out)

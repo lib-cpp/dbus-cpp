@@ -16,21 +16,24 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
+#include "org/freedesktop/dbus/dbus.h"
 #include "org/freedesktop/dbus/types/stl/tuple.h"
 
 #include <gtest/gtest.h>
 
 #include <memory>
 
+namespace dbus = org::freedesktop::dbus;
+
 namespace
 {
 std::shared_ptr<org::freedesktop::dbus::Message> a_method_call()
 {
-    return org::freedesktop::dbus::Message::make_method_call(
-               DBUS_SERVICE_DBUS,
-               DBUS_PATH_DBUS,
-               DBUS_SERVICE_DBUS,
-               "ListNames");
+    return dbus::Message::make_method_call(
+                dbus::DBus::name(),
+                dbus::DBus::path(),
+                dbus::DBus::interface(),
+                "ListNames");
 }
 }
 

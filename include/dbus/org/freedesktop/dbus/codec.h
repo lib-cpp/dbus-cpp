@@ -337,8 +337,7 @@ struct Codec<types::Any>
 
     inline static void decode_argument(Message::Reader& in, types::Any& value)
     {
-        (void) in;
-        (void) value;
+        value = types::Any{in.access_message()->clone()};
     }
 };
 

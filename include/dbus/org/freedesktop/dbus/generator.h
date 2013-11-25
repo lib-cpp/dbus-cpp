@@ -30,7 +30,7 @@ namespace freedesktop
 {
 namespace dbus
 {
-class GeneratorConfiguration;
+struct GeneratorConfiguration;
 
 /**
  * @brief Interface and implementation to generate boilerplate bindings code for interfacing with DBus services.

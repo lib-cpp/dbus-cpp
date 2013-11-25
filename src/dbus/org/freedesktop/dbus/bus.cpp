@@ -19,12 +19,41 @@
 #include <org/freedesktop/dbus/bus.h>
 
 #include <org/freedesktop/dbus/match_rule.h>
+#include <org/freedesktop/dbus/object.h>
 
 #include <org/freedesktop/dbus/traits/timeout.h>
 #include <org/freedesktop/dbus/traits/watch.h>
 
+#include "message_factory_impl.h"
+#include "pending_call_impl.h"
+
 namespace
 {
+struct VTable
+{
+    static void unregister_object_path(DBusConnection*, void* data)
+    {
+        delete static_cast<VTable*>(data);
+    }
+
+    static DBusHandlerResult on_new_message(
+            DBusConnection*,
+            DBusMessage* message,
+            void* data)
+    {
+        auto thiz = static_cast<VTable*>(data);
+
+        if (thiz->object->on_new_message(
+                    org::freedesktop::dbus::Message::from_raw_message(
+                        message)))
+            return DBUS_HANDLER_RESULT_HANDLED;
+
+        return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+    }
+
+    std::shared_ptr<org::freedesktop::dbus::Object> object;
+};
+
 DBusHandlerResult static_handle_message(
         DBusConnection* connection,
         DBusMessage* message,
@@ -46,6 +75,25 @@ namespace freedesktop
 {
 namespace dbus
 {
+Bus::Name::Name(Bus::Name&& rhs) : name(std::move(rhs.name))
+{
+}
+
+Bus::Name& Bus::Name::operator=(Bus::Name&& rhs)
+{
+    name = std::move(rhs.name);
+    return *this;
+}
+
+Bus::Name::Name(const std::string &name) : name(name)
+{
+}
+
+const std::string& Bus::Name::as_string() const
+{
+    return name;
+}
+
 Bus::MessageHandlerResult Bus::handle_message(const Message::Ptr& message)
 {
     message_type_router(message);
@@ -54,6 +102,7 @@ Bus::MessageHandlerResult Bus::handle_message(const Message::Ptr& message)
 
 Bus::Bus(WellKnownBus bus)
     : connection(nullptr),
+      message_factory_impl(new impl::MessageFactory()),
       message_type_router([](const Message::Ptr& msg) { return msg->type(); }),
       signal_router([](const Message::Ptr& msg){ return msg->path(); })
 {
@@ -91,6 +140,50 @@ Bus::~Bus() noexcept
     dbus_connection_unref(connection.get());
 }
 
+const std::shared_ptr<MessageFactory> Bus::message_factory()
+{
+
+}
+
+const std::shared_ptr<MessageFactory> Bus::message_factory()
+{
+    return message_factory_impl;
+}
+
+Bus::Name&& Bus::request_name_on_bus(
+        const std::string& name,
+        Bus::RequestNameFlag flags)
+{
+    Error error;
+    auto rc = dbus_bus_request_name(
+                connection.get(),
+                name.c_str(),
+                static_cast<unsigned int>(flags),
+                std::addressof(error.raw()));
+
+    Bus::Name result{name};
+
+    switch (rc)
+    {
+    case DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER: return std::move(result);
+    case DBUS_REQUEST_NAME_REPLY_IN_QUEUE: return std::move(result);
+    case DBUS_REQUEST_NAME_REPLY_EXISTS: throw Bus::Errors::AlreadyOwned{}; break;
+    case DBUS_REQUEST_NAME_REPLY_ALREADY_OWNER: throw Bus::Errors::AlreadyOwner{}; break;
+    case -1: throw std::runtime_error(error.print());
+    }
+
+    return std::move(result);
+}
+
+void Bus::release_name_on_bus(Bus::Name&& name)
+{
+    Error error;
+    dbus_bus_release_name(
+                connection.get(),
+                name.as_string().c_str(),
+                std::addressof(error.raw()));
+}
+
 uint32_t Bus::send(const std::shared_ptr<Message>& msg)
 {
     dbus_uint32_t serial;
@@ -118,7 +211,7 @@ std::shared_ptr<Message> Bus::send_with_reply_and_block_for_at_most(
     return Message::from_raw_message(result);
 }
 
-DBusPendingCall* Bus::send_with_reply_and_timeout(
+PendingCall::Ptr Bus::send_with_reply_and_timeout(
         const std::shared_ptr<Message>& msg,
         const std::chrono::milliseconds& timeout)
 {
@@ -130,12 +223,12 @@ DBusPendingCall* Bus::send_with_reply_and_timeout(
                 timeout.count());
 
     if (!result)
-        throw std::runtime_error("Could not send message, not enough memory");
+        throw Errors::NoMemory{};
 
     if (!pending_call)
         throw std::runtime_error("Connection disconnected or tried to send fd's over a transport that does not support it");
 
-    return pending_call;
+    return impl::PendingCall::create(pending_call);
 }
 
 void Bus::add_match(const MatchRule& rule)
@@ -176,6 +269,43 @@ void Bus::run()
     if (!executor)
         throw std::runtime_error("Missing executor, cannot run.");
     executor->run();
+}
+
+void Bus::register_object_for_path(
+        const types::ObjectPath& path,
+        const std::shared_ptr<Object>& object)
+{
+    auto vtable = new DBusObjectPathVTable
+    {
+        VTable::unregister_object_path,
+        VTable::on_new_message,
+        nullptr,
+        nullptr,
+        nullptr,
+        nullptr
+    };
+
+    Error e;
+    auto result = dbus_connection_try_register_object_path(
+                      connection.get(),
+                      path.as_string().c_str(),
+                      vtable,
+                      new VTable{object},
+                      std::addressof(e.raw()));
+
+    if (!result || e)
+    {
+        delete vtable;
+        throw std::runtime_error(e.print());
+    }
+}
+
+void Bus::unregister_object_path(
+        const types::ObjectPath& path)
+{
+    dbus_connection_unregister_object_path(
+                connection.get(),
+                path.as_string().c_str());
 }
 
 Bus::SignalRouter& Bus::access_signal_router()

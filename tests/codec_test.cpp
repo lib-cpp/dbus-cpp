@@ -17,11 +17,13 @@
  */
 
 #include "org/freedesktop/dbus/codec.h"
+#include "org/freedesktop/dbus/dbus.h"
 #include "org/freedesktop/dbus/helper/signature.h"
 
 #include "org/freedesktop/dbus/types/any.h"
 #include "org/freedesktop/dbus/types/object_path.h"
 #include "org/freedesktop/dbus/types/signature.h"
+#include "org/freedesktop/dbus/types/struct.h"
 #include "org/freedesktop/dbus/types/unix_fd.h"
 #include "org/freedesktop/dbus/types/variant.h"
 
@@ -29,11 +31,14 @@
 #include "org/freedesktop/dbus/types/stl/list.h"
 #include "org/freedesktop/dbus/types/stl/map.h"
 #include "org/freedesktop/dbus/types/stl/string.h"
+#include "org/freedesktop/dbus/types/stl/tuple.h"
 #include "org/freedesktop/dbus/types/stl/vector.h"
 
 #include <gtest/gtest.h>
 
 #include <memory>
+
+namespace dbus = org::freedesktop::dbus;
 
 TEST(Codec, BasicTypesMatchSizeAndAlignOfDBusTypes)
 {
@@ -167,9 +172,9 @@ const double default_double
 org::freedesktop::dbus::Message::Ptr a_method_call()
 {
     return org::freedesktop::dbus::Message::make_method_call(
-                DBUS_SERVICE_DBUS,
-                DBUS_PATH_DBUS,
-                DBUS_SERVICE_DBUS,
+                dbus::DBus::name(),
+                dbus::DBus::path(),
+                dbus::DBus::interface(),
                 "ListNames");
 }
 
@@ -245,7 +250,7 @@ TEST(ObjectPath, EncodingAndDecodingWorksCorrectly)
     namespace dbus = org::freedesktop::dbus;
     const dbus::types::ObjectPath expected_value
     {
-        DBUS_PATH_DBUS
+        dbus::DBus::path()
     };
     auto msg = a_method_call();
     auto writer = msg->writer();
@@ -304,14 +309,18 @@ TEST(Variant, TypeMapperSpecializationReturnsCorrectValues)
 TEST(Variant, EncodingAndDecodingWorksCorrectly)
 {
     namespace dbus = org::freedesktop::dbus;
-    const dbus::types::Variant<double> expected_value {42.};
+
+    typedef dbus::types::Struct<std::tuple<double, double, std::int32_t>> Struct;
+    Struct my_struct = Struct{std::make_tuple(42., 42., 56)};
+
+    const dbus::types::Variant<Struct> expected_value {my_struct};
     auto msg = a_method_call();
     auto writer = msg->writer();
 
     ASSERT_NO_THROW(dbus::encode_argument(writer, expected_value););
 
     auto reader = msg->reader();
-    ASSERT_EQ(expected_value, dbus::decode_argument<dbus::types::Variant<double>>(reader));
+    ASSERT_EQ(expected_value, dbus::decode_argument<dbus::types::Variant<Struct>>(reader));
 }
 
 TEST(Signature, TypeMapperSpecializationReturnsCorrectValues)

@@ -31,6 +31,11 @@ namespace types
 template<typename T>
 struct Struct
 {
+    bool operator==(const Struct<T>& rhs) const
+    {
+        return value == rhs.value;
+    }
+
     T value;
 };
 }
@@ -74,7 +79,7 @@ struct Codec<types::Struct<T>>
         {
             Codec<T>::encode_argument(sw, arg.value);
         }
-        out.close_structure(sw);
+        out.close_structure(std::move(sw));
     }
 
     inline static void decode_argument(Message::Reader& in, types::Struct<T>& out)

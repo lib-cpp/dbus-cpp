@@ -1,4 +1,6 @@
 libdbus-cpp.so.1 libdbus-cpp1 #MINVER#
+ (c++)"org::freedesktop::dbus::Message::Reader::pop()@Base" 0replaceme
+ (c++)"org::freedesktop::dbus::Message::Reader::type() const@Base" 0replaceme
  (c++)"org::freedesktop::dbus::Bus::remove_match(org::freedesktop::dbus::MatchRule const&)@Base" 0replaceme
  (c++)"org::freedesktop::dbus::Bus::handle_message(std::shared_ptr<org::freedesktop::dbus::Message> const&)@Base" 0replaceme
  (c++)"org::freedesktop::dbus::Bus::send_with_reply_and_timeout(std::shared_ptr<org::freedesktop::dbus::Message> const&, std::chrono::duration<long, std::ratio<1l, 1000l> > const&)@Base" 0replaceme

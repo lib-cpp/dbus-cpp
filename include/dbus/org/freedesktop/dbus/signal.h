@@ -21,8 +21,6 @@
 #include <org/freedesktop/dbus/message.h>
 #include <org/freedesktop/dbus/visibility.h>
 
-#include <boost/signals2.hpp>
-
 #include <functional>
 #include <memory>
 #include <string>
@@ -33,12 +31,6 @@ namespace freedesktop
 {
 namespace dbus
 {
-namespace signals
-{
-typedef boost::signals2::connection Connection;
-typedef boost::signals2::scoped_connection ScopedConnection;
-}
-
 template<typename T>
 struct is_not_void
 {
@@ -62,13 +54,14 @@ class Signal
 public:
     typedef std::shared_ptr<Signal<SignalDescription, void>> Ptr;
     typedef std::function<void()> Handler;
+    typedef typename std::list<Handler>::iterator SubscriptionToken;
 
     inline ~Signal() noexcept;
 
     inline void emit(void);
 
-    inline signals::Connection connect(const Handler& h);
-
+    inline SubscriptionToken connect(const Handler& h);
+    inline void disconnect(const SubscriptionToken& token);
 protected:
     friend class Object;
 
@@ -88,7 +81,8 @@ private:
     std::string interface;
     std::string name;
     MatchRule rule;
-    boost::signals2::signal<void()> signal;
+    std::mutex handlers_guard;
+    std::list<Handler> handlers;
 };
 
 /**
@@ -104,15 +98,17 @@ class Signal<
     typename SignalDescription::ArgumentType>::type
     >
 {
-public:
+public:    
     typedef std::shared_ptr<Signal<SignalDescription, typename SignalDescription::ArgumentType>> Ptr;
     typedef std::function<void(const typename SignalDescription::ArgumentType&)> Handler;
+    typedef typename std::list<Handler>::iterator SubscriptionToken;
 
     inline ~Signal() noexcept;
 
     inline void emit(const typename SignalDescription::ArgumentType&);
 
-    inline signals::Connection connect(const Handler& h);
+    inline SubscriptionToken connect(const Handler& h);
+    inline void disconnect(const SubscriptionToken& token);
 
 protected:
     friend class Object;
@@ -143,7 +139,8 @@ private:
         std::string interface;
         std::string name;
         MatchRule rule;
-        boost::signals2::signal<void(const typename SignalDescription::ArgumentType&)> signal;
+        std::mutex handlers_guard;
+        std::list<Handler> handlers;
     };
     std::shared_ptr<Shared> d;
 };

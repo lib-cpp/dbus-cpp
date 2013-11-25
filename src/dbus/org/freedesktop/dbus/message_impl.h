@@ -43,11 +43,12 @@ namespace dbus
 {
 template<typename T> struct Codec;
 class Error;
-
+namespace impl
+{
 /**
  * @brief The Message class wraps a raw DBus message
  */
-class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Message : public std::enable_shared_from_this<Message>
+class Message : public std::enable_shared_from_this<Message>
 {
 public:
     typedef std::shared_ptr<Message> Ptr;
@@ -347,8 +348,8 @@ public:
      * @return An instance of message of type Type::signal.
      */
     static std::shared_ptr<Message> make_signal(
-        const std::string& path, 
-        const std::string& interface, 
+        const std::string& path,
+        const std::string& interface,
         const std::string& signal);
 
     /**
@@ -360,7 +361,7 @@ public:
      */
     static std::shared_ptr<Message> make_error(
         const Message::Ptr& in_reply_to,
-        const std::string& error_name, 
+        const std::string& error_name,
         const std::string& error_desc);
 
     /**
@@ -440,11 +441,12 @@ private:
     Message(
         DBusMessage* msg,
         bool ref_on_construction = false);
-    
+
     std::shared_ptr<Message> clone();
 
     std::shared_ptr<DBusMessage> dbus_message;
 };
+}
 }
 }
 }

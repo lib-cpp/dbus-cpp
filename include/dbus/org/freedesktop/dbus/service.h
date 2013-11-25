@@ -33,10 +33,6 @@
 #include "org/freedesktop/dbus/types/stl/map.h"
 #include "org/freedesktop/dbus/types/stl/string.h"
 
-#include <boost/signals2.hpp>
-
-#include <dbus/dbus.h>
-
 #include <bitset>
 #include <future>
 #include <memory>
@@ -63,23 +59,7 @@ class Object;
 class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Service : public std::enable_shared_from_this<Service>
 {
 public: 
-    typedef std::shared_ptr<Service> Ptr;
-
-    /**
-     * @brief The RequestNameFlag enum lists possible behavior when trying to acquire name on the bus.
-     */
-    enum class RequestNameFlag
-    {
-        not_set = 0,
-        allow_replacement = 1 << 0, ///< Allow for later replacement by another service implementation.
-        replace_existing = 1 << 1, ///< Replace any existing instance on the bus.
-        do_not_queue = 1 << 2 ///< Blocking wait for service name to be acquired.
-    };
-
-    /**
-     * @brief default_request_name_flags returns defaults flags when acquiring a name on the bus.
-     */
-    static RequestNameFlag default_request_name_flags();
+    typedef std::shared_ptr<Service> Ptr;    
 
     /**
      * @brief Exposes a service on the bus.
@@ -91,7 +71,9 @@ public:
     template<typename Interface>
     inline static Ptr add_service(
         const Bus::Ptr& connection,
-        const RequestNameFlag& flags = default_request_name_flags())
+        const Bus::RequestNameFlag& flags =
+            Bus::RequestNameFlag::do_not_queue |
+            Bus::RequestNameFlag::replace_existing)
     {
         static Ptr instance(
             new Service(
@@ -160,7 +142,7 @@ protected:
     template<typename T> friend class Property;
 
     Service(const Bus::Ptr& connection, const std::string& name);
-    Service(const Bus::Ptr& connection, const std::string& name, const RequestNameFlag& flags);
+    Service(const Bus::Ptr& connection, const std::string& name, const Bus::RequestNameFlag& flags);
 
     bool is_stub() const;
 
@@ -175,8 +157,6 @@ private:
     std::shared_ptr<Object> root;
     bool stub;
 };
-
-Service::RequestNameFlag operator|(Service::RequestNameFlag lhs, Service::RequestNameFlag rhs);
 }
 }
 }

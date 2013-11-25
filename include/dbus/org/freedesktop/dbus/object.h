@@ -66,7 +66,7 @@ namespace dbus
 {
 namespace types
 {
-struct Any;
+class Any;
 class ObjectPath;
 template<typename T>
 class Variant;
@@ -75,7 +75,7 @@ class MatchRule;
 template<typename T>
 class Property;
 template<typename T>
-struct Result;
+class Result;
 template<typename T, typename U>
 class Signal;
 
@@ -173,26 +173,41 @@ class Object : public std::enable_shared_from_this<Object>
      */
     inline bool is_stub() const;
 
+    /**
+     * @brief Requests the object to process a message
+     * @param msg The message to be processed.
+     * @return true iff the msg has been handled.
+     */
+    inline bool on_new_message(const Message::Ptr& msg);
+
   private:
     friend class Service;
     template<typename T, typename U> friend class Signal;
     template<typename T> friend class Property;
 
-    static void unregister_object_path(DBusConnection*, void*);
-
-    static DBusHandlerResult on_new_message(DBusConnection*, DBusMessage* message, void* user_data);
-
     Object(const std::shared_ptr<Service> parent, const types::ObjectPath& path);
 
     void add_match(const MatchRule& rule);
     void remove_match(const MatchRule& rule);
+    void on_properties_changed(
+            const interfaces::Properties::Signals::PropertiesChanged::ArgumentType&);
 
     std::shared_ptr<Service> parent;
-    types::ObjectPath object_path;
+    types::ObjectPath object_path;    
     MessageRouter<SignalKey> signal_router;
     MessageRouter<MethodKey> method_router;
     MessageRouter<PropertyKey> get_property_router;
     MessageRouter<PropertyKey> set_property_router;
+    std::map<
+        std::tuple<std::string, std::string>,
+        std::function<void(const Message::Ptr&)>
+    > property_changed_vtable;
+    std::shared_ptr<
+        Signal<
+            interfaces::Properties::Signals::PropertiesChanged,
+            interfaces::Properties::Signals::PropertiesChanged::ArgumentType
+        >
+    > signal_properties_changed;
 };
 }
 }

@@ -23,6 +23,8 @@
 #include <chrono>
 #include <memory>
 
+namespace dbus = org::freedesktop::dbus;
+
 TEST(Message, BuildingAMethodCallMessageSucceedsForValidArguments)
 {
     const std::string destination = DBUS_SERVICE_DBUS;
@@ -95,7 +97,7 @@ TEST(Message, WriteAndSuccessiveReadAreIdempotent)
                 interface,
                 member);
 
-    const unsigned int expected_integer_value
+    const int32_t expected_integer_value
     {
         43
     };
@@ -116,4 +118,59 @@ TEST(Message, WriteAndSuccessiveReadAreIdempotent)
 
     EXPECT_EQ(expected_integer_value, i);
     EXPECT_EQ(expected_floating_point_value, d);
+}
+
+TEST(Message, WriteAndSuccessiveIterationAreIdempotent)
+{
+    const std::string destination = DBUS_SERVICE_DBUS;
+    const std::string path = DBUS_PATH_DBUS;
+    const std::string interface = DBUS_SERVICE_DBUS;
+    const std::string member = "ListNames";
+
+    auto msg = org::freedesktop::dbus::Message::make_method_call(
+                destination,
+                path,
+                interface,
+                member);
+
+    const std::int32_t expected_integer_value
+    {
+        43
+    };
+    const double expected_floating_point_value
+    {
+        42.
+    };
+
+    {
+        auto writer = msg->writer();
+        writer.push_int32(expected_integer_value);
+        writer.push_floating_point(expected_floating_point_value);
+        auto vw = writer.open_variant(dbus::types::Signature("(id)"));
+        {
+            auto sw = vw.open_structure();
+            {
+                sw.push_int32(expected_integer_value);
+                sw.push_floating_point(expected_floating_point_value);
+            }
+            vw.close_structure(std::move(sw));
+        }
+        writer.close_variant(std::move(vw));
+    }
+
+    auto reader = msg->reader();
+    EXPECT_EQ(dbus::ArgumentType::int32, reader.type());
+    EXPECT_NO_THROW(reader.pop());
+    EXPECT_EQ(dbus::ArgumentType::floating_point, reader.type());
+    EXPECT_NO_THROW(reader.pop());
+    auto vr = reader.pop_variant();
+    {
+        auto sr = vr.pop_structure();
+        {
+            EXPECT_EQ(dbus::ArgumentType::int32, sr.type());
+            EXPECT_EQ(expected_integer_value, sr.pop_int32());
+            EXPECT_EQ(dbus::ArgumentType::floating_point, sr.type());
+            EXPECT_EQ(expected_floating_point_value, sr.pop_floating_point());
+        }
+    }
 }

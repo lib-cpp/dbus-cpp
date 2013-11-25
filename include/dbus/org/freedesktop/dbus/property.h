@@ -18,6 +18,7 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_PROPERTY_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_PROPERTY_H_
 
+#include <list>
 #include <memory>
 
 namespace org
@@ -36,17 +37,35 @@ template<typename PropertyType>
 class Property
 {
 public:
+    /** Function signature for subscribing to change notifications. */
+    typedef std::function<void(const typename PropertyType::ValueType& new_value)> ChangeObserver;
+
+    /** Token to be used for unsubscribing from change notifications. */
+    typedef typename std::list<ChangeObserver>::iterator Token;
+
     /**
      * @brief Non-mutable access to the contained value.
      * @return Non-mutable reference to the contained value.
      */
-    inline const typename PropertyType::ValueType& value();
+    inline const typename PropertyType::ValueType& get() const;
 
     /**
      * @brief Adjusts the contained value
      * @param [in] new_value New value of the property.
      */
-    inline void value(const typename PropertyType::ValueType& new_value);
+    inline void set(const typename PropertyType::ValueType& new_value);
+
+    /**
+      * @brief Subscribes to changes to this property.
+      * @param observer The observer to be called in the case of changes.
+      */
+    inline Token subscribe_to_changes(const ChangeObserver& observer);
+
+    /**
+     * @brief Cancel a previous subscription to change notifications.
+     * @param token Represents the previous subscription.
+     */
+    inline void unsubscribe_from_changes(const Token& token);
 
     /**
      * @brief Queries whether the property is writable.
@@ -69,13 +88,16 @@ private:
 
     inline void handle_get(const Message::Ptr& msg);
     inline void handle_set(const Message::Ptr& msg);
+    inline void handle_changed(const Message::Ptr& msg);
 
     std::shared_ptr<Object> parent;
     std::string interface;
     std::string name;
+    std::mutex observers_guard;
+    std::list<ChangeObserver> observers;
     bool writable;
 
-    types::Variant<typename PropertyType::ValueType> property_value;
+    mutable types::Variant<typename PropertyType::ValueType> property_value;
 };
 }
 }

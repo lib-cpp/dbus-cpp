@@ -60,64 +60,52 @@ bus->install_executor(org::freedesktop::dbus::asio::make_executor(bus));
     auto all_properties = upower_object->get_all_properties<org::freedesktop::UPower>();
     std::for_each(all_properties.begin(), all_properties.end(), [](const std::pair<const std::string, dbus::types::Variant<dbus::types::Any>>& pair)
     {
-        std::cout << pair.first << " -> " << pair.second.get() << std::endl;
+        std::cout << pair.first << std::endl;
     });
 
-    std::cout << upower_object->get_property<org::freedesktop::UPower::Properties::DaemonVersion>()->value() << std::endl;
-    std::cout << upower_object->get_property<org::freedesktop::UPower::Properties::CanSuspend>()->value() << std::endl;
-    std::cout << upower_object->get_property<org::freedesktop::UPower::Properties::CanHibernate>()->value() << std::endl;
-    std::cout << upower_object->get_property<org::freedesktop::UPower::Properties::OnBattery>()->value() << std::endl;
-    std::cout << upower_object->get_property<org::freedesktop::UPower::Properties::LidIsClosed>()->value() << std::endl;
-    std::cout << upower_object->get_property<org::freedesktop::UPower::Properties::LidIsPresent>()->value() << std::endl;
+    std::cout << upower_object->get_property<org::freedesktop::UPower::Properties::DaemonVersion>()->get() << std::endl;
+    std::cout << upower_object->get_property<org::freedesktop::UPower::Properties::CanSuspend>()->get() << std::endl;
+    std::cout << upower_object->get_property<org::freedesktop::UPower::Properties::CanHibernate>()->get() << std::endl;
+    std::cout << upower_object->get_property<org::freedesktop::UPower::Properties::OnBattery>()->get() << std::endl;
+    std::cout << upower_object->get_property<org::freedesktop::UPower::Properties::LidIsClosed>()->get() << std::endl;
+    std::cout << upower_object->get_property<org::freedesktop::UPower::Properties::LidIsPresent>()->get() << std::endl;
 
     auto device_added_signal = upower_object->get_signal<org::freedesktop::UPower::Signals::DeviceAdded>();
-    dbus::signals::ScopedConnection sc1
+    device_added_signal->connect([](const org::freedesktop::UPower::Signals::DeviceAdded::ArgumentType&)
     {
-        device_added_signal->connect([](const org::freedesktop::UPower::Signals::DeviceAdded::ArgumentType&)
-        {
-            std::cout << "org::freedesktop::UPower::Signals::DeviceAdded" << std::endl;
-        })
-    };
+        std::cout << "org::freedesktop::UPower::Signals::DeviceAdded" << std::endl;
+    });
+
     auto device_removed_signal = upower_object->get_signal<org::freedesktop::UPower::Signals::DeviceRemoved>();
-    dbus::signals::ScopedConnection sc2
+    device_removed_signal->connect([](const org::freedesktop::UPower::Signals::DeviceRemoved::ArgumentType&)
     {
-        device_removed_signal->connect([](const org::freedesktop::UPower::Signals::DeviceRemoved::ArgumentType&)
-        {
-            std::cout << "org::freedesktop::UPower::Signals::DeviceRemoved" << std::endl;
-        })
-    };
+        std::cout << "org::freedesktop::UPower::Signals::DeviceRemoved" << std::endl;
+    });
+
     auto device_changed_signal = upower_object->get_signal<org::freedesktop::UPower::Signals::DeviceChanged>();
-    dbus::signals::ScopedConnection sc3
+    device_changed_signal->connect([](const org::freedesktop::UPower::Signals::DeviceChanged::ArgumentType&)
     {
-        device_changed_signal->connect([](const org::freedesktop::UPower::Signals::DeviceChanged::ArgumentType&)
-        {
-            std::cout << "org::freedesktop::UPower::Signals::DeviceChanged" << std::endl;
-        })
-    };
+        std::cout << "org::freedesktop::UPower::Signals::DeviceChanged" << std::endl;
+    });
+
     auto changed_signal = upower_object->get_signal<org::freedesktop::UPower::Signals::Changed>();
-    dbus::signals::ScopedConnection sc4
+    changed_signal->connect([]()
     {
-        changed_signal->connect([]()
-        {
-            std::cout << "org::freedesktop::UPower::Signals::Changed" << std::endl;
-        })
-    };
+        std::cout << "org::freedesktop::UPower::Signals::Changed" << std::endl;
+    });
+
     auto sleeping_signal = upower_object->get_signal<org::freedesktop::UPower::Signals::Sleeping>();
-    dbus::signals::ScopedConnection sc5
+    sleeping_signal->connect([]()
     {
-        sleeping_signal->connect([]()
-        {
-            std::cout << "org::freedesktop::UPower::Signals::Sleeping" << std::endl;
-        })
-    };
+        std::cout << "org::freedesktop::UPower::Signals::Sleeping" << std::endl;
+    });
+
     auto resuming_signal = upower_object->get_signal<org::freedesktop::UPower::Signals::Resuming>();
-    dbus::signals::ScopedConnection sc6
+    resuming_signal->connect([]()
     {
-        resuming_signal->connect([]()
-        {
-            std::cout << "org::freedesktop::UPower::Signals::Resuming" << std::endl;
-        })
-    };
+        std::cout << "org::freedesktop::UPower::Signals::Resuming" << std::endl;
+    });
+
     auto devices = upower_object->invoke_method_synchronously<org::freedesktop::UPower::EnumerateDevices, std::vector<dbus::types::ObjectPath>>();
     std::cout << "Devices count: " << devices.value().size() << std::endl;
     std::for_each(devices.value().begin(), devices.value().end(), [upower_object](const dbus::types::ObjectPath& path)
@@ -165,37 +153,37 @@ bus->install_executor(org::freedesktop::dbus::asio::make_executor(bus));
         }
 
         std::cout << "Manual: " << path << std::endl;
-        std::cout << "\tVendor: " << device->get_property<org::freedesktop::UPower::Device::Properties::Vendor>()->value() << std::endl;
-        std::cout << "\tModel: " << device->get_property<org::freedesktop::UPower::Device::Properties::Model>()->value() << std::endl;
-        std::cout << "\tSerial: " << device->get_property<org::freedesktop::UPower::Device::Properties::Serial>()->value() << std::endl;
-        std::cout << "\tUpdateTime: " << device->get_property<org::freedesktop::UPower::Device::Properties::UpdateTime>()->value() << std::endl;
-        std::cout << "\tType: " << device->get_property<org::freedesktop::UPower::Device::Properties::Type>()->value() << std::endl;
-        std::cout << "\tPowerSupply: " << device->get_property<org::freedesktop::UPower::Device::Properties::PowerSupply>()->value() << std::endl;
-        std::cout << "\tHasHistory: " << device->get_property<org::freedesktop::UPower::Device::Properties::HasHistory>()->value() << std::endl;
-        std::cout << "\tHasStatistics: " << device->get_property<org::freedesktop::UPower::Device::Properties::HasStatistics>()->value() << std::endl;
-        std::cout << "\tOnline: " << device->get_property<org::freedesktop::UPower::Device::Properties::Online>()->value() << std::endl;
-        std::cout << "\tEnergy: " << device->get_property<org::freedesktop::UPower::Device::Properties::Energy>()->value() << std::endl;
-        std::cout << "\tEnergyEmpty: " << device->get_property<org::freedesktop::UPower::Device::Properties::EnergyEmpty>()->value() << std::endl;
-        std::cout << "\tEnergyFull: " << device->get_property<org::freedesktop::UPower::Device::Properties::EnergyFull>()->value() << std::endl;
-        std::cout << "\tEnergyFullDesign: " << device->get_property<org::freedesktop::UPower::Device::Properties::EnergyFullDesign>()->value() << std::endl;
-        std::cout << "\tEnergyRate: " << device->get_property<org::freedesktop::UPower::Device::Properties::EnergyRate>()->value() << std::endl;
-        std::cout << "\tVoltage: " << device->get_property<org::freedesktop::UPower::Device::Properties::Voltage>()->value() << std::endl;
-        //std::cout << "\tTimeToEmpty: " << device->get_property<UPower::Device::Properties::TimeToEmpty>()->value() << std::endl;
-        //std::cout << "\tTimeToFull: " << device->get_property<UPower::Device::Properties::TimeToFull>()->value() << std::endl;
-        std::cout << "\tPercentage: " << device->get_property<org::freedesktop::UPower::Device::Properties::Percentage>()->value() << std::endl;
-        std::cout << "\tIsPresent: " << device->get_property<org::freedesktop::UPower::Device::Properties::IsPresent>()->value() << std::endl;
-        std::cout << "\tState: " << device->get_property<org::freedesktop::UPower::Device::Properties::State>()->value() << std::endl;
-        std::cout << "\tIsRechargeable: " << device->get_property<org::freedesktop::UPower::Device::Properties::IsRechargeable>()->value() << std::endl;
-        std::cout << "\tCapacity: " << device->get_property<org::freedesktop::UPower::Device::Properties::Capacity>()->value() << std::endl;
-        std::cout << "\tTechnology: " << device->get_property<org::freedesktop::UPower::Device::Properties::Technology>()->value() << std::endl;
-        std::cout << "\tRecallNotice: " << device->get_property<org::freedesktop::UPower::Device::Properties::RecallNotice>()->value() << std::endl;
-        std::cout << "\tRecallVendor: " << device->get_property<org::freedesktop::UPower::Device::Properties::RecallVendor>()->value() << std::endl;
-        std::cout << "\tRecallUrl: " << device->get_property<org::freedesktop::UPower::Device::Properties::RecallUrl>()->value() << std::endl;
+        std::cout << "\tVendor: " << device->get_property<org::freedesktop::UPower::Device::Properties::Vendor>()->get() << std::endl;
+        std::cout << "\tModel: " << device->get_property<org::freedesktop::UPower::Device::Properties::Model>()->get() << std::endl;
+        std::cout << "\tSerial: " << device->get_property<org::freedesktop::UPower::Device::Properties::Serial>()->get() << std::endl;
+        std::cout << "\tUpdateTime: " << device->get_property<org::freedesktop::UPower::Device::Properties::UpdateTime>()->get() << std::endl;
+        std::cout << "\tType: " << device->get_property<org::freedesktop::UPower::Device::Properties::Type>()->get() << std::endl;
+        std::cout << "\tPowerSupply: " << device->get_property<org::freedesktop::UPower::Device::Properties::PowerSupply>()->get() << std::endl;
+        std::cout << "\tHasHistory: " << device->get_property<org::freedesktop::UPower::Device::Properties::HasHistory>()->get() << std::endl;
+        std::cout << "\tHasStatistics: " << device->get_property<org::freedesktop::UPower::Device::Properties::HasStatistics>()->get() << std::endl;
+        std::cout << "\tOnline: " << device->get_property<org::freedesktop::UPower::Device::Properties::Online>()->get() << std::endl;
+        std::cout << "\tEnergy: " << device->get_property<org::freedesktop::UPower::Device::Properties::Energy>()->get() << std::endl;
+        std::cout << "\tEnergyEmpty: " << device->get_property<org::freedesktop::UPower::Device::Properties::EnergyEmpty>()->get() << std::endl;
+        std::cout << "\tEnergyFull: " << device->get_property<org::freedesktop::UPower::Device::Properties::EnergyFull>()->get() << std::endl;
+        std::cout << "\tEnergyFullDesign: " << device->get_property<org::freedesktop::UPower::Device::Properties::EnergyFullDesign>()->get() << std::endl;
+        std::cout << "\tEnergyRate: " << device->get_property<org::freedesktop::UPower::Device::Properties::EnergyRate>()->get() << std::endl;
+        std::cout << "\tVoltage: " << device->get_property<org::freedesktop::UPower::Device::Properties::Voltage>()->get() << std::endl;
+        //std::cout << "\tTimeToEmpty: " << device->get_property<UPower::Device::Properties::TimeToEmpty>()->get() << std::endl;
+        //std::cout << "\tTimeToFull: " << device->get_property<UPower::Device::Properties::TimeToFull>()->get() << std::endl;
+        std::cout << "\tPercentage: " << device->get_property<org::freedesktop::UPower::Device::Properties::Percentage>()->get() << std::endl;
+        std::cout << "\tIsPresent: " << device->get_property<org::freedesktop::UPower::Device::Properties::IsPresent>()->get() << std::endl;
+        std::cout << "\tState: " << device->get_property<org::freedesktop::UPower::Device::Properties::State>()->get() << std::endl;
+        std::cout << "\tIsRechargeable: " << device->get_property<org::freedesktop::UPower::Device::Properties::IsRechargeable>()->get() << std::endl;
+        std::cout << "\tCapacity: " << device->get_property<org::freedesktop::UPower::Device::Properties::Capacity>()->get() << std::endl;
+        std::cout << "\tTechnology: " << device->get_property<org::freedesktop::UPower::Device::Properties::Technology>()->get() << std::endl;
+        std::cout << "\tRecallNotice: " << device->get_property<org::freedesktop::UPower::Device::Properties::RecallNotice>()->get() << std::endl;
+        std::cout << "\tRecallVendor: " << device->get_property<org::freedesktop::UPower::Device::Properties::RecallVendor>()->get() << std::endl;
+        std::cout << "\tRecallUrl: " << device->get_property<org::freedesktop::UPower::Device::Properties::RecallUrl>()->get() << std::endl;
         std::cout << "-----------------------------------------------------------------------------------" << std::endl;
         auto properties = device->get_all_properties<org::freedesktop::UPower::Device>();
         std::for_each(properties.begin(), properties.end(), [](const std::pair<const std::string, dbus::types::Variant<dbus::types::Any>>& pair)
         {
-            std::cout << "\t" << pair.first << " -> " << pair.second.get() << std::endl;
+            std::cout << "\t" << pair.first << std::endl;
         });
         std::cout << "===================================================================================" << std::endl;
     });

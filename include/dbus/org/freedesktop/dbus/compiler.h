@@ -33,7 +33,7 @@ namespace freedesktop
 namespace dbus
 {
 class Generator;
-class GeneratorConfiguration;
+struct GeneratorConfiguration;
 
 /**
  * \brief Parses and processes a DBus introspection XML.

@@ -26,7 +26,7 @@ namespace dbus
 {
 template<typename PropertyType>
 const typename PropertyType::ValueType&
-Property<PropertyType>::value()
+Property<PropertyType>::get() const
 {
     if (parent->is_stub())
         property_value = parent->invoke_method_synchronously<
@@ -38,18 +38,48 @@ Property<PropertyType>::value()
 
 template<typename PropertyType>
 void
-Property<PropertyType>::value(const typename PropertyType::ValueType& new_value)
+Property<PropertyType>::set(const typename PropertyType::ValueType& new_value)
 {
     property_value.set(new_value);
     if (parent->is_stub())
     {
         if (!writable)
-            std::runtime_error("Property is not writable");
+            throw std::runtime_error("Property is not writable");
         parent->invoke_method_synchronously<
             interfaces::Properties::Set,
             void
             >(interface, name, property_value);
     }
+
+    std::lock_guard<std::mutex> lg(observers_guard);
+    for (auto observer : observers)
+        observer(new_value);
+}
+
+/**
+  * @brief Subscribes to changes to this property.
+  * @param observer The observer to be called in the case of changes.
+  */
+template<typename PropertyType>
+inline typename Property<PropertyType>::Token
+Property<PropertyType>::subscribe_to_changes(const typename Property<PropertyType>::ChangeObserver& observer)
+{
+    Token token;
+    std::lock_guard<std::mutex> lg(observers_guard);
+    token = observers.insert(observers.end(), observer);
+    return token;
+}
+
+/**
+ * @brief Cancel a previous subscription to change notifications.
+ * @param token Represents the previous subscription.
+ */
+template<typename PropertyType>
+inline void
+Property<PropertyType>::unsubscribe_from_changes(const typename Property<PropertyType>::Token& token)
+{
+    std::lock_guard<std::mutex> lg(observers_guard);
+    observers.erase(token);
 }
 
 template<typename PropertyType>
@@ -158,6 +188,21 @@ Property<PropertyType>::handle_set(const Message::Ptr& msg)
 
     auto reply = Message::make_method_return(msg);
     parent->parent->get_connection()->send(reply);
+}
+
+template<typename PropertyType>
+void
+Property<PropertyType>::handle_changed(const Message::Ptr& msg)
+{
+    try
+    {
+        typename PropertyType::ValueType value;
+        msg->reader() >> value;
+        set(value);
+    }
+    catch (...)
+    {
+    }
 }
 }
 }

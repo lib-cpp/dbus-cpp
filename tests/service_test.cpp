@@ -48,20 +48,18 @@ dbus::Bus::Ptr the_session_bus()
 TEST(Service, AccessingAnExistingServiceAndItsObjectsOnTheBusWorks)
 {
     auto bus = the_session_bus();
-    auto dbus = dbus::Service::use_service<dbus::DBus>(bus);
-    auto dbus_object = dbus->object_for_path(dbus::types::ObjectPath(DBUS_PATH_DBUS));
+    auto names = dbus::DBus(bus).list_names();
 
-    auto names = dbus_object->invoke_method_synchronously<dbus::DBus::ListNames, std::vector<std::string>>();
-
-    ASSERT_GT(names.value().size(), 0);
+    ASSERT_GT(names.size(), std::size_t{0});
 }
 
 TEST(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
 {
-    test::CrossProcessSync cross_process_sync;
+    test::CrossProcessSync cps1;
 
     const int64_t expected_value = 42;
-    auto child = [expected_value, &cross_process_sync]()
+
+    auto child = [expected_value, &cps1]()
     {
         auto bus = the_session_bus();
         bus->install_executor(org::freedesktop::dbus::asio::make_executor(bus));
@@ -69,7 +67,8 @@ TEST(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
         auto skeleton = service->add_object_for_path(dbus::types::ObjectPath("/this/is/unlikely/to/exist/Service"));
         auto signal = skeleton->get_signal<test::Service::Signals::Dummy>();
         auto writable_property = skeleton->get_property<test::Service::Properties::Dummy>();
-        writable_property->value(expected_value);
+        writable_property->set(expected_value);
+
         skeleton->install_method_handler<test::Service::Method>([bus, skeleton, expected_value](const dbus::Message::Ptr& msg)
         {
             std::cout << __PRETTY_FUNCTION__ << std::endl;
@@ -78,35 +77,40 @@ TEST(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
             bus->send(reply);
             skeleton->emit_signal<test::Service::Signals::Dummy, int64_t>(expected_value);
         });
+
         std::thread t{[bus](){ bus->run(); }};
-        cross_process_sync.signal_ready();
+        cps1.signal_ready();
         if (t.joinable())
             t.join();
     };
-    auto parent = [expected_value, cross_process_sync]()
+
+    auto parent = [expected_value, cps1]()
     {
         auto bus = the_session_bus();
         bus->install_executor(org::freedesktop::dbus::asio::make_executor(bus));
         std::thread t{[bus](){ bus->run(); }};
-        cross_process_sync.wait_for_signal_ready();
+        cps1.wait_for_signal_ready();
 
         auto stub_service = dbus::Service::use_service(bus, dbus::traits::Service<test::Service>::interface_name());
         auto stub = stub_service->object_for_path(dbus::types::ObjectPath("/this/is/unlikely/to/exist/Service"));
         auto writable_property = stub->get_property<test::Service::Properties::Dummy>();
+        writable_property->subscribe_to_changes([](double d)
+        {
+            std::cout << "Dummy property changed: " << d << std::endl;
+        });
         auto signal = stub->get_signal<test::Service::Signals::Dummy>();
         int64_t received_signal_value = -1;
         signal->connect([bus, &received_signal_value](const int32_t& value)
         {
-            std::cout << value << std::endl;
             received_signal_value = value;
             bus->stop();
         });
         auto result = stub->invoke_method_synchronously<test::Service::Method, int64_t>();
         ASSERT_FALSE(result.is_error());
         ASSERT_EQ(expected_value, result.value());
-        ASSERT_EQ(expected_value, writable_property->value());
-        ASSERT_NO_THROW(writable_property->value(4242));
-        ASSERT_EQ(4242, writable_property->value());
+        ASSERT_EQ(expected_value, writable_property->get());
+        ASSERT_NO_THROW(writable_property->set(4242));
+        ASSERT_EQ(4242, writable_property->get());
 
         if (t.joinable())
             t.join();
@@ -134,7 +138,7 @@ TEST(Service, AddingAnExistingServiceThrowsForSpecificFlags)
     {
         "org.freedesktop.DBus"
     };
-    dbus::Service::RequestNameFlag flags{dbus::Service::RequestNameFlag::not_set};
+    dbus::Bus::RequestNameFlag flags{dbus::Bus::RequestNameFlag::not_set};
     ASSERT_ANY_THROW(auto service = dbus::Service::add_service<dbus::DBus>(bus, flags););
 }
 
@@ -146,7 +150,11 @@ TEST(VoidResult, DefaultConstructionYieldsANonErrorResult)
 
 TEST(VoidResult, FromMethodCallYieldsException)
 {
-    auto msg = dbus::Message::make_method_call(DBUS_SERVICE_DBUS, DBUS_PATH_DBUS, DBUS_SERVICE_DBUS, "ListNames");
+    auto msg = dbus::Message::make_method_call(
+                dbus::DBus::name(),
+                dbus::DBus::path(),
+                dbus::DBus::interface(),
+                "ListNames");
     dbus::Result<void> result;
 
     EXPECT_ANY_THROW(result.from_message(msg));
@@ -157,7 +165,12 @@ TEST(VoidResult, FromErrorYieldsError)
     const std::string error_name = "does.not.exist.MyError";
     const std::string error_description = "MyErrorDescription";
 
-    auto msg = dbus::Message::make_method_call(DBUS_SERVICE_DBUS, DBUS_PATH_DBUS, DBUS_SERVICE_DBUS, "ListNames");
+    auto msg = dbus::Message::make_method_call(
+                dbus::DBus::name(),
+                dbus::DBus::path(),
+                dbus::DBus::interface(),
+                "ListNames");
+
     dbus_message_set_serial(msg->get(), 1);
     auto error_reply = dbus::Message::make_error(msg, error_name, error_description);
     dbus::Result<void> result = dbus::Result<void>::from_message(error_reply);
@@ -167,7 +180,12 @@ TEST(VoidResult, FromErrorYieldsError)
 
 TEST(VoidResult, FromNonEmptyMethodReturnYieldsException)
 {
-    auto msg = dbus::Message::make_method_call(DBUS_SERVICE_DBUS, DBUS_PATH_DBUS, DBUS_SERVICE_DBUS, "ListNames");
+    auto msg = dbus::Message::make_method_call(
+                dbus::DBus::name(),
+                dbus::DBus::path(),
+                dbus::DBus::interface(),
+                "ListNames");
+
     dbus_message_set_serial(msg->get(), 1);
     auto reply = dbus::Message::make_method_return(msg);
     reply->writer() << 42;
@@ -185,7 +203,11 @@ TEST(NonVoidResult, DefaultConstructionYieldsANonErrorResult)
 
 TEST(NonVoidResult, FromMethodCallYieldsException)
 {
-    auto msg = dbus::Message::make_method_call(DBUS_SERVICE_DBUS, DBUS_PATH_DBUS, DBUS_SERVICE_DBUS, "ListNames");
+    auto msg = dbus::Message::make_method_call(
+                dbus::DBus::name(),
+                dbus::DBus::path(),
+                dbus::DBus::interface(),
+                "ListNames");
     dbus::Result<int32_t> result;
 
     EXPECT_ANY_THROW(result.from_message(msg));
@@ -196,7 +218,11 @@ TEST(NonVoidResult, FromErrorYieldsError)
     const std::string error_name = "does.not.exist.MyError";
     const std::string error_description = "MyErrorDescription";
 
-    auto msg = dbus::Message::make_method_call(DBUS_SERVICE_DBUS, DBUS_PATH_DBUS, DBUS_SERVICE_DBUS, "ListNames");
+    auto msg = dbus::Message::make_method_call(
+                dbus::DBus::name(),
+                dbus::DBus::path(),
+                dbus::DBus::interface(),
+                "ListNames");
     dbus_message_set_serial(msg->get(), 1);
     auto error_reply = dbus::Message::make_error(msg, error_name, error_description);
     auto result = dbus::Result<int32_t>::from_message(error_reply);
@@ -208,9 +234,9 @@ TEST(NonVoidResult, FromErrorYieldsError)
 TEST(NonVoidResult, FromEmptyMethodReturnYieldsException)
 {
     auto msg = dbus::Message::make_method_call(
-                DBUS_SERVICE_DBUS,
-                DBUS_PATH_DBUS,
-                DBUS_SERVICE_DBUS,
+                dbus::DBus::name(),
+                dbus::DBus::path(),
+                dbus::DBus::interface(),
                 "ListNames");
 
     dbus_message_set_serial(msg->get(), 1);

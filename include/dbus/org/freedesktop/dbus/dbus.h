@@ -18,12 +18,11 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_DBUS_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_DBUS_H_
 
-#include <dbus/dbus.h>
-
 #include "org/freedesktop/dbus/bus.h"
 #include "org/freedesktop/dbus/codec.h"
 #include "org/freedesktop/dbus/object.h"
 #include "org/freedesktop/dbus/service.h"
+#include "org/freedesktop/dbus/visibility.h"
 #include "org/freedesktop/dbus/types/object_path.h"
 
 #include <sstream>
@@ -34,105 +33,53 @@ namespace freedesktop
 {
 namespace dbus
 {
-
-class DBus
+class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC DBus
 {
-  public:
-    struct ListNames
-    {
-        typedef DBus Interface;
-        
-        inline static const std::string& name()
-        {
-            static const std::string s
-            {
-                "ListNames"
-            };
-            return s;
-        }
+public:
+    /** @brief Query the well-known name of the DBus daemon. */
+    ORG_FREEDESKTOP_DBUS_DLL_PUBLIC static const std::string& name();
 
-        inline static const std::chrono::milliseconds default_timeout()
-        {
-            return std::chrono::seconds{1};
-        }
-    };
-    
-    struct GetConnectionUnixProcessID
-    {
-        typedef DBus Interface;
-        
-        inline static const std::string& name()
-        {
-            static const std::string s
-            {
-                "GetConnectionUnixProcessID"
-            };
-            return s;
-        }
-        
-        inline static const std::chrono::milliseconds default_timeout()
-        {
-            return std::chrono::seconds{1};
-        }
-    };
+    /** @brief Query the object path of the DBus daemon. */
+    ORG_FREEDESKTOP_DBUS_DLL_PUBLIC static const types::ObjectPath& path();
 
-    struct GetConnectionUnixUser
-    {
-        typedef DBus Interface;
-        
-        static const std::string& name()
-        {
-            static const std::string s
-            {
-                "GetConnectionUnixUser"
-            };
-            return s;
-        }
-        
-        inline static const std::chrono::milliseconds default_timeout()
-        {
-            return std::chrono::seconds{1};
-        }
-    };
+    /** @brief Query the interface name of the DBus daemon. */
+    ORG_FREEDESKTOP_DBUS_DLL_PUBLIC static const std::string& interface();
 
-    DBus(const Bus::Ptr& bus) 
-            : bus(bus),
-              service(Service::use_service<DBus>(bus)),
-              object(service->object_for_path(types::ObjectPath(DBUS_PATH_DBUS)))
-    {        
-    }
+    ORG_FREEDESKTOP_DBUS_DLL_PUBLIC DBus(const Bus::Ptr& bus);
+    DBus(const DBus&) = delete;
 
-    uint32_t get_connection_unix_process_id(const std::string& name)
-    {
-        return object->invoke_method_synchronously<GetConnectionUnixProcessID, uint32_t>(name).value();
-    }
+    DBus& operator=(const DBus&) = delete;
+    bool operator==(const DBus&) const = delete;
 
-    uint32_t get_connection_unix_user(const std::string& name)
-    {
-        return object->invoke_method_synchronously<GetConnectionUnixUser, uint32_t>(name).value();
-    }
+    /**
+     * @brief Queries the process ID given a name on the bus.
+     * @param [in] name Name of the remote peer.
+     * @return The process id of the remote peer.
+     */
+    ORG_FREEDESKTOP_DBUS_DLL_PUBLIC uint32_t get_connection_unix_process_id(const std::string& name) const;
 
-  private:
+    /**
+     * @brief Queries the user ID given a name on the bus.
+     * @param [in] name Name of the remote peer.
+     * @return The user id that the remote peer runs under.
+     */
+    ORG_FREEDESKTOP_DBUS_DLL_PUBLIC uint32_t get_connection_unix_user(const std::string& name) const;
+
+    /**
+      * @brief List all known names on the bus.
+      * @return A vector of all known participants on the bus.
+      */
+    ORG_FREEDESKTOP_DBUS_DLL_PUBLIC std::vector<std::string> list_names() const;
+
+private:
+    struct ListNames;
+    struct GetConnectionUnixProcessID;
+    struct GetConnectionUnixUser;
+
     Bus::Ptr bus;
     Service::Ptr service;
     Object::Ptr object;
 };
-
-namespace traits
-{
-template<> 
-struct Service<DBus>
-{
-    static const std::string& interface_name()
-    {
-        static const std::string s
-        {
-            DBUS_SERVICE_DBUS
-        };
-        return s;
-    }
-};
-}
 }
 }
 }

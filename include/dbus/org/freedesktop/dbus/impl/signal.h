@@ -41,10 +41,20 @@ Signal<SignalDescription, Argument>::emit(void)
 }
 
 template<typename SignalDescription, typename Argument>
-inline signals::Connection
+inline typename Signal<SignalDescription, Argument>::SubscriptionToken
 Signal<SignalDescription, Argument>::connect(const Handler& h)
 {
-    return signal.connect(h);
+    std::lock_guard<std::mutex> lg(handlers_guard);
+    return handlers.insert(handlers.end(), h);
+}
+
+template<typename SignalDescription, typename Argument>
+inline void
+Signal<SignalDescription, Argument>::disconnect(
+        const typename Signal<SignalDescription, Argument>::SubscriptionToken& token)
+{
+    std::lock_guard<std::mutex> lg(handlers_guard);
+    return handlers.erase(token);
 }
 
 template<typename SignalDescription, typename Argument>
@@ -85,7 +95,9 @@ template<typename SignalDescription, typename Argument>
 inline void
 Signal<SignalDescription, Argument>::operator()(const Message::Ptr&)
 {
-    signal();
+    std::lock_guard<std::mutex> lg(handlers_guard);
+    for (auto handler : handlers)
+        handler();
 }
 
 template<typename SignalDescription>
@@ -114,15 +126,37 @@ Signal<
 }
 
 template<typename SignalDescription>
-inline signals::Connection
+inline typename Signal<
+SignalDescription,
+typename std::enable_if<
+    is_not_void<typename SignalDescription::ArgumentType>::value,
+    typename SignalDescription::ArgumentType
+>::type
+>::SubscriptionToken
 Signal<
     SignalDescription,
     typename std::enable_if<
         is_not_void<typename SignalDescription::ArgumentType>::value,
-        typename SignalDescription::ArgumentType>::type
-    >::connect(const Handler& h)
+        typename SignalDescription::ArgumentType
+    >::type
+>::connect(const Handler& h)
 {
-    return d->signal.connect(h);
+    std::lock_guard<std::mutex> lg(d->handlers_guard);
+    return d->handlers.insert(d->handlers.end(), h);
+}
+
+template<typename SignalDescription>
+inline void
+Signal<
+    SignalDescription,
+    typename std::enable_if<
+        is_not_void<typename SignalDescription::ArgumentType>::value,
+        typename SignalDescription::ArgumentType
+    >::type
+>::disconnect(const SubscriptionToken& token)
+{
+    std::lock_guard<std::mutex> lg(d.handlers_guard);
+    return d.handlers.erase(token);
 }
 
 template<typename SignalDescription>
@@ -178,7 +212,9 @@ Signal<
     try
     {
         msg->reader() >> d->value;
-        d->signal(d->value);
+        std::lock_guard<std::mutex> lg(d->handlers_guard);
+        for (auto handler : d->handlers)
+            handler(d->value);
     }
     catch (const std::runtime_error& e)
     {

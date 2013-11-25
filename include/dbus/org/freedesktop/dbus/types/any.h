@@ -18,13 +18,7 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_TYPES_ANY_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_TYPES_ANY_H_
 
-#include <org/freedesktop/dbus/argument_type.h>
-#include <org/freedesktop/dbus/helper/apply_visitor.h>
-
-#include <cstring>
-#include <functional>
-#include <ostream>
-#include <tuple>
+#include <memory>
 
 namespace org
 {
@@ -32,101 +26,39 @@ namespace freedesktop
 {
 namespace dbus
 {
+class Message;
 namespace types
 {
-struct Any
+/**
+ * @brief Any describes types for which no codec specialization is known at compile time.
+ */
+class Any
 {
-    inline static void clone_value_if_string(DBusBasicValue& out, const DBusBasicValue& in, const ArgumentType& type)
-    {
-        out = in;
-        if (type == ArgumentType::string)
-            out.str = ::strdup(in.str); // FIXME(tvoss): This should be a strcpy
-    }
-
-    Any() : type(ArgumentType::invalid)
+public:
+    /**
+      * @brief Constructs an empty instance.
+      */
+    Any(const std::shared_ptr<Message>& msg = std::shared_ptr<Message>{})
+        : msg(msg)
     {
     }
 
-    Any(const Any& other) : type(other.type)
+    /**
+     * @brief Provides non-mutable access to the contained message.
+     *
+     * Users of the library can rely on Any and access to the contained and cloned
+     * message to postpone serialization until runtime. Usually, compile-time static
+     * typing is preferred via template-specializations of Codec to ensure maximum
+     * stability.
+     */
+    inline const std::shared_ptr<Message>& message() const
     {
-        clone_value_if_string(value, other.value, other.type);
+        return msg;
     }
 
-    Any& operator=(const Any& other)
-    {
-        type = other.type;
-        clone_value_if_string(value, other.value, other.type);
-
-        return *this;
-    }
-
-    ~Any() noexcept
-    {
-        if (type == ArgumentType::string)
-            free(value.str);
-    }
-
-    void operator()(org::freedesktop::dbus::ArgumentType t)
-    {
-        this->type = t;
-    }
-
-    void operator()(org::freedesktop::dbus::ArgumentType t, DBusBasicValue* v)
-    {
-        type = t;
-        clone_value_if_string(value, *v, t);
-    }
-
-    ArgumentType type;
-    DBusBasicValue value;
+private:
+    std::shared_ptr<Message> msg;
 };
-
-inline std::ostream& operator<<(std::ostream& out, const Any& any)
-{
-    switch (any.type)
-    {
-    case ArgumentType::invalid:
-        out << "invalid";
-        break;
-
-    case ArgumentType::floating_point:
-        out << any.value.dbl;
-        break;
-    case ArgumentType::byte:
-        out << any.value.byt;
-        break;
-    case ArgumentType::boolean:
-        out << std::boolalpha << static_cast<bool>(any.value.bool_val);
-        break;
-    case ArgumentType::int16:
-        out << any.value.i16;
-        break;
-    case ArgumentType::uint16:
-        out << any.value.u16;
-        break;
-    case ArgumentType::int32:
-        out << any.value.i32;
-        break;
-    case ArgumentType::uint32:
-        out << any.value.u32;
-        break;
-    case ArgumentType::int64:
-        out << any.value.i64;
-        break;
-    case ArgumentType::uint64:
-        out << any.value.u64;
-        break;
-    case ArgumentType::string:
-    case ArgumentType::object_path:
-    case ArgumentType::signature:
-        out << any.value.str;
-        break;
-    default:
-        break;
-    }
-
-    return out;
-}
 }
 }
 }

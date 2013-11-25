@@ -31,6 +31,8 @@
 #include <org/freedesktop/dbus/types/variant.h>
 #include <org/freedesktop/dbus/types/stl/map.h>
 #include <org/freedesktop/dbus/types/stl/string.h>
+#include <org/freedesktop/dbus/types/stl/tuple.h>
+#include <org/freedesktop/dbus/types/stl/vector.h>
 
 #include <functional>
 #include <future>
@@ -94,7 +96,7 @@ inline std::future<Result<ResultType>> Object::invoke_method_asynchronously(cons
     if (!msg)
         throw std::runtime_error("No memory available to allocate DBus message");
     
-    msg->writer().append(args...);
+    msg->writer().append(args...);    
 
     auto pending_call =
             parent->get_connection()->send_with_reply_and_timeout(
@@ -135,11 +137,39 @@ template<typename PropertyDescription>
 inline std::shared_ptr<Property<PropertyDescription>>
 Object::get_property()
 {
+    // If this is a proxy object we set up listening for property changes the
+    // first time someone accesses properties.
+    if (parent->is_stub())
+    {
+        if (!signal_properties_changed)
+        {
+            signal_properties_changed
+                = get_signal<interfaces::Properties::Signals::PropertiesChanged>();
+        }
+
+        signal_properties_changed->connect(
+            std::bind(
+                &Object::on_properties_changed,
+                shared_from_this(),
+                std::placeholders::_1));
+    }
+
     typedef Property<PropertyDescription> PropertyType;
     auto property =
             PropertyType::make_property(
                 shared_from_this());
-    
+
+    if (parent->is_stub())
+    {
+        auto tuple = std::make_tuple(
+                traits::Service<typename PropertyDescription::Interface>::interface_name(),
+                PropertyDescription::name());
+
+        property_changed_vtable[tuple] = std::bind(
+                &Property<PropertyDescription>::handle_changed,
+                property,
+                std::placeholders::_1);
+    }
     return property;
 }
 
@@ -197,15 +227,9 @@ inline bool Object::is_stub() const
     return parent->is_stub();
 }
 
-inline void Object::unregister_object_path(DBusConnection*, void*)
+inline bool Object::on_new_message(const Message::Ptr& msg)
 {
-    std::cout << __PRETTY_FUNCTION__ << std::endl;
-}
-
-inline DBusHandlerResult Object::on_new_message(DBusConnection*, DBusMessage* message, void* user_data)
-{
-    auto thiz = static_cast<Object*>(user_data);
-    return thiz->method_router(Message::from_raw_message(message)) ? DBUS_HANDLER_RESULT_HANDLED : DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+    return method_router(msg);
 }
 
 inline Object::Object(
@@ -259,6 +283,7 @@ inline Object::Object(
                 &MessageRouter<PropertyKey>::operator(), 
                 std::ref(get_property_router), 
                 std::placeholders::_1));
+
         install_method_handler<interfaces::Properties::Set>(
             std::bind(
                 &MessageRouter<PropertyKey>::operator(), 
@@ -275,6 +300,22 @@ inline void Object::add_match(const MatchRule& rule)
 inline void Object::remove_match(const MatchRule& rule)
 {
     parent->remove_match(rule.path(object_path));
+}
+
+inline void Object::on_properties_changed(
+        const interfaces::Properties::Signals::PropertiesChanged::ArgumentType& arg)
+{
+    auto interface = std::get<0>(arg);
+    auto changed_values = std::get<1>(arg);
+
+    for (auto value : changed_values)
+    {
+        auto it = property_changed_vtable.find(std::make_tuple(interface, value.first));
+        if (it != property_changed_vtable.end())
+        {
+            it->second(value.second.get().message());
+        }
+    }
 }
 }
 }

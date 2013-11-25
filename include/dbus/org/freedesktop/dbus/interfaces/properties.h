@@ -78,6 +78,24 @@ public:
             return std::chrono::seconds{1};
         }
     };
+
+    struct Signals
+    {
+        struct PropertiesChanged
+        {
+            inline static std::string name()
+            {
+                return "PropertiesChanged";
+            };
+
+            typedef Properties Interface;
+            typedef std::tuple<
+                std::string,
+                std::map<std::string, org::freedesktop::dbus::types::Variant<>>,
+                std::vector<std::string>
+            > ArgumentType;
+        };
+    };
 };
 }
 

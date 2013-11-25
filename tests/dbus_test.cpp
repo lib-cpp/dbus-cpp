@@ -41,8 +41,8 @@ TEST(DBus, QueryingUnixProcessIdReturnsCorrectResult)
 {
     const std::string path{"/this/is/just/a/test/service"};
 
-    auto pid = getpid();
-    auto uid = getuid();
+    uint32_t pid = getpid();
+    uint32_t uid = getuid();
 
     test::CrossProcessSync barrier;
 

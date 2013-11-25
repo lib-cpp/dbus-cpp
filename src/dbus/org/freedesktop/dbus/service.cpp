@@ -33,10 +33,6 @@
 #include "org/freedesktop/dbus/types/stl/map.h"
 #include "org/freedesktop/dbus/types/stl/string.h"
 
-#include <boost/signals2.hpp>
-
-#include <dbus/dbus.h>
-
 #include <bitset>
 #include <future>
 #include <memory>
@@ -51,16 +47,6 @@ namespace freedesktop
 {
 namespace dbus
 {
-Service::RequestNameFlag operator|(Service::RequestNameFlag lhs, Service::RequestNameFlag rhs)
-{
-    return static_cast<Service::RequestNameFlag>(static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs));
-}
-
-Service::RequestNameFlag Service::default_request_name_flags()
-{
-    return RequestNameFlag::do_not_queue;
-}
-
 Service::Ptr Service::use_service(const Bus::Ptr& connection, const std::string& name)
 {
     return Ptr(new Service(connection, name));
@@ -106,7 +92,7 @@ Service::Service(const Bus::Ptr& connection, const std::string& name)
 
 }
 
-Service::Service(const Bus::Ptr& connection, const std::string& name, const Service::RequestNameFlag& flags)
+Service::Service(const Bus::Ptr& connection, const std::string& name, const Bus::RequestNameFlag& flags)
     : connection(connection),
       name(name),
       stub(false)
@@ -133,29 +119,8 @@ std::shared_ptr<Object> Service::object_for_path(const types::ObjectPath& path)
 std::shared_ptr<Object> Service::add_object_for_path(const types::ObjectPath& path)
 {
     auto object = std::shared_ptr<Object>(new Object(shared_from_this(), path));
-    auto vtable = new DBusObjectPathVTable
-    {
-        Object::unregister_object_path,
-        Object::on_new_message,
-        nullptr,
-        nullptr,
-        nullptr,
-        nullptr
-    };
 
-    Error e;
-    auto result = dbus_connection_try_register_object_path(
-                      connection->raw(),
-                      path.as_string().c_str(),
-                      vtable,
-                      object.get(),
-                      std::addressof(e.raw()));
-
-    if (!result)
-    {
-        delete vtable;
-        throw std::runtime_error(e.name()+ ": " + e.message());
-    }
+    connection->register_object_for_path(path, object);
 
     return object;
 }

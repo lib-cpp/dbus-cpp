@@ -29,6 +29,7 @@ add_library(
   dbus-cpp SHARED
 
   bus.cpp
+  dbus.cpp
   error.cpp
   match_rule.cpp
   message.cpp
