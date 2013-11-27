@@ -15,8 +15,8 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_TYPES_VARIANT_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_TYPES_VARIANT_H_
+#ifndef CORE_DBUS_TYPES_VARIANT_H_
+#define CORE_DBUS_TYPES_VARIANT_H_
 
 #include <org/freedesktop/dbus/types/any.h>
 
@@ -25,15 +25,13 @@
 #include <memory>
 #include <stdexcept>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
 namespace types
 {
-template<typename T = org::freedesktop::dbus::types::Any>
+template<typename T = core::dbus::types::Any>
 class Variant
 {
 public:
@@ -61,5 +59,4 @@ private:
 }
 }
 }
-}
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_TYPES_VARIANT_H_
+#endif // CORE_DBUS_TYPES_VARIANT_H_

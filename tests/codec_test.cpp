@@ -38,91 +38,91 @@
 
 #include <memory>
 
-namespace dbus = org::freedesktop::dbus;
+namespace dbus = core::dbus;
 
 TEST(Codec, BasicTypesMatchSizeAndAlignOfDBusTypes)
 {
-    ::testing::StaticAssertTypeEq<dbus_bool_t, typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::boolean>::Type>();
-    ::testing::StaticAssertTypeEq<int8_t, typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::byte>::Type>();
-    ::testing::StaticAssertTypeEq<int16_t, typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::int16>::Type>();
-    ::testing::StaticAssertTypeEq<uint16_t, typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::uint16>::Type>();
-    ::testing::StaticAssertTypeEq<int32_t, typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::int32>::Type>();
-    ::testing::StaticAssertTypeEq<uint32_t, typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::uint32>::Type>();
-    ::testing::StaticAssertTypeEq<int64_t, typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::int64>::Type>();
-    ::testing::StaticAssertTypeEq<uint64_t, typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::uint64>::Type>();
-    ::testing::StaticAssertTypeEq<double, typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::floating_point>::Type>();
+    ::testing::StaticAssertTypeEq<dbus_bool_t, typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::boolean>::Type>();
+    ::testing::StaticAssertTypeEq<int8_t, typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::byte>::Type>();
+    ::testing::StaticAssertTypeEq<int16_t, typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::int16>::Type>();
+    ::testing::StaticAssertTypeEq<uint16_t, typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::uint16>::Type>();
+    ::testing::StaticAssertTypeEq<int32_t, typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::int32>::Type>();
+    ::testing::StaticAssertTypeEq<uint32_t, typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::uint32>::Type>();
+    ::testing::StaticAssertTypeEq<int64_t, typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::int64>::Type>();
+    ::testing::StaticAssertTypeEq<uint64_t, typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::uint64>::Type>();
+    ::testing::StaticAssertTypeEq<double, typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::floating_point>::Type>();
 
-    ASSERT_EQ(sizeof(dbus_bool_t), sizeof(typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::boolean>::Type));
-    ASSERT_EQ(sizeof(unsigned char), sizeof(typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::byte>::Type));
-    ASSERT_EQ(sizeof(dbus_int16_t), sizeof(typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::int16>::Type));
-    ASSERT_EQ(sizeof(dbus_uint16_t), sizeof(typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::uint16>::Type));
-    ASSERT_EQ(sizeof(dbus_int32_t), sizeof(typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::int32>::Type));
-    ASSERT_EQ(sizeof(dbus_uint32_t), sizeof(typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::uint32>::Type));
-    ASSERT_EQ(sizeof(dbus_int64_t), sizeof(typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::int64>::Type));
-    ASSERT_EQ(sizeof(dbus_uint64_t), sizeof(typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::uint64>::Type));
-    ASSERT_EQ(sizeof(double), sizeof(typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::floating_point>::Type));
+    ASSERT_EQ(sizeof(dbus_bool_t), sizeof(typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::boolean>::Type));
+    ASSERT_EQ(sizeof(unsigned char), sizeof(typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::byte>::Type));
+    ASSERT_EQ(sizeof(dbus_int16_t), sizeof(typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::int16>::Type));
+    ASSERT_EQ(sizeof(dbus_uint16_t), sizeof(typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::uint16>::Type));
+    ASSERT_EQ(sizeof(dbus_int32_t), sizeof(typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::int32>::Type));
+    ASSERT_EQ(sizeof(dbus_uint32_t), sizeof(typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::uint32>::Type));
+    ASSERT_EQ(sizeof(dbus_int64_t), sizeof(typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::int64>::Type));
+    ASSERT_EQ(sizeof(dbus_uint64_t), sizeof(typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::uint64>::Type));
+    ASSERT_EQ(sizeof(double), sizeof(typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::floating_point>::Type));
 
-    ASSERT_EQ(alignof(dbus_bool_t), alignof(typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::boolean>::Type));
-    ASSERT_EQ(alignof(unsigned char), alignof(typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::byte>::Type));
-    ASSERT_EQ(alignof(dbus_int16_t), alignof(typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::int16>::Type));
-    ASSERT_EQ(alignof(dbus_uint16_t), alignof(typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::uint16>::Type));
-    ASSERT_EQ(alignof(dbus_int32_t), alignof(typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::int32>::Type));
-    ASSERT_EQ(alignof(dbus_uint32_t), alignof(typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::uint32>::Type));
-    ASSERT_EQ(alignof(dbus_int64_t), alignof(typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::int64>::Type));
-    ASSERT_EQ(alignof(dbus_uint64_t), alignof(typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::uint64>::Type));
-    ASSERT_EQ(alignof(double), alignof(typename org::freedesktop::dbus::helper::DBusTypeMapper<org::freedesktop::dbus::ArgumentType::floating_point>::Type));
+    ASSERT_EQ(alignof(dbus_bool_t), alignof(typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::boolean>::Type));
+    ASSERT_EQ(alignof(unsigned char), alignof(typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::byte>::Type));
+    ASSERT_EQ(alignof(dbus_int16_t), alignof(typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::int16>::Type));
+    ASSERT_EQ(alignof(dbus_uint16_t), alignof(typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::uint16>::Type));
+    ASSERT_EQ(alignof(dbus_int32_t), alignof(typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::int32>::Type));
+    ASSERT_EQ(alignof(dbus_uint32_t), alignof(typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::uint32>::Type));
+    ASSERT_EQ(alignof(dbus_int64_t), alignof(typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::int64>::Type));
+    ASSERT_EQ(alignof(dbus_uint64_t), alignof(typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::uint64>::Type));
+    ASSERT_EQ(alignof(double), alignof(typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::floating_point>::Type));
 }
 
 TEST(Codec, BasicTypesMapToCorrectDBusTypes)
 {
-    ASSERT_EQ(org::freedesktop::dbus::ArgumentType::boolean, org::freedesktop::dbus::helper::TypeMapper<bool>::type_value());
-    ASSERT_EQ(org::freedesktop::dbus::ArgumentType::byte, org::freedesktop::dbus::helper::TypeMapper<int8_t>::type_value());
-    ASSERT_EQ(org::freedesktop::dbus::ArgumentType::int16, org::freedesktop::dbus::helper::TypeMapper<int16_t>::type_value());
-    ASSERT_EQ(org::freedesktop::dbus::ArgumentType::uint16, org::freedesktop::dbus::helper::TypeMapper<uint16_t>::type_value());
-    ASSERT_EQ(org::freedesktop::dbus::ArgumentType::int32, org::freedesktop::dbus::helper::TypeMapper<int32_t>::type_value());
-    ASSERT_EQ(org::freedesktop::dbus::ArgumentType::uint32, org::freedesktop::dbus::helper::TypeMapper<uint32_t>::type_value());
-    ASSERT_EQ(org::freedesktop::dbus::ArgumentType::floating_point, org::freedesktop::dbus::helper::TypeMapper<float>::type_value());
-    ASSERT_EQ(org::freedesktop::dbus::ArgumentType::floating_point, org::freedesktop::dbus::helper::TypeMapper<double>::type_value());
+    ASSERT_EQ(core::dbus::ArgumentType::boolean, core::dbus::helper::TypeMapper<bool>::type_value());
+    ASSERT_EQ(core::dbus::ArgumentType::byte, core::dbus::helper::TypeMapper<int8_t>::type_value());
+    ASSERT_EQ(core::dbus::ArgumentType::int16, core::dbus::helper::TypeMapper<int16_t>::type_value());
+    ASSERT_EQ(core::dbus::ArgumentType::uint16, core::dbus::helper::TypeMapper<uint16_t>::type_value());
+    ASSERT_EQ(core::dbus::ArgumentType::int32, core::dbus::helper::TypeMapper<int32_t>::type_value());
+    ASSERT_EQ(core::dbus::ArgumentType::uint32, core::dbus::helper::TypeMapper<uint32_t>::type_value());
+    ASSERT_EQ(core::dbus::ArgumentType::floating_point, core::dbus::helper::TypeMapper<float>::type_value());
+    ASSERT_EQ(core::dbus::ArgumentType::floating_point, core::dbus::helper::TypeMapper<double>::type_value());
 }
 
 TEST(Codec, StlCompoundTypesMapToCorrectDBusTypes)
 {
-    ASSERT_EQ(org::freedesktop::dbus::ArgumentType::string, org::freedesktop::dbus::helper::TypeMapper<std::string>::type_value());
-    ASSERT_EQ(org::freedesktop::dbus::ArgumentType::array, org::freedesktop::dbus::helper::TypeMapper<std::vector<std::string>>::type_value());
-    ASSERT_EQ(org::freedesktop::dbus::ArgumentType::array, org::freedesktop::dbus::helper::TypeMapper<std::list<std::string>>::type_value());
+    ASSERT_EQ(core::dbus::ArgumentType::string, core::dbus::helper::TypeMapper<std::string>::type_value());
+    ASSERT_EQ(core::dbus::ArgumentType::array, core::dbus::helper::TypeMapper<std::vector<std::string>>::type_value());
+    ASSERT_EQ(core::dbus::ArgumentType::array, core::dbus::helper::TypeMapper<std::list<std::string>>::type_value());
     typedef std::map<std::string, std::string> Map; // Need to circumvent a macro restriction with this.
-    ASSERT_EQ(org::freedesktop::dbus::ArgumentType::array, org::freedesktop::dbus::helper::TypeMapper< Map >::type_value());
+    ASSERT_EQ(core::dbus::ArgumentType::array, core::dbus::helper::TypeMapper< Map >::type_value());
     typedef std::pair<std::string,std::string> Pair; // Need to circumvent a macro restriction with this.
-    ASSERT_EQ(org::freedesktop::dbus::ArgumentType::dictionary_entry, org::freedesktop::dbus::helper::TypeMapper<Pair>::type_value());
+    ASSERT_EQ(core::dbus::ArgumentType::dictionary_entry, core::dbus::helper::TypeMapper<Pair>::type_value());
 }
 
 TEST(Codec, BasicTypeSignaturesMapToCorrectDBusSignatures)
 {
-    ASSERT_STREQ(DBUS_TYPE_BOOLEAN_AS_STRING, org::freedesktop::dbus::helper::TypeMapper<bool>::signature().c_str());
-    ASSERT_STREQ(DBUS_TYPE_BYTE_AS_STRING, org::freedesktop::dbus::helper::TypeMapper<int8_t>::signature().c_str());
-    ASSERT_STREQ(DBUS_TYPE_INT16_AS_STRING, org::freedesktop::dbus::helper::TypeMapper<int16_t>::signature().c_str());
-    ASSERT_STREQ(DBUS_TYPE_UINT16_AS_STRING, org::freedesktop::dbus::helper::TypeMapper<uint16_t>::signature().c_str());
-    ASSERT_STREQ(DBUS_TYPE_INT32_AS_STRING, org::freedesktop::dbus::helper::TypeMapper<int32_t>::signature().c_str());
-    ASSERT_STREQ(DBUS_TYPE_UINT32_AS_STRING, org::freedesktop::dbus::helper::TypeMapper<uint32_t>::signature().c_str());
-    ASSERT_STREQ(DBUS_TYPE_DOUBLE_AS_STRING, org::freedesktop::dbus::helper::TypeMapper<float>::signature().c_str());
-    ASSERT_STREQ(DBUS_TYPE_DOUBLE_AS_STRING, org::freedesktop::dbus::helper::TypeMapper<double>::signature().c_str());
+    ASSERT_STREQ(DBUS_TYPE_BOOLEAN_AS_STRING, core::dbus::helper::TypeMapper<bool>::signature().c_str());
+    ASSERT_STREQ(DBUS_TYPE_BYTE_AS_STRING, core::dbus::helper::TypeMapper<int8_t>::signature().c_str());
+    ASSERT_STREQ(DBUS_TYPE_INT16_AS_STRING, core::dbus::helper::TypeMapper<int16_t>::signature().c_str());
+    ASSERT_STREQ(DBUS_TYPE_UINT16_AS_STRING, core::dbus::helper::TypeMapper<uint16_t>::signature().c_str());
+    ASSERT_STREQ(DBUS_TYPE_INT32_AS_STRING, core::dbus::helper::TypeMapper<int32_t>::signature().c_str());
+    ASSERT_STREQ(DBUS_TYPE_UINT32_AS_STRING, core::dbus::helper::TypeMapper<uint32_t>::signature().c_str());
+    ASSERT_STREQ(DBUS_TYPE_DOUBLE_AS_STRING, core::dbus::helper::TypeMapper<float>::signature().c_str());
+    ASSERT_STREQ(DBUS_TYPE_DOUBLE_AS_STRING, core::dbus::helper::TypeMapper<double>::signature().c_str());
 }
 
 TEST(Codec, CompoundTypeSignaturesMapToCorrectDBusSignatures)
 {
     ASSERT_STREQ(
         DBUS_TYPE_ARRAY_AS_STRING DBUS_TYPE_STRING_AS_STRING,
-        org::freedesktop::dbus::helper::TypeMapper<std::vector<std::string>>::signature().c_str());
+        core::dbus::helper::TypeMapper<std::vector<std::string>>::signature().c_str());
 
     ASSERT_STREQ(
         DBUS_TYPE_ARRAY_AS_STRING DBUS_TYPE_STRING_AS_STRING,
-        org::freedesktop::dbus::helper::TypeMapper<std::list<std::string>>::signature().c_str());
+        core::dbus::helper::TypeMapper<std::list<std::string>>::signature().c_str());
 
     typedef std::map<std::string, std::string> Map;
 
     ASSERT_STREQ(
         DBUS_TYPE_ARRAY_AS_STRING DBUS_DICT_ENTRY_BEGIN_CHAR_AS_STRING DBUS_TYPE_STRING_AS_STRING DBUS_TYPE_STRING_AS_STRING DBUS_DICT_ENTRY_END_CHAR_AS_STRING,
-        org::freedesktop::dbus::helper::TypeMapper<Map>::signature().c_str());
+        core::dbus::helper::TypeMapper<Map>::signature().c_str());
 }
 
 namespace
@@ -169,9 +169,9 @@ const double default_double
     std::numeric_limits<double>::min()
 };
 
-org::freedesktop::dbus::Message::Ptr a_method_call()
+core::dbus::Message::Ptr a_method_call()
 {
-    return org::freedesktop::dbus::Message::make_method_call(
+    return core::dbus::Message::make_method_call(
                 dbus::DBus::name(),
                 dbus::DBus::path(),
                 dbus::DBus::interface(),
@@ -179,22 +179,22 @@ org::freedesktop::dbus::Message::Ptr a_method_call()
 }
 
 std::tuple<
-    org::freedesktop::dbus::Message::Ptr,
+    core::dbus::Message::Ptr,
     std::function<const char*()>
     > a_method_call_with_basic_types_as_arguments()
 {
     auto msg = a_method_call();
     auto writer = msg->writer();
-    EXPECT_NO_THROW(org::freedesktop::dbus::Codec<bool>::encode_argument(writer, default_bool););
-    EXPECT_NO_THROW(org::freedesktop::dbus::Codec<int8_t>::encode_argument(writer, default_int8););
-    EXPECT_NO_THROW(org::freedesktop::dbus::Codec<int16_t>::encode_argument(writer, default_int16););
-    EXPECT_NO_THROW(org::freedesktop::dbus::Codec<uint16_t>::encode_argument(writer, default_uint16););
-    EXPECT_NO_THROW(org::freedesktop::dbus::Codec<int32_t>::encode_argument(writer, default_int32););
-    EXPECT_NO_THROW(org::freedesktop::dbus::Codec<uint32_t>::encode_argument(writer, default_uint32););
-    EXPECT_NO_THROW(org::freedesktop::dbus::Codec<int64_t>::encode_argument(writer, default_int64););
-    EXPECT_NO_THROW(org::freedesktop::dbus::Codec<uint64_t>::encode_argument(writer, default_uint64););
-    EXPECT_NO_THROW(org::freedesktop::dbus::Codec<float>::encode_argument(writer, default_float););
-    EXPECT_NO_THROW(org::freedesktop::dbus::Codec<double>::encode_argument(writer, default_double););
+    EXPECT_NO_THROW(core::dbus::Codec<bool>::encode_argument(writer, default_bool););
+    EXPECT_NO_THROW(core::dbus::Codec<int8_t>::encode_argument(writer, default_int8););
+    EXPECT_NO_THROW(core::dbus::Codec<int16_t>::encode_argument(writer, default_int16););
+    EXPECT_NO_THROW(core::dbus::Codec<uint16_t>::encode_argument(writer, default_uint16););
+    EXPECT_NO_THROW(core::dbus::Codec<int32_t>::encode_argument(writer, default_int32););
+    EXPECT_NO_THROW(core::dbus::Codec<uint32_t>::encode_argument(writer, default_uint32););
+    EXPECT_NO_THROW(core::dbus::Codec<int64_t>::encode_argument(writer, default_int64););
+    EXPECT_NO_THROW(core::dbus::Codec<uint64_t>::encode_argument(writer, default_uint64););
+    EXPECT_NO_THROW(core::dbus::Codec<float>::encode_argument(writer, default_float););
+    EXPECT_NO_THROW(core::dbus::Codec<double>::encode_argument(writer, default_double););
 
     std::function<const char*()> signature = []()
     {
@@ -205,9 +205,9 @@ std::tuple<
 }
 
 template<typename T>
-::testing::AssertionResult check_value(org::freedesktop::dbus::Message::Reader& reader, const T& expected_value)
+::testing::AssertionResult check_value(core::dbus::Message::Reader& reader, const T& expected_value)
 {
-    return expected_value == org::freedesktop::dbus::decode_argument<T>(reader) ?
+    return expected_value == core::dbus::decode_argument<T>(reader) ?
                 ::testing::AssertionSuccess() :
                 ::testing::AssertionFailure();
 }
@@ -238,7 +238,7 @@ TEST(Codec, DecodingAMessageOfBasicTypesYieldsCorrectValues)
 
 TEST(ObjectPath, TypeMapperSpecializationReturnsCorrectValues)
 {
-    namespace dbus = org::freedesktop::dbus;
+    namespace dbus = core::dbus;
     ASSERT_EQ(dbus::ArgumentType::object_path, dbus::helper::TypeMapper<dbus::types::ObjectPath>::type_value());
     ASSERT_TRUE(dbus::helper::TypeMapper<dbus::types::ObjectPath>::is_basic_type());
     ASSERT_TRUE(dbus::helper::TypeMapper<dbus::types::ObjectPath>::requires_signature());
@@ -247,7 +247,7 @@ TEST(ObjectPath, TypeMapperSpecializationReturnsCorrectValues)
 
 TEST(ObjectPath, EncodingAndDecodingWorksCorrectly)
 {
-    namespace dbus = org::freedesktop::dbus;
+    namespace dbus = core::dbus;
     const dbus::types::ObjectPath expected_value
     {
         dbus::DBus::path()
@@ -262,7 +262,7 @@ TEST(ObjectPath, EncodingAndDecodingWorksCorrectly)
 
 TEST(Unixfd, TypeMapperSpecializationReturnsCorrectValues)
 {
-    namespace dbus = org::freedesktop::dbus;
+    namespace dbus = core::dbus;
     ASSERT_EQ(dbus::ArgumentType::unix_fd, dbus::helper::TypeMapper<dbus::types::UnixFd>::type_value());
     ASSERT_TRUE(dbus::helper::TypeMapper<dbus::types::UnixFd>::is_basic_type());
     ASSERT_TRUE(dbus::helper::TypeMapper<dbus::types::UnixFd>::requires_signature());
@@ -273,7 +273,7 @@ TEST(Unixfd, TypeMapperSpecializationReturnsCorrectValues)
 
 TEST(UnixFd, EncodingAndDecodingWorksCorrectly)
 {
-    namespace dbus = org::freedesktop::dbus;
+    namespace dbus = core::dbus;
     const dbus::types::UnixFd expected_value
     {
         eventfd(0,0)
@@ -299,7 +299,7 @@ TEST(UnixFd, EncodingAndDecodingWorksCorrectly)
 
 TEST(Variant, TypeMapperSpecializationReturnsCorrectValues)
 {
-    namespace dbus = org::freedesktop::dbus;
+    namespace dbus = core::dbus;
     ASSERT_EQ(dbus::ArgumentType::variant, dbus::helper::TypeMapper<dbus::types::Variant<double>>::type_value());
     ASSERT_TRUE(dbus::helper::TypeMapper<dbus::types::ObjectPath>::is_basic_type());
     ASSERT_TRUE(dbus::helper::TypeMapper<dbus::types::ObjectPath>::requires_signature());
@@ -308,7 +308,7 @@ TEST(Variant, TypeMapperSpecializationReturnsCorrectValues)
 
 TEST(Variant, EncodingAndDecodingWorksCorrectly)
 {
-    namespace dbus = org::freedesktop::dbus;
+    namespace dbus = core::dbus;
 
     typedef dbus::types::Struct<std::tuple<double, double, std::int32_t>> Struct;
     Struct my_struct = Struct{std::make_tuple(42., 42., 56)};
@@ -325,7 +325,7 @@ TEST(Variant, EncodingAndDecodingWorksCorrectly)
 
 TEST(Signature, TypeMapperSpecializationReturnsCorrectValues)
 {
-    namespace dbus = org::freedesktop::dbus;
+    namespace dbus = core::dbus;
     ASSERT_EQ(dbus::ArgumentType::signature, dbus::helper::TypeMapper<dbus::types::Signature>::type_value());
     ASSERT_TRUE(dbus::helper::TypeMapper<dbus::types::Signature>::is_basic_type());
     ASSERT_TRUE(dbus::helper::TypeMapper<dbus::types::Signature>::requires_signature());
@@ -334,7 +334,7 @@ TEST(Signature, TypeMapperSpecializationReturnsCorrectValues)
 
 TEST(Signature, EncodingAndDecodingWorksCorrectly)
 {
-    namespace dbus = org::freedesktop::dbus;
+    namespace dbus = core::dbus;
     const dbus::types::Signature expected_value
     {
         "(ii)"

@@ -23,9 +23,7 @@
 #include <iostream>
 #include <map>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -418,7 +416,6 @@ void IntrospectionParser::on_annotation(const std::function<void(const Annotatio
 void IntrospectionParser::on_annotation_done(const std::function<void()>& f)
 {
     d->on_annotation_done = f;
-}
 }
 }
 }

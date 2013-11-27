@@ -22,7 +22,7 @@
 #include <sstream>
 #include <string>
 
-namespace dbus = org::freedesktop::dbus;
+namespace dbus = core::dbus;
 
 namespace
 {

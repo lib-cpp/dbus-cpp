@@ -15,8 +15,8 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_INTERFACES_PROPERTIES_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_INTERFACES_PROPERTIES_H_
+#ifndef CORE_DBUS_INTERFACES_PROPERTIES_H_
+#define CORE_DBUS_INTERFACES_PROPERTIES_H_
 
 #include <org/freedesktop/dbus/service.h>
 #include <org/freedesktop/dbus/traits/service.h>
@@ -24,9 +24,7 @@
 #include <chrono>
 #include <string>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -91,7 +89,7 @@ public:
             typedef Properties Interface;
             typedef std::tuple<
                 std::string,
-                std::map<std::string, org::freedesktop::dbus::types::Variant<>>,
+                std::map<std::string, core::dbus::types::Variant<>>,
                 std::vector<std::string>
             > ArgumentType;
         };
@@ -113,5 +111,4 @@ struct Service<interfaces::Properties>
 }
 }
 }
-}
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_INTERFACES_INTROSPECTABLE_H_
+#endif // CORE_DBUS_INTERFACES_INTROSPECTABLE_H_

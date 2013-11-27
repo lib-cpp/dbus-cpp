@@ -15,14 +15,12 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_TYPES_STRUCT_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_TYPES_STRUCT_H_
+#ifndef CORE_DBUS_TYPES_STRUCT_H_
+#define CORE_DBUS_TYPES_STRUCT_H_
 
 #include <org/freedesktop/dbus/codec.h>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -42,7 +40,7 @@ struct Struct
 namespace helper
 {
 template<typename T>
-struct TypeMapper<org::freedesktop::dbus::types::Struct<T>>
+struct TypeMapper<core::dbus::types::Struct<T>>
 {
     constexpr inline static ArgumentType type_value()
     {
@@ -90,5 +88,4 @@ struct Codec<types::Struct<T>>
 };
 }
 }
-}
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_TYPES_STRUCT_H_
+#endif // CORE_DBUS_TYPES_STRUCT_H_

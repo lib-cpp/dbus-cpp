@@ -29,21 +29,21 @@
 #include <chrono>
 #include <memory>
 
-namespace dbus = org::freedesktop::dbus;
+namespace dbus = core::dbus;
 
 namespace
 {
-org::freedesktop::dbus::Bus::Ptr the_session_bus()
+core::dbus::Bus::Ptr the_session_bus()
 {
-    org::freedesktop::dbus::Bus::Ptr session_bus = std::make_shared<org::freedesktop::dbus::Bus>(org::freedesktop::dbus::WellKnownBus::session);
+    core::dbus::Bus::Ptr session_bus = std::make_shared<core::dbus::Bus>(core::dbus::WellKnownBus::session);
     return session_bus;
 }
 }
 
 TEST(Bus, ConstructionForSessionBusDoesNotThrow)
 {
-    std::shared_ptr<org::freedesktop::dbus::Bus> bus;
-    EXPECT_NO_THROW(bus.reset(new org::freedesktop::dbus::Bus(org::freedesktop::dbus::WellKnownBus::session)););
+    std::shared_ptr<core::dbus::Bus> bus;
+    EXPECT_NO_THROW(bus.reset(new core::dbus::Bus(core::dbus::WellKnownBus::session)););
 
     EXPECT_TRUE(bus->raw() != nullptr);
 }
@@ -51,7 +51,7 @@ TEST(Bus, ConstructionForSessionBusDoesNotThrow)
 TEST(Bus, BlockingMethodInvocationSucceedsForValidMessage)
 {
     static const char* expected_signature = DBUS_TYPE_ARRAY_AS_STRING DBUS_TYPE_STRING_AS_STRING;
-    auto msg = org::freedesktop::dbus::Message::make_method_call(
+    auto msg = core::dbus::Message::make_method_call(
                 dbus::DBus::name(),
                 dbus::DBus::path(),
                 dbus::DBus::name(),
@@ -59,20 +59,20 @@ TEST(Bus, BlockingMethodInvocationSucceedsForValidMessage)
 
     auto bus = the_session_bus();
     const std::chrono::milliseconds timeout = std::chrono::seconds(10);
-    std::shared_ptr<org::freedesktop::dbus::Message> reply = nullptr;
+    std::shared_ptr<core::dbus::Message> reply = nullptr;
     EXPECT_NO_THROW(
         reply = bus->send_with_reply_and_block_for_at_most(
                     msg,
                     timeout));
 
     EXPECT_NE(nullptr, reply.get());
-    EXPECT_EQ(org::freedesktop::dbus::Message::Type::method_return, reply->type());
+    EXPECT_EQ(core::dbus::Message::Type::method_return, reply->type());
     EXPECT_EQ(expected_signature, reply->signature());
 }
 
 TEST(Bus, NonBlockingMethodInvocationSucceedsForValidMessage)
 {
-    auto msg = org::freedesktop::dbus::Message::make_method_call(
+    auto msg = core::dbus::Message::make_method_call(
                 dbus::DBus::name(),
                 dbus::DBus::path(),
                 dbus::DBus::name(),
@@ -90,7 +90,7 @@ TEST(Bus, NonBlockingMethodInvocationSucceedsForValidMessage)
 
 TEST(Bus, HasOwnerForNameReturnsTrueForExistingName)
 {
-    org::freedesktop::dbus::Bus bus(org::freedesktop::dbus::WellKnownBus::session);
+    core::dbus::Bus bus(core::dbus::WellKnownBus::session);
 
     EXPECT_TRUE(bus.has_owner_for_name(dbus::DBus::name()));
 }
@@ -110,7 +110,7 @@ TEST(Bus, AddingAndRemovingAValidMatchRuleDoesNotThrow)
 
     struct ScopedMatch
     {
-        ScopedMatch(org::freedesktop::dbus::Bus::Ptr bus, const dbus::MatchRule& match_rule) : bus(bus), match_rule(match_rule)
+        ScopedMatch(core::dbus::Bus::Ptr bus, const dbus::MatchRule& match_rule) : bus(bus), match_rule(match_rule)
         {
             EXPECT_NO_THROW(bus->add_match(match_rule););
         }
@@ -120,7 +120,7 @@ TEST(Bus, AddingAndRemovingAValidMatchRuleDoesNotThrow)
             EXPECT_NO_THROW(bus->remove_match(match_rule););
         }
 
-        org::freedesktop::dbus::Bus::Ptr bus;
+        core::dbus::Bus::Ptr bus;
         dbus::MatchRule match_rule;
     };
 
@@ -140,10 +140,10 @@ dbus::Message::Ptr a_signal_message(const std::string& path, const std::string& 
 TEST(Bus, InstallingARouteForSignalsResultsInTheRouteBeingInvoked)
 {
     const std::string path{"/org/gnome/SettingsDaemon/Power"};
-    const org::freedesktop::dbus::types::ObjectPath to_route_for(path);
+    const core::dbus::types::ObjectPath to_route_for(path);
     bool invoked {false};
     auto bus = the_session_bus();
-    bus->install_executor(org::freedesktop::dbus::asio::make_executor(bus));
+    bus->install_executor(core::dbus::asio::make_executor(bus));
     bus->access_signal_router().install_route(to_route_for,[&](const dbus::Message::Ptr&)
                                               {
                                                   invoked = true;

@@ -34,7 +34,7 @@
 
 #include <thread>
 
-namespace dbus = org::freedesktop::dbus;
+namespace dbus = core::dbus;
 
 namespace
 {
@@ -62,7 +62,7 @@ TEST(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
     auto child = [expected_value, &cps1]()
     {
         auto bus = the_session_bus();
-        bus->install_executor(org::freedesktop::dbus::asio::make_executor(bus));
+        bus->install_executor(core::dbus::asio::make_executor(bus));
         auto service = dbus::Service::add_service<test::Service>(bus);
         auto skeleton = service->add_object_for_path(dbus::types::ObjectPath("/this/is/unlikely/to/exist/Service"));
         auto signal = skeleton->get_signal<test::Service::Signals::Dummy>();
@@ -87,7 +87,7 @@ TEST(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
     auto parent = [expected_value, cps1]()
     {
         auto bus = the_session_bus();
-        bus->install_executor(org::freedesktop::dbus::asio::make_executor(bus));
+        bus->install_executor(core::dbus::asio::make_executor(bus));
         std::thread t{[bus](){ bus->run(); }};
         cps1.wait_for_signal_ready();
 

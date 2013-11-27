@@ -27,9 +27,7 @@
 #include <stdexcept>
 #include <memory>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -92,7 +90,7 @@ struct Watch<DBusWatch>
 }
 namespace asio
 {
-class Executor : public org::freedesktop::dbus::Executor
+class Executor : public core::dbus::Executor
 {
   public:
     template<typename UnderlyingTimeoutType = DBusTimeout>

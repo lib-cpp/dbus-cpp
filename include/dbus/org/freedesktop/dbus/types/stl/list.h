@@ -15,17 +15,15 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_TYPES_STL_LIST_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_TYPES_STL_LIST_H_
+#ifndef CORE_DBUS_TYPES_STL_LIST_H_
+#define CORE_DBUS_TYPES_STL_LIST_H_
 
 #include <org/freedesktop/dbus/codec.h>
 
 #include <algorithm>
 #include <list>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -98,6 +96,5 @@ struct Codec<std::list<T>>
 };
 }
 }
-}
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_TYPES_STL_LIST_H_
+#endif // CORE_DBUS_TYPES_STL_LIST_H_
 

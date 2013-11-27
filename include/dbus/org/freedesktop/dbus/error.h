@@ -15,8 +15,8 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_ERROR_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_ERROR_H_
+#ifndef CORE_DBUS_ERROR_H_
+#define CORE_DBUS_ERROR_H_
 
 #include <org/freedesktop/dbus/visibility.h>
 
@@ -25,9 +25,7 @@
 
 struct DBusError;
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -80,6 +78,5 @@ class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Error
 };
 }
 }
-}
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_ERROR_H_
+#endif // CORE_DBUS_ERROR_H_

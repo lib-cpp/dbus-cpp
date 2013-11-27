@@ -15,8 +15,8 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_ARGUMENT_TYPE_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_ARGUMENT_TYPE_H_
+#ifndef CORE_DBUS_ARGUMENT_TYPE_H_
+#define CORE_DBUS_ARGUMENT_TYPE_H_
 
 #include <map>
 #include <ostream>
@@ -24,9 +24,7 @@
 
 #include <dbus/dbus.h>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -97,6 +95,5 @@ inline std::ostream& operator<<(std::ostream& out, const ArgumentType& type) noe
 }
 }
 }
-}
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_ARGUMENT_TYPE_H_
+#endif // CORE_DBUS_ARGUMENT_TYPE_H_

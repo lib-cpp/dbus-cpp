@@ -15,14 +15,12 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_STREAMING_OPERATORS_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_STREAMING_OPERATORS_H_
+#ifndef CORE_DBUS_MESSAGE_STREAMING_OPERATORS_H_
+#define CORE_DBUS_MESSAGE_STREAMING_OPERATORS_H_
 
 #include <org/freedesktop/dbus/codec.h>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -41,6 +39,5 @@ Message::Writer operator<<(Message::Writer writer, const T& out)
 }
 }
 }
-}
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_STREAMING_OPERATORS_H_
+#endif // CORE_DBUS_MESSAGE_STREAMING_OPERATORS_H_

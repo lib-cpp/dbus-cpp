@@ -15,8 +15,8 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_H_
+#ifndef CORE_DBUS_MESSAGE_H_
+#define CORE_DBUS_MESSAGE_H_
 
 #include <org/freedesktop/dbus/argument_type.h>
 #include <org/freedesktop/dbus/visibility.h>
@@ -35,9 +35,7 @@
 #include <ostream>
 #include <stdexcept>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -449,8 +447,7 @@ private:
 }
 }
 }
-}
 
 #include "impl/message.h>
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_H_
+#endif // CORE_DBUS_MESSAGE_H_

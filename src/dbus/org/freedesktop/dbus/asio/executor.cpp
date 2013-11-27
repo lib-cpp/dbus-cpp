@@ -27,9 +27,7 @@
 #include <stdexcept>
 #include <memory>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -92,7 +90,7 @@ struct Watch<DBusWatch>
 }
 namespace asio
 {
-class Executor : public org::freedesktop::dbus::Executor
+class Executor : public core::dbus::Executor
 {
 public:
     template<typename UnderlyingTimeoutType = DBusTimeout>
@@ -375,10 +373,9 @@ private:
 
 ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Executor::Ptr make_executor(const Bus::Ptr& bus)
 {
-    return std::make_shared<org::freedesktop::dbus::asio::Executor>(bus);
+    return std::make_shared<core::dbus::asio::Executor>(bus);
 }
 
-}
 }
 }
 }

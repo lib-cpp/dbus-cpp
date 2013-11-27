@@ -15,8 +15,8 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_GENERATOR_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_GENERATOR_H_
+#ifndef CORE_DBUS_GENERATOR_H_
+#define CORE_DBUS_GENERATOR_H_
 
 #include <org/freedesktop/dbus/compiler.h>
 
@@ -24,9 +24,7 @@
 #include <functional>
 #include <memory>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -72,6 +70,5 @@ class Generator
 };
 }
 }
-}
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_GENERATOR_H_
+#endif // CORE_DBUS_GENERATOR_H_

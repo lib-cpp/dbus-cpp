@@ -45,14 +45,14 @@ struct VTable
         auto thiz = static_cast<VTable*>(data);
 
         if (thiz->object->on_new_message(
-                    org::freedesktop::dbus::Message::from_raw_message(
+                    core::dbus::Message::from_raw_message(
                         message)))
             return DBUS_HANDLER_RESULT_HANDLED;
 
         return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
     }
 
-    std::shared_ptr<org::freedesktop::dbus::Object> object;
+    std::shared_ptr<core::dbus::Object> object;
 };
 
 DBusHandlerResult static_handle_message(
@@ -62,17 +62,15 @@ DBusHandlerResult static_handle_message(
 {
     (void) connection;
     auto thiz =
-            static_cast<org::freedesktop::dbus::Bus*>(user_data);
+            static_cast<core::dbus::Bus*>(user_data);
     return static_cast<DBusHandlerResult>(
                 thiz->handle_message(
-                    org::freedesktop::dbus::Message::from_raw_message(
+                    core::dbus::Message::from_raw_message(
                         message)));
 }
 }
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -328,7 +326,6 @@ Bus::SignalRouter& Bus::access_signal_router()
 DBusConnection* Bus::raw() const
 {
     return d->connection.get();
-}
 }
 }
 }

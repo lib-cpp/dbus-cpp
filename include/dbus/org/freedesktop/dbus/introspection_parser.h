@@ -15,16 +15,14 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_INTROSPECTION_PARSER_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_INTROSPECTION_PARSER_H_
+#ifndef CORE_DBUS_INTROSPECTION_PARSER_H_
+#define CORE_DBUS_INTROSPECTION_PARSER_H_
 
 #include <functional>
 #include <memory>
 #include <string>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -219,6 +217,5 @@ class IntrospectionParser
 };
 }
 }
-}
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_INTROSPECTION_PARSER_H_
+#endif // CORE_DBUS_INTROSPECTION_PARSER_H_

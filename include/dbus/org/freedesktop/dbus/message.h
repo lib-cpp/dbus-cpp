@@ -15,8 +15,8 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_H_
+#ifndef CORE_DBUS_MESSAGE_H_
+#define CORE_DBUS_MESSAGE_H_
 
 #include <org/freedesktop/dbus/argument_type.h>
 #include <org/freedesktop/dbus/visibility.h>
@@ -33,9 +33,7 @@
 #include <ostream>
 #include <stdexcept>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -446,14 +444,13 @@ typedef std::shared_ptr<Message> MessagePtr;
 typedef std::unique_ptr<Message> MessageUPtr;
 }
 }
-}
 
 namespace std
 {
 template<>
-struct hash<org::freedesktop::dbus::Message::Type>
+struct hash<core::dbus::Message::Type>
 {
-    size_t operator()(const org::freedesktop::dbus::Message::Type& type) const
+    size_t operator()(const core::dbus::Message::Type& type) const
     {
         static const hash<int> h {};
         return h(static_cast<int>(type));
@@ -461,4 +458,4 @@ struct hash<org::freedesktop::dbus::Message::Type>
 };
 }
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_H_
+#endif // CORE_DBUS_MESSAGE_H_

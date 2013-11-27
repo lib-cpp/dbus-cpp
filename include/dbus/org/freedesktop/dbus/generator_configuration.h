@@ -15,14 +15,12 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_GENERATOR_CONFIGURATION_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_GENERATOR_CONFIGURATION_H_
+#ifndef CORE_DBUS_GENERATOR_CONFIGURATION_H_
+#define CORE_DBUS_GENERATOR_CONFIGURATION_H_
 
 #include <functional>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -36,6 +34,5 @@ struct GeneratorConfiguration
 };
 }
 }
-}
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_GENERATOR_CONFIGURATION_H_
+#endif // CORE_DBUS_GENERATOR_CONFIGURATION_H_

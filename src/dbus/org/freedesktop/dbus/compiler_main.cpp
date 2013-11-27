@@ -20,7 +20,7 @@
 #include <org/freedesktop/dbus/generator.h>
 #include <org/freedesktop/dbus/introspection_parser.h>
 
-namespace dbus = org::freedesktop::dbus;
+namespace dbus = core::dbus;
 
 int main(int argc, const char* argv[])
 {

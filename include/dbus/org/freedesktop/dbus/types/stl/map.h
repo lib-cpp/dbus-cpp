@@ -15,17 +15,15 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_TYPES_STL_MAP_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_TYPES_STL_MAP_H_
+#ifndef CORE_DBUS_TYPES_STL_MAP_H_
+#define CORE_DBUS_TYPES_STL_MAP_H_
 
 #include <org/freedesktop/dbus/codec.h>
 
 #include <algorithm>
 #include <map>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -138,5 +136,4 @@ struct Codec<std::map<T, U>>
 };
 }
 }
-}
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_TYPES_STL_MAP_H_
+#endif // CORE_DBUS_TYPES_STL_MAP_H_

@@ -22,9 +22,7 @@
 
 #include <iostream>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -85,7 +83,6 @@ Error::operator bool() const
 DBusError& Error::raw()
 {
     return d->error;
-}
 }
 }
 }

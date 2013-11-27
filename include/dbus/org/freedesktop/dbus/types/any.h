@@ -15,14 +15,12 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_TYPES_ANY_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_TYPES_ANY_H_
+#ifndef CORE_DBUS_TYPES_ANY_H_
+#define CORE_DBUS_TYPES_ANY_H_
 
 #include <memory>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -62,6 +60,5 @@ private:
 }
 }
 }
-}
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_TYPES_ANY_H_
+#endif // CORE_DBUS_TYPES_ANY_H_

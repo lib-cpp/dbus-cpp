@@ -15,8 +15,8 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_TYPES_OBJECT_PATH_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_TYPES_OBJECT_PATH_H_
+#ifndef CORE_DBUS_TYPES_OBJECT_PATH_H_
+#define CORE_DBUS_TYPES_OBJECT_PATH_H_
 
 #include <org/freedesktop/dbus/visibility.h>
 
@@ -24,9 +24,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -117,7 +115,6 @@ ORG_FREEDESKTOP_DBUS_DLL_PUBLIC std::ostream& operator<<(std::ostream& out, cons
 }
 }
 }
-}
 
 namespace std
 {
@@ -125,14 +122,14 @@ namespace std
  * @brief Enables usage of ObjectPath instances in hashed containers.
  */
 template<>
-struct ORG_FREEDESKTOP_DBUS_DLL_PUBLIC hash<org::freedesktop::dbus::types::ObjectPath>
+struct ORG_FREEDESKTOP_DBUS_DLL_PUBLIC hash<core::dbus::types::ObjectPath>
 {
     /**
      * @brief operator () calculates the hash of an object path instance.
      * @param p The instance to calculate the hash value for.
      */
-    size_t operator()(const org::freedesktop::dbus::types::ObjectPath& p) const;
+    size_t operator()(const core::dbus::types::ObjectPath& p) const;
 };
 }
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_TYPES_OBJECT_PATH_H_
+#endif // CORE_DBUS_TYPES_OBJECT_PATH_H_

@@ -15,17 +15,15 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_TYPES_STL_TUPLE_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_TYPES_STL_TUPLE_H_
+#ifndef CORE_DBUS_TYPES_STL_TUPLE_H_
+#define CORE_DBUS_TYPES_STL_TUPLE_H_
 
 #include <org/freedesktop/dbus/codec.h>
 #include <org/freedesktop/dbus/helper/type_mapper.h>
 
 #include <tuple>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -134,5 +132,4 @@ struct Codec<std::tuple<Args...>>
 };
 }
 }
-}
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_TYPES_STL_TUPLE_H_
+#endif // CORE_DBUS_TYPES_STL_TUPLE_H_

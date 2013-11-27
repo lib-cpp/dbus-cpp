@@ -15,8 +15,8 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_PENDING_CALL_IMPL_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_PENDING_CALL_IMPL_H_
+#ifndef CORE_DBUS_PENDING_CALL_IMPL_H_
+#define CORE_DBUS_PENDING_CALL_IMPL_H_
 
 #include <org/freedesktop/dbus/pending_call.h>
 
@@ -26,15 +26,13 @@
 
 #include <mutex>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
 namespace impl
 {
-class PendingCall : public org::freedesktop::dbus::PendingCall
+class PendingCall : public core::dbus::PendingCall
 {
 private:
     struct Wrapper
@@ -57,13 +55,13 @@ private:
 
     DBusPendingCall* pending_call;
     std::mutex callback_guard;
-    org::freedesktop::dbus::PendingCall::Notification callback;
+    core::dbus::PendingCall::Notification callback;
 
 public:
-    inline static org::freedesktop::dbus::PendingCall::Ptr create(DBusPendingCall* call)
+    inline static core::dbus::PendingCall::Ptr create(DBusPendingCall* call)
     {
-        auto result = std::shared_ptr<org::freedesktop::dbus::impl::PendingCall>(
-                    new org::freedesktop::dbus::impl::PendingCall(call));
+        auto result = std::shared_ptr<core::dbus::impl::PendingCall>(
+                    new core::dbus::impl::PendingCall(call));
 
         dbus_pending_call_set_notify(
                     result->pending_call,
@@ -71,7 +69,7 @@ public:
                     new Wrapper{result},
                     [](void* data) { delete static_cast<Wrapper*>(data); });
 
-        return std::dynamic_pointer_cast<org::freedesktop::dbus::PendingCall>(result);
+        return std::dynamic_pointer_cast<core::dbus::PendingCall>(result);
     }
 
     inline std::shared_ptr<Message> wait_for_reply()
@@ -92,7 +90,7 @@ public:
         dbus_pending_call_cancel(pending_call);
     }
 
-    void then(const org::freedesktop::dbus::PendingCall::Notification& notification)
+    void then(const core::dbus::PendingCall::Notification& notification)
     {
         std::lock_guard<std::mutex> lg{callback_guard};
         callback = notification;
@@ -107,6 +105,5 @@ private:
 }
 }
 }
-}
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_PENDING_CALL_IMPL_H_
+#endif // CORE_DBUS_PENDING_CALL_IMPL_H_

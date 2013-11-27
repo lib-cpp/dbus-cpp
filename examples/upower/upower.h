@@ -25,9 +25,7 @@
 #include <chrono>
 #include <string>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 struct UPower
 {
@@ -121,7 +119,7 @@ struct UPower
                 return "DeviceAdded";
             };
             typedef UPower Interface;
-            typedef org::freedesktop::dbus::types::ObjectPath ArgumentType;
+            typedef core::dbus::types::ObjectPath ArgumentType;
         };
         struct DeviceRemoved
         {
@@ -130,7 +128,7 @@ struct UPower
                 return "DeviceRemoved";
             };
             typedef UPower Interface;
-            typedef org::freedesktop::dbus::types::ObjectPath ArgumentType;
+            typedef core::dbus::types::ObjectPath ArgumentType;
         };
         struct DeviceChanged
         {
@@ -520,18 +518,15 @@ struct UPower
 
 };
 }
-}
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
 namespace traits
 {
 template<>
-struct Service<org::freedesktop::UPower>
+struct Service<core::UPower>
 {
     inline static const std::string& interface_name()
     {
@@ -544,7 +539,7 @@ struct Service<org::freedesktop::UPower>
 };
 
 template<>
-struct Service<org::freedesktop::UPower::Device>
+struct Service<core::UPower::Device>
 {
     inline static const std::string& interface_name()
     {
@@ -555,7 +550,6 @@ struct Service<org::freedesktop::UPower::Device>
         return s;
     }
 };
-}
 }
 }
 }

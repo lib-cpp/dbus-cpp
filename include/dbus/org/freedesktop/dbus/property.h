@@ -15,15 +15,13 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_PROPERTY_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_PROPERTY_H_
+#ifndef CORE_DBUS_PROPERTY_H_
+#define CORE_DBUS_PROPERTY_H_
 
 #include <list>
 #include <memory>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -101,8 +99,7 @@ private:
 };
 }
 }
-}
 
 #include "impl/property.h"
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_PROPERTY_H_
+#endif // CORE_DBUS_PROPERTY_H_

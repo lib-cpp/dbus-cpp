@@ -23,11 +23,11 @@
 
 #include <memory>
 
-namespace dbus = org::freedesktop::dbus;
+namespace dbus = core::dbus;
 
 namespace
 {
-std::shared_ptr<org::freedesktop::dbus::Message> a_method_call()
+std::shared_ptr<core::dbus::Message> a_method_call()
 {
     return dbus::Message::make_method_call(
                 dbus::DBus::name(),
@@ -43,12 +43,12 @@ TEST(CodecForTuple, encoding_of_tuples_works)
     auto msg = a_method_call();
     auto writer = msg->writer();
     TupleType t1(42, 42);
-    org::freedesktop::dbus::Codec<TupleType>::encode_argument(writer, t1);
+    core::dbus::Codec<TupleType>::encode_argument(writer, t1);
     EXPECT_EQ(msg->signature(),
-              org::freedesktop::dbus::helper::TypeMapper<TupleType>::signature());
+              core::dbus::helper::TypeMapper<TupleType>::signature());
     TupleType t2;
     auto reader = msg->reader();
-    org::freedesktop::dbus::Codec<TupleType>::decode_argument(reader, t2);
+    core::dbus::Codec<TupleType>::decode_argument(reader, t2);
 
     EXPECT_EQ(std::get<0>(t1), std::get<0>(t2));
     EXPECT_EQ(std::get<1>(t1), std::get<1>(t2));

@@ -24,9 +24,7 @@
 
 #include <iostream>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -77,10 +75,9 @@ std::ostream& operator<<(std::ostream& out, const ObjectPath& path)
 }
 }
 }
-}
 
-size_t std::hash<org::freedesktop::dbus::types::ObjectPath>::operator()(
-        const org::freedesktop::dbus::types::ObjectPath& p) const
+size_t std::hash<core::dbus::types::ObjectPath>::operator()(
+        const core::dbus::types::ObjectPath& p) const
 {
     static const std::hash<std::string> h {};
     return h(p.as_string());

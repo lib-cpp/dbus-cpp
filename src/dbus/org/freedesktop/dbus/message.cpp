@@ -36,9 +36,7 @@
 #include <stack>
 #include <stdexcept>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -649,7 +647,6 @@ Message::~Message()
 std::shared_ptr<Message> Message::clone()
 {
     return std::shared_ptr<Message>(new Message(d->clone()));
-}
 }
 }
 }

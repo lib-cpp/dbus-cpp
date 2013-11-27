@@ -30,7 +30,7 @@
 // local includes to access testing data
 #include "test_data.h"
 
-namespace dbus = org::freedesktop::dbus;
+namespace dbus = core::dbus;
 
 namespace
 {

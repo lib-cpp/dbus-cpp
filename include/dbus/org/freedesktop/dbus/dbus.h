@@ -15,8 +15,8 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_DBUS_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_DBUS_H_
+#ifndef CORE_DBUS_DBUS_H_
+#define CORE_DBUS_DBUS_H_
 
 #include <org/freedesktop/dbus/bus.h>
 #include <org/freedesktop/dbus/codec.h>
@@ -27,9 +27,7 @@
 
 #include <sstream>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -82,6 +80,5 @@ private:
 };
 }
 }
-}
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_DBUS_H_
+#endif // CORE_DBUS_DBUS_H_

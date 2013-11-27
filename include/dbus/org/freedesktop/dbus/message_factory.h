@@ -15,16 +15,14 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_FACTORY_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_FACTORY_H_
+#ifndef CORE_DBUS_MESSAGE_FACTORY_H_
+#define CORE_DBUS_MESSAGE_FACTORY_H_
 
 #include <org/freedesktop/dbus/message.h>
 #include <org/freedesktop/dbus/visibility.h>
 #include <org/freedesktop/dbus/types/object_path.h>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -88,6 +86,5 @@ protected:
 };
 }
 }
-}
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_FACTORY_H_
+#endif // CORE_DBUS_MESSAGE_FACTORY_H_

@@ -15,8 +15,8 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_RESULT_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_RESULT_H_
+#ifndef CORE_DBUS_RESULT_H_
+#define CORE_DBUS_RESULT_H_
 
 #include <org/freedesktop/dbus/codec.h>
 #include <org/freedesktop/dbus/error.h>
@@ -25,9 +25,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -165,6 +163,5 @@ private:
 };
 }
 }
-}
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_RESULT_H_
+#endif // CORE_DBUS_RESULT_H_

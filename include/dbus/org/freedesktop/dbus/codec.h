@@ -15,15 +15,13 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_CODEC_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_CODEC_H_
+#ifndef CORE_DBUS_CODEC_H_
+#define CORE_DBUS_CODEC_H_
 
 #include <org/freedesktop/dbus/message.h>
 #include <org/freedesktop/dbus/helper/type_mapper.h>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -413,6 +411,5 @@ inline void decode_message(Message::Reader& out, Arg& arg, Args& ... params)
 }
 }
 }
-}
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_CODEC_H_
+#endif // CORE_DBUS_CODEC_H_

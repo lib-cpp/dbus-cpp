@@ -15,8 +15,8 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_HELPER_TYPE_MAPPER_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_HELPER_TYPE_MAPPER_H_
+#ifndef CORE_DBUS_HELPER_TYPE_MAPPER_H_
+#define CORE_DBUS_HELPER_TYPE_MAPPER_H_
 
 #include <org/freedesktop/dbus/argument_type.h>
 
@@ -33,9 +33,7 @@
 #include <tuple>
 #include <vector>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -421,6 +419,5 @@ struct TypeMapper<types::Variant<T>>
 }
 }
 }
-}
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_HELPER_TYPE_MAPPER_H_
+#endif // CORE_DBUS_HELPER_TYPE_MAPPER_H_

@@ -27,7 +27,7 @@
 
 #include <gtest/gtest.h>
 
-namespace dbus = org::freedesktop::dbus;
+namespace dbus = core::dbus;
 
 namespace
 {
@@ -40,13 +40,13 @@ dbus::Bus::Ptr the_session_bus()
 
 TEST(Executor, ThrowsOnConstructionFromNullBus)
 {
-    EXPECT_ANY_THROW(org::freedesktop::dbus::asio::make_executor(org::freedesktop::dbus::Bus::Ptr{}));
+    EXPECT_ANY_THROW(core::dbus::asio::make_executor(core::dbus::Bus::Ptr{}));
 }
 
 TEST(Executor, DoesNotThrowForExistingBus)
 {
-    org::freedesktop::dbus::Bus::Ptr bus{new org::freedesktop::dbus::Bus{org::freedesktop::dbus::WellKnownBus::session}};
-    EXPECT_NO_THROW(bus->install_executor(org::freedesktop::dbus::asio::make_executor(bus)));
+    core::dbus::Bus::Ptr bus{new core::dbus::Bus{core::dbus::WellKnownBus::session}};
+    EXPECT_NO_THROW(bus->install_executor(core::dbus::asio::make_executor(bus)));
 }
 
 TEST(Executor, ABusRunByAnExecutorReceivesSignals)
@@ -104,7 +104,7 @@ TEST(Executor, ABusRunByAnExecutorReceivesSignals)
 /*TEST(Bus, TimeoutThrowsForNullDBusWatch)
 {
     boost::asio::io_service io_service;
-    EXPECT_ANY_THROW(org::freedesktop::dbus::asio::Executor::Timeout<> timeout(io_service, nullptr););
+    EXPECT_ANY_THROW(core::dbus::asio::Executor::Timeout<> timeout(io_service, nullptr););
 }
 
 namespace
@@ -138,9 +138,7 @@ struct TimeoutHelper
 };
 }
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -192,7 +190,7 @@ TEST(Executor, TimeoutHandlerIsInvokedForEnabledDBusTimeout)
     {
         helper.reactor.stop();
     });
-    auto to = std::make_shared<org::freedesktop::dbus::asio::Executor::Timeout<TimeoutHelper>>(helper.reactor, std::addressof(helper));
+    auto to = std::make_shared<core::dbus::asio::Executor::Timeout<TimeoutHelper>>(helper.reactor, std::addressof(helper));
     to->start();
 
     helper.reactor.run();
@@ -224,7 +222,7 @@ TEST(Bus, TimeoutHandlerIsNotInvokedForDisabledDBusTimeout)
     {
         helper.reactor.stop();
     });
-    auto to = std::make_shared<org::freedesktop::dbus::asio::Executor::Timeout<TimeoutHelper>>(helper.reactor, std::addressof(helper));
+    auto to = std::make_shared<core::dbus::asio::Executor::Timeout<TimeoutHelper>>(helper.reactor, std::addressof(helper));
     to->start();
     helper.reactor.run();
 
@@ -252,7 +250,7 @@ TEST(Bus, TimeoutHandlerIsNotInvokedForEnabledButCancelledDBusTimeout)
     {
         helper.reactor.stop();
     });
-    auto to = std::make_shared<org::freedesktop::dbus::asio::Executor::Timeout<TimeoutHelper>>(helper.reactor, std::addressof(helper));
+    auto to = std::make_shared<core::dbus::asio::Executor::Timeout<TimeoutHelper>>(helper.reactor, std::addressof(helper));
     to->start();
     helper.reactor.post([&]()
     {
@@ -361,7 +359,7 @@ TEST(Executor, WatchHandlerIsInvokedForReadableAndWritableEvents)
         write(wh.fd, std::addressof(make_readable), sizeof(make_readable));
     });
 
-    auto watch = std::make_shared<org::freedesktop::dbus::asio::Executor::Watch<WatchHelper>>(helper.reactor, std::addressof(helper));
+    auto watch = std::make_shared<core::dbus::asio::Executor::Watch<WatchHelper>>(helper.reactor, std::addressof(helper));
 
     helper.reactor.post([&]()
     {

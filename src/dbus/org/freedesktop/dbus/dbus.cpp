@@ -21,9 +21,7 @@
 #include <org/freedesktop/dbus/types/stl/string.h>
 #include <org/freedesktop/dbus/types/stl/vector.h>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -122,7 +120,6 @@ uint32_t DBus::get_connection_unix_process_id(const std::string& name) const
 uint32_t DBus::get_connection_unix_user(const std::string& name) const
 {
     return object->invoke_method_synchronously<GetConnectionUnixUser, uint32_t>(name).value();
-}
 }
 }
 }

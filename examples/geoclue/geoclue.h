@@ -27,9 +27,7 @@
 #include <chrono>
 #include <string>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 struct Geoclue
 {
@@ -110,18 +108,15 @@ struct Geoclue
     };
 };
 }
-}
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
 namespace traits
 {
 template<>
-struct Service<org::freedesktop::Geoclue>
+struct Service<core::Geoclue>
 {
     inline static const std::string& interface_name()
     {
@@ -133,7 +128,7 @@ struct Service<org::freedesktop::Geoclue>
 };
 
 template<>
-struct Service<org::freedesktop::Geoclue::Master>
+struct Service<core::Geoclue::Master>
 {
     inline static const std::string& interface_name()
     {
@@ -145,7 +140,7 @@ struct Service<org::freedesktop::Geoclue::Master>
 };
 
 template<>
-struct Service<org::freedesktop::Geoclue::MasterClient>
+struct Service<core::Geoclue::MasterClient>
 {
     inline static const std::string& interface_name()
     {
@@ -157,7 +152,7 @@ struct Service<org::freedesktop::Geoclue::MasterClient>
 };
 
 template<>
-struct Service<org::freedesktop::Geoclue::Address>
+struct Service<core::Geoclue::Address>
 {
     inline static const std::string& interface_name()
     {
@@ -169,7 +164,7 @@ struct Service<org::freedesktop::Geoclue::Address>
 };
 
 template<>
-struct Service<org::freedesktop::Geoclue::Position>
+struct Service<core::Geoclue::Position>
 {
     inline static const std::string& interface_name()
     {
@@ -179,7 +174,6 @@ struct Service<org::freedesktop::Geoclue::Position>
         return s;
     }
 };
-}
 }
 }
 }

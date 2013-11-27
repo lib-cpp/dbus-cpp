@@ -15,12 +15,10 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_IMPL_PROPERTY_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_IMPL_PROPERTY_H_
+#ifndef CORE_DBUS_IMPL_PROPERTY_H_
+#define CORE_DBUS_IMPL_PROPERTY_H_
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -206,6 +204,5 @@ Property<PropertyType>::handle_changed(const Message::Ptr& msg)
 }
 }
 }
-}
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_IMPL_PROPERTY_H_
+#endif // CORE_DBUS_IMPL_PROPERTY_H_

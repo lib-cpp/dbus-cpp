@@ -16,8 +16,8 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_COMPILER_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_COMPILER_H_
+#ifndef CORE_DBUS_COMPILER_H_
+#define CORE_DBUS_COMPILER_H_
 
 #include <org/freedesktop/dbus/introspection_parser.h>
 
@@ -26,9 +26,7 @@
 #include <string>
 #include <vector>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -230,6 +228,5 @@ class Compiler
 };
 }
 }
-}
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_COMPILER_H_
+#endif // CORE_DBUS_COMPILER_H_

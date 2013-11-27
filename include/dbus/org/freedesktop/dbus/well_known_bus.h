@@ -15,14 +15,12 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_ORG_DBUS_H_
-#define DBUS_ORG_FREEDESKTOP_ORG_DBUS_H_
+#ifndef CORE_ORG_DBUS_H_
+#define CORE_ORG_DBUS_H_
 
 #include <dbus/dbus.h>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -37,6 +35,5 @@ enum class WellKnownBus
 };
 }
 }
-}
 
-#endif // DBUS_ORG_FREEDESKTOP_ORG_DBUS_H_
+#endif // CORE_ORG_DBUS_H_

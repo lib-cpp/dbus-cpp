@@ -15,8 +15,8 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_SIGNAL_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_SIGNAL_H_
+#ifndef CORE_DBUS_SIGNAL_H_
+#define CORE_DBUS_SIGNAL_H_
 
 #include <org/freedesktop/dbus/message.h>
 #include <org/freedesktop/dbus/visibility.h>
@@ -25,9 +25,7 @@
 #include <memory>
 #include <string>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -191,8 +189,7 @@ private:
 };
 }
 }
-}
 
 #include "impl/signal.h"
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_SIGNAL_H_
+#endif // CORE_DBUS_SIGNAL_H_

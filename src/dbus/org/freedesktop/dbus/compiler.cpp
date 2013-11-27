@@ -23,9 +23,7 @@
 
 #include <iostream>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -325,7 +323,6 @@ int Compiler::main(int argc, const char* argv[])
     }
 
     return EXIT_SUCCESS;
-}
 }
 }
 }

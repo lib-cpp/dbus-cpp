@@ -15,8 +15,8 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_OBJECT_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_OBJECT_H_
+#ifndef CORE_DBUS_OBJECT_H_
+#define CORE_DBUS_OBJECT_H_
 
 #include <org/freedesktop/dbus/bus.h>
 #include <org/freedesktop/dbus/service.h>
@@ -58,9 +58,7 @@ inline std::ostream& operator<<(std::ostream& out,
 }
 }
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -211,8 +209,7 @@ class Object : public std::enable_shared_from_this<Object>
 };
 }
 }
-}
 
 #include "impl/object.h"
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_OBJECT_H_
+#endif // CORE_DBUS_OBJECT_H_

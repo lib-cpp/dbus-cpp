@@ -15,14 +15,12 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_IMPL_SIGNAL_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_IMPL_SIGNAL_H_
+#ifndef CORE_DBUS_IMPL_SIGNAL_H_
+#define CORE_DBUS_IMPL_SIGNAL_H_
 
 #include <org/freedesktop/dbus/message_streaming_operators.h>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -236,8 +234,7 @@ inline Signal<
 }
 }
 }
-}
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_IMPL_SIGNAL_H_
+#endif // CORE_DBUS_IMPL_SIGNAL_H_
 
 

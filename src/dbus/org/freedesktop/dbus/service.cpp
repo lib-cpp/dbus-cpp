@@ -41,9 +41,7 @@
 #include <string>
 #include <tuple>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -123,7 +121,6 @@ std::shared_ptr<Object> Service::add_object_for_path(const types::ObjectPath& pa
     connection->register_object_for_path(path, object);
 
     return object;
-}
 }
 }
 }

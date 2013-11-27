@@ -45,9 +45,7 @@
 typedef boost::filesystem::path Path;
 typedef boost::filesystem::fstream File;
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -83,7 +81,7 @@ struct TypeMangler
     {
         struct Element
         {
-            org::freedesktop::dbus::ArgumentType argument;
+            core::dbus::ArgumentType argument;
             std::shared_ptr<Element> parent;
             std::vector<std::shared_ptr<Element>> children;
         };
@@ -179,11 +177,11 @@ struct TypeMangler
             result = state.update_for_dict_entry_end();
             break;
         case DBUS_TYPE_ARRAY:
-            result = state.update_for_type(static_cast<org::freedesktop::dbus::ArgumentType>(c));
+            result = state.update_for_type(static_cast<core::dbus::ArgumentType>(c));
             result = state.update_for_array_start();
             break;
         default:
-            result = state.update_for_type(static_cast<org::freedesktop::dbus::ArgumentType>(c));
+            result = state.update_for_type(static_cast<core::dbus::ArgumentType>(c));
             break;
         }
 
@@ -246,16 +244,16 @@ struct TypeMangler
             ss << comma << "std::string" << comma;
             break;
         case ArgumentType::object_path:
-            ss << comma << "org::freedesktop::dbus::types::ObjectPath" << comma;
+            ss << comma << "core::dbus::types::ObjectPath" << comma;
             break;
         case ArgumentType::signature:
-            ss << comma << "org::freedesktop::dbus::types::Signature" << comma;
+            ss << comma << "core::dbus::types::Signature" << comma;
             break;
         case ArgumentType::unix_fd:
-            ss << comma << "org::freedesktop::dbus::types::UnixFd" << comma;
+            ss << comma << "core::dbus::types::UnixFd" << comma;
             break;
         case ArgumentType::variant:
-            ss << comma << "org::freedesktop::dbus::types::Variant<>" << comma;
+            ss << comma << "core::dbus::types::Variant<>" << comma;
             break;
         case ArgumentType::array:
             ss << comma << "std::vector<";
@@ -900,7 +898,6 @@ bool Generator::invoke_for_model_with_configuration(
     context.namespaces.node.interface.protocol_file << context.namespaces.node.interface.buffer.str();
 
     return true;
-}
 }
 }
 }

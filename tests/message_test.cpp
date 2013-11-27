@@ -23,7 +23,7 @@
 #include <chrono>
 #include <memory>
 
-namespace dbus = org::freedesktop::dbus;
+namespace dbus = core::dbus;
 
 TEST(Message, BuildingAMethodCallMessageSucceedsForValidArguments)
 {
@@ -32,8 +32,8 @@ TEST(Message, BuildingAMethodCallMessageSucceedsForValidArguments)
     const std::string interface = DBUS_SERVICE_DBUS;
     const std::string member = "ListNames";
 
-    std::shared_ptr<org::freedesktop::dbus::Message> msg;
-    EXPECT_NO_THROW(msg = org::freedesktop::dbus::Message::make_method_call(destination, path, interface, member););
+    std::shared_ptr<core::dbus::Message> msg;
+    EXPECT_NO_THROW(msg = core::dbus::Message::make_method_call(destination, path, interface, member););
     EXPECT_NE(nullptr, msg.get());
 }
 
@@ -44,8 +44,8 @@ TEST(Message, BuildingAMethodCallMessageThrowsForInvalidArguments)
     const std::string interface = DBUS_SERVICE_DBUS;
     const std::string member = "ListNames";
 
-    std::shared_ptr<org::freedesktop::dbus::Message> msg;
-    EXPECT_ANY_THROW(msg = org::freedesktop::dbus::Message::make_method_call(destination, path, interface, member););
+    std::shared_ptr<core::dbus::Message> msg;
+    EXPECT_ANY_THROW(msg = core::dbus::Message::make_method_call(destination, path, interface, member););
     EXPECT_EQ(nullptr, msg.get());
 }
 
@@ -56,7 +56,7 @@ TEST(Message, AccessingAReaderOnAnEmptyMessageThrows)
     const std::string interface = DBUS_SERVICE_DBUS;
     const std::string member = "ListNames";
 
-    auto msg = org::freedesktop::dbus::Message::make_method_call(destination, path, interface, member);
+    auto msg = core::dbus::Message::make_method_call(destination, path, interface, member);
 
     EXPECT_ANY_THROW(msg->reader());
 }
@@ -68,7 +68,7 @@ TEST(Message, AccessingAWriterOnAnyMessageSucceeds)
     const std::string interface = DBUS_SERVICE_DBUS;
     const std::string member = "ListNames";
 
-    auto msg = org::freedesktop::dbus::Message::make_method_call(
+    auto msg = core::dbus::Message::make_method_call(
                 destination,
                 path,
                 interface,
@@ -91,7 +91,7 @@ TEST(Message, WriteAndSuccessiveReadAreIdempotent)
     const std::string interface = DBUS_SERVICE_DBUS;
     const std::string member = "ListNames";
 
-    auto msg = org::freedesktop::dbus::Message::make_method_call(
+    auto msg = core::dbus::Message::make_method_call(
                 destination,
                 path,
                 interface,
@@ -127,7 +127,7 @@ TEST(Message, WriteAndSuccessiveIterationAreIdempotent)
     const std::string interface = DBUS_SERVICE_DBUS;
     const std::string member = "ListNames";
 
-    auto msg = org::freedesktop::dbus::Message::make_method_call(
+    auto msg = core::dbus::Message::make_method_call(
                 destination,
                 path,
                 interface,

@@ -20,6 +20,6 @@
 
 int main(int, char**)
 {
-    std::cout << org::freedesktop::SampleInterface::introspect() << std::endl;
+    std::cout << core::SampleInterface::introspect() << std::endl;
     return 0;
 }

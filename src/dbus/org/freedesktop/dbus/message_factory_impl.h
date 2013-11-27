@@ -15,20 +15,18 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_FACTORY_IMPL_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_FACTORY_IMPL_H_
+#ifndef CORE_DBUS_MESSAGE_FACTORY_IMPL_H_
+#define CORE_DBUS_MESSAGE_FACTORY_IMPL_H_
 
 #include <org/freedesktop/dbus/message_factory.h>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
 namespace impl
 {
-struct MessageFactory : public org::freedesktop::dbus::MessageFactory
+struct MessageFactory : public core::dbus::MessageFactory
 {
     MessageFactory() = default;
 
@@ -65,6 +63,5 @@ struct MessageFactory : public org::freedesktop::dbus::MessageFactory
 }
 }
 }
-}
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_FACTORY_H_
+#endif // CORE_DBUS_MESSAGE_FACTORY_H_

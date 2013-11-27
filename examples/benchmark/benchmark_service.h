@@ -23,7 +23,7 @@
 #include <org/freedesktop/dbus/skeleton.h>
 #include <org/freedesktop/dbus/stub.h>
 
-namespace dbus = org::freedesktop::dbus;
+namespace dbus = core::dbus;
 
 namespace test
 {
@@ -76,9 +76,7 @@ public:
 };
 }
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -96,7 +94,6 @@ struct Service<test::IBenchmarkService>
         return s;
     }
 };
-}
 }
 }
 }

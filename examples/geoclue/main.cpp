@@ -29,7 +29,7 @@
 #include <sys/types.h>
 #include <signal.h>
 
-namespace dbus = org::freedesktop::dbus;
+namespace dbus = core::dbus;
 
 namespace
 {
@@ -43,16 +43,16 @@ dbus::Bus::Ptr the_session_bus()
 int main(int, char**)
 {
     auto bus = the_session_bus();
-    bus->install_executor(org::freedesktop::dbus::asio::make_executor(bus));
+    bus->install_executor(core::dbus::asio::make_executor(bus));
     std::thread t {std::bind(&dbus::Bus::run, bus)};
     auto ubuntu_geoip = dbus::Service::use_service(bus, "org.freedesktop.Geoclue.Providers.UbuntuGeoIP");
     auto ubuntu_geoip_obj = ubuntu_geoip->object_for_path(dbus::types::ObjectPath("/org/freedesktop/Geoclue/Providers/UbuntuGeoIP"));
 
     // Connect to signal
-    auto position_changed_signal = ubuntu_geoip_obj->get_signal<org::freedesktop::Geoclue::Position::Signals::PositionChanged>();
-    position_changed_signal->connect([](const org::freedesktop::Geoclue::Position::Signals::PositionChanged::ArgumentType&)
+    auto position_changed_signal = ubuntu_geoip_obj->get_signal<core::Geoclue::Position::Signals::PositionChanged>();
+    position_changed_signal->connect([](const core::Geoclue::Position::Signals::PositionChanged::ArgumentType&)
     {
-        std::cout << "org::freedesktop::Geoclue::Position::Signals::PositionChanged" << std::endl;
+        std::cout << "core::Geoclue::Position::Signals::PositionChanged" << std::endl;
     });
 
     // Demonstrates tying tuple values to fields of a custom struct.
@@ -66,7 +66,7 @@ int main(int, char**)
     } p;
     std::tie(p.fields, p.timestamp, p.latitude, p.longitude, p.altitude, std::ignore)
         = ubuntu_geoip_obj->invoke_method_synchronously<
-          org::freedesktop::Geoclue::Position::GetPosition,
+          core::Geoclue::Position::GetPosition,
           std::tuple<int32_t, int32_t, double, double, double, dbus::types::Struct<std::tuple<int32_t, double, double>>>
           >().value();
     std::cout 	<< p.fields << ", "
@@ -77,7 +77,7 @@ int main(int, char**)
 
     // Illustrates std::get-based access to.
     auto address = ubuntu_geoip_obj->invoke_method_synchronously<
-                   org::freedesktop::Geoclue::Address::GetAddress,
+                   core::Geoclue::Address::GetAddress,
                    std::tuple<int32_t, std::map<std::string, std::string>, dbus::types::Struct<std::tuple<int32_t, double, double>>>
                    >().value();
     std::cout << std::get<0>(address) << std::endl;
@@ -85,15 +85,15 @@ int main(int, char**)
     {
         std::cout << p.first << " -> " << p.second << std::endl;
     });
-    auto geoclue = dbus::Service::use_service(bus, dbus::traits::Service<org::freedesktop::Geoclue::Master>::interface_name());
+    auto geoclue = dbus::Service::use_service(bus, dbus::traits::Service<core::Geoclue::Master>::interface_name());
     auto geoclue_obj = geoclue->object_for_path(dbus::types::ObjectPath("/org/freedesktop/Geoclue/Master"));
-    auto session_path = geoclue_obj->invoke_method_synchronously<org::freedesktop::Geoclue::Master::Create, dbus::types::ObjectPath>().value();
+    auto session_path = geoclue_obj->invoke_method_synchronously<core::Geoclue::Master::Create, dbus::types::ObjectPath>().value();
     auto geoclue_client = geoclue->object_for_path(session_path);
 
     try
     {
         geoclue_client->invoke_method_synchronously<
-        org::freedesktop::Geoclue::MasterClient::SetRequirements,
+        core::Geoclue::MasterClient::SetRequirements,
             void,
             int32_t, int32_t, bool, int32_t
             >(1, 100, false, (1 << 10)-1);

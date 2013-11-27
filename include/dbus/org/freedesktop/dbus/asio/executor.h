@@ -15,16 +15,14 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_ASIO_EXECUTOR_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_ASIO_EXECUTOR_H_
+#ifndef CORE_DBUS_ASIO_EXECUTOR_H_
+#define CORE_DBUS_ASIO_EXECUTOR_H_
 
 #include <org/freedesktop/dbus/bus.h>
 #include <org/freedesktop/dbus/executor.h>
 #include <org/freedesktop/dbus/visibility.h>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -34,6 +32,5 @@ ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Executor::Ptr make_executor(const Bus::Ptr& bus)
 }
 }
 }
-}
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_ASIO_EXECUTOR_H_
+#endif // CORE_DBUS_ASIO_EXECUTOR_H_

@@ -15,17 +15,15 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_INTERFACES_INTROSPECTABLE_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_INTERFACES_INTROSPECTABLE_H_
+#ifndef CORE_DBUS_INTERFACES_INTROSPECTABLE_H_
+#define CORE_DBUS_INTERFACES_INTROSPECTABLE_H_
 
 #include <org/freedesktop/dbus/service.h>
 
 #include <chrono>
 #include <string>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -76,7 +74,6 @@ struct Service<interfaces::Introspectable>
 }
 }
 }
-}
 
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_INTERFACES_INTROSPECTABLE_H_
+#endif // CORE_DBUS_INTERFACES_INTROSPECTABLE_H_

@@ -15,8 +15,8 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_TYPES_STL_VECTOR_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_TYPES_STL_VECTOR_H_
+#ifndef CORE_DBUS_TYPES_STL_VECTOR_H_
+#define CORE_DBUS_TYPES_STL_VECTOR_H_
 
 #include <org/freedesktop/dbus/codec.h>
 #include <org/freedesktop/dbus/helper/type_mapper.h>
@@ -24,9 +24,7 @@
 #include <algorithm>
 #include <vector>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -64,7 +62,7 @@ struct Codec<std::vector<T>>
                     types::Signature(helper::TypeMapper<T>::signature()));
         {
             for(auto element : arg)
-                org::freedesktop::dbus::encode_argument(vw, element);
+                core::dbus::encode_argument(vw, element);
         }
         out.close_array(std::move(vw));
     }
@@ -77,7 +75,7 @@ struct Codec<std::vector<T>>
         {
             try
             {
-                auto value = org::freedesktop::dbus::decode_argument<T>(ar);
+                auto value = core::dbus::decode_argument<T>(ar);
                 out.push_back(value);
             } catch(...)
             {
@@ -88,5 +86,4 @@ struct Codec<std::vector<T>>
 };
 }
 }
-}
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_TYPES_STL_VECTOR_H_
+#endif // CORE_DBUS_TYPES_STL_VECTOR_H_

@@ -15,15 +15,13 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_ANNOUNCER_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_ANNOUNCER_H_
+#ifndef CORE_DBUS_ANNOUNCER_H_
+#define CORE_DBUS_ANNOUNCER_H_
 
 #include <org/freedesktop/dbus/service.h>
 #include <org/freedesktop/dbus/skeleton.h>
 
-namespace org
-{
-namespace freedesktop
+namespace core
 {
 namespace dbus
 {
@@ -48,5 +46,4 @@ inline static typename Implementation::Ptr announce_service_on_bus(
 }
 }
 }
-}
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_ANNOUNCER_H_
+#endif // CORE_DBUS_ANNOUNCER_H_

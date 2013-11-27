@@ -16,8 +16,8 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_VISIBILITY_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_VISIBILITY_H_
+#ifndef CORE_DBUS_VISIBILITY_H_
+#define CORE_DBUS_VISIBILITY_H_
 
 #if __GNUC__ >= 4
 #define ORG_FREEDESKTOP_DBUS_DLL_PUBLIC __attribute__ ((visibility ("default")))
@@ -27,5 +27,5 @@
 #define ORG_FREEDESKTOP_DBUS_DLL_LOCAL
 #endif
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_VISIBILITY_H_
+#endif // CORE_DBUS_VISIBILITY_H_
 
