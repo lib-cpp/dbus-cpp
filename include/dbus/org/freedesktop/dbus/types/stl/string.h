@@ -18,8 +18,8 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_TYPES_STL_STRING_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_TYPES_STL_STRING_H_
 
-#include "org/freedesktop/dbus/codec.h"
-#include "org/freedesktop/dbus/helper/type_mapper.h"
+#include <org/freedesktop/dbus/codec.h>
+#include <org/freedesktop/dbus/helper/type_mapper.h>
 
 #include <string>
 

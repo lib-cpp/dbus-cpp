@@ -18,7 +18,7 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_TYPES_STL_LIST_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_TYPES_STL_LIST_H_
 
-#include "org/freedesktop/dbus/codec.h"
+#include <org/freedesktop/dbus/codec.h>
 
 #include <algorithm>
 #include <list>

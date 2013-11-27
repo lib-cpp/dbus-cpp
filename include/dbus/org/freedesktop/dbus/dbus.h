@@ -18,12 +18,12 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_DBUS_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_DBUS_H_
 
-#include "org/freedesktop/dbus/bus.h"
-#include "org/freedesktop/dbus/codec.h"
-#include "org/freedesktop/dbus/object.h"
-#include "org/freedesktop/dbus/service.h"
-#include "org/freedesktop/dbus/visibility.h"
-#include "org/freedesktop/dbus/types/object_path.h"
+#include <org/freedesktop/dbus/bus.h>
+#include <org/freedesktop/dbus/codec.h>
+#include <org/freedesktop/dbus/object.h>
+#include <org/freedesktop/dbus/service.h>
+#include <org/freedesktop/dbus/visibility.h>
+#include <org/freedesktop/dbus/types/object_path.h>
 
 #include <sstream>
 

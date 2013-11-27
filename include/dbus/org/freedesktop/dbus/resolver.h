@@ -18,8 +18,8 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_RESOLVER_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_RESOLVER_H_
 
-#include "org/freedesktop/dbus/bus.h"
-#include "org/freedesktop/dbus/stub.h"
+#include <org/freedesktop/dbus/bus.h>
+#include <org/freedesktop/dbus/stub.h>
 
 namespace org
 {
@@ -27,6 +27,11 @@ namespace freedesktop
 {
 namespace dbus
 {
+/**
+ * @brief Resolves an interface on the bus and creates a proxy object for it.
+ * @tparam Interface The interface to be resolved on the bus.
+ * @tparam ServiceStub The stub or proxy wrapping access to the interface.
+ */
 template<typename Interface, typename ServiceStub>
 typename ServiceStub::Ptr resolve_service_on_bus(const Bus::Ptr& bus)
 {

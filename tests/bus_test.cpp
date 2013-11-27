@@ -16,11 +16,11 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include "org/freedesktop/dbus/bus.h"
-#include "org/freedesktop/dbus/dbus.h"
-#include "org/freedesktop/dbus/match_rule.h"
+#include <org/freedesktop/dbus/bus.h>
+#include <org/freedesktop/dbus/dbus.h>
+#include <org/freedesktop/dbus/match_rule.h>
 
-#include "org/freedesktop/dbus/asio/executor.h"
+#include <org/freedesktop/dbus/asio/executor.h>
 
 #include <boost/asio.hpp>
 

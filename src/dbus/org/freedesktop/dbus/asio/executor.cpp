@@ -16,10 +16,10 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include "org/freedesktop/dbus/bus.h"
-#include "org/freedesktop/dbus/executor.h"
-#include "org/freedesktop/dbus/traits/timeout.h"
-#include "org/freedesktop/dbus/traits/watch.h"
+#include <org/freedesktop/dbus/bus.h>
+#include <org/freedesktop/dbus/executor.h>
+#include <org/freedesktop/dbus/traits/timeout.h>
+#include <org/freedesktop/dbus/traits/watch.h>
 
 #include <boost/asio.hpp>
 #include <boost/asio/io_service.hpp>

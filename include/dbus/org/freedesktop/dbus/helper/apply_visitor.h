@@ -18,8 +18,8 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_HELPER_APPLY_VISITOR_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_HELPER_APPLY_VISITOR_H_
 
-#include "org/freedesktop/dbus/argument_type.h"
-#include "org/freedesktop/dbus/helper/is_compound_type.h"
+#include <org/freedesktop/dbus/argument_type.h>
+#include <org/freedesktop/dbus/helper/is_compound_type.h>
 
 namespace org
 {

@@ -18,16 +18,16 @@
 
 #include "upower.h"
 
-#include "org/freedesktop/dbus/bus.h"
-#include "org/freedesktop/dbus/object.h"
-#include "org/freedesktop/dbus/property.h"
-#include "org/freedesktop/dbus/service.h"
+#include <org/freedesktop/dbus/bus.h>
+#include <org/freedesktop/dbus/object.h>
+#include <org/freedesktop/dbus/property.h>
+#include <org/freedesktop/dbus/service.h>
 
-#include "org/freedesktop/dbus/asio/executor.h"
-#include "org/freedesktop/dbus/interfaces/properties.h"
-#include "org/freedesktop/dbus/types/struct.h"
-#include "org/freedesktop/dbus/types/stl/tuple.h"
-#include "org/freedesktop/dbus/types/stl/vector.h"
+#include <org/freedesktop/dbus/asio/executor.h>
+#include <org/freedesktop/dbus/interfaces/properties.h>
+#include <org/freedesktop/dbus/types/struct.h>
+#include <org/freedesktop/dbus/types/stl/tuple.h>
+#include <org/freedesktop/dbus/types/stl/vector.h>
 
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/stats.hpp>

@@ -18,10 +18,10 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_INTERFACES_OBJECT_MANAGER_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_INTERFACES_OBJECT_MANAGER_H_
 
-#include "org/freedesktop/dbus/service.h"
-#include "org/freedesktop/dbus/types/any.h"
-#include "org/freedesktop/dbus/types/object_path.h"
-#include "org/freedesktop/dbus/types/variant.h"
+#include <org/freedesktop/dbus/service.h>
+#include <org/freedesktop/dbus/types/any.h>
+#include <org/freedesktop/dbus/types/object_path.h>
+#include <org/freedesktop/dbus/types/variant.h>
 
 #include <chrono>
 #include <string>

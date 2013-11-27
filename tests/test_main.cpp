@@ -16,7 +16,7 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include "SampleInterface.h"
+#include "SampleInterface.h>
 
 int main(int, char**)
 {

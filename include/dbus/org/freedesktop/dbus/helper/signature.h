@@ -18,7 +18,7 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_HELPER_SIGNATURE_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_HELPER_SIGNATURE_H_
 
-#include "org/freedesktop/dbus/helper/type_mapper.h"
+#include <org/freedesktop/dbus/helper/type_mapper.h>
 
 #include <string>
 

@@ -53,22 +53,45 @@ class Signal
 {
 public:
     typedef std::shared_ptr<Signal<SignalDescription, void>> Ptr;
+
+    /**
+     * @brief Handler defines the function signature for change callbacks.
+     */
     typedef std::function<void()> Handler;
+
+    /**
+     * @brief SubscriptionToken is a type that refers to a signal-slot connection.
+     */
     typedef typename std::list<Handler>::iterator SubscriptionToken;
 
     inline ~Signal() noexcept;
 
+    /**
+      * @brief Emits the signal.
+      */
     inline void emit(void);
 
+    /**
+     * @brief connect creates a connection to the provided handler.
+     * @param h The handler to be invoked when the signal is emitted.
+     * @return A token that corresponds to the signal-slot connection.
+     */
     inline SubscriptionToken connect(const Handler& h);
+
+    /**
+     * @brief disconnect releases a signal-slot connection
+     * @param token Refers to the signal-slot connection that should be released.
+     */
     inline void disconnect(const SubscriptionToken& token);
+
 protected:
     friend class Object;
 
-    inline static std::shared_ptr<Signal<SignalDescription, void>> make_signal(
-                                                                       const std::shared_ptr<Object>& parent,
-                                                                       const std::string& interface,
-                                                                       const std::string& name);
+    inline static std::shared_ptr<Signal<SignalDescription, void>>
+    make_signal(
+       const std::shared_ptr<Object>& parent,
+       const std::string& interface,
+       const std::string& name);
 
 private:
     inline Signal(const std::shared_ptr<Object>& parent,
@@ -100,14 +123,36 @@ class Signal<
 {
 public:    
     typedef std::shared_ptr<Signal<SignalDescription, typename SignalDescription::ArgumentType>> Ptr;
+
+    /**
+     * @brief Handler defines the function signature for change callbacks.
+     */
     typedef std::function<void(const typename SignalDescription::ArgumentType&)> Handler;
+
+    /**
+     * @brief SubscriptionToken is a type that refers to a signal-slot connection.
+     */
     typedef typename std::list<Handler>::iterator SubscriptionToken;
 
     inline ~Signal() noexcept;
 
-    inline void emit(const typename SignalDescription::ArgumentType&);
+    /**
+      * @brief Emits the signal with the provided argument.
+      * @param [in] arg The parameter to be passed over to handlers.
+      */
+    inline void emit(const typename SignalDescription::ArgumentType& arg);
 
+    /**
+     * @brief connect creates a connection to the provided handler.
+     * @param h The handler to be invoked when the signal is emitted.
+     * @return A token that corresponds to the signal-slot connection.
+     */
     inline SubscriptionToken connect(const Handler& h);
+
+    /**
+     * @brief disconnect releases a signal-slot connection
+     * @param token Refers to the signal-slot connection that should be released.
+     */
     inline void disconnect(const SubscriptionToken& token);
 
 protected:

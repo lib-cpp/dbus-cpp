@@ -40,22 +40,38 @@ public:
     virtual ~Stub() noexcept(true) = default;
 
 protected:
+    /**
+     * @brief Stub creates a proxy for the service on the given bus instance.
+     * @param bus The bus that the actual service lives upon
+     */
     inline explicit Stub(const Bus::Ptr& bus) : bus(bus),
         service(Service::use_service<T>(bus)),
         root(service->root_object())
     {
     }
 
+    /**
+     * @brief access_bus provides access to the underlying bus instance.
+     * @return A mutable reference to the underlying bus.
+     */
     inline const Bus::Ptr& access_bus() const
     {
         return bus;
     }
 
+    /**
+     * @brief Provides access to the root object of the service.
+     * @return A mutable reference to the root object.
+     */
     inline const Object::Ptr& access_root() const
     {
         return root;
     }
 
+    /**
+     * @brief Provides access to the underlying service object that this object is a proxy for.
+     * @return A mutable reference to the underlying service object.
+     */
     inline const Service::Ptr& access_service() const
     {
         return service;

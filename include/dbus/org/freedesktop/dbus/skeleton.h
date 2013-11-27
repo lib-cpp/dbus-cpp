@@ -39,16 +39,28 @@ public:
     virtual ~Skeleton() noexcept = default;
 
 protected:
+    /**
+     * @brief Skeleton announces the service on the given bus instance.
+     * @param bus The bus that the actual service lives upon
+     */
     inline explicit Skeleton(const Bus::Ptr& bus) : bus(bus),
         service(Service::add_service<T>(bus))
     {
     }
 
+    /**
+     * @brief access_bus provides access to the underlying bus instance.
+     * @return A mutable reference to the underlying bus.
+     */
     inline const Bus::Ptr& access_bus() const
     {
         return bus;
     }
 
+    /**
+     * @brief Provides access to the underlying service object that this object is a proxy for.
+     * @return A mutable reference to the underlying service object.
+     */
     inline const Service::Ptr& access_service() const
     {
         return service;

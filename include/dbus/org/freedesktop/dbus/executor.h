@@ -18,7 +18,7 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_EXECUTOR_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_EXECUTOR_H_
 
-#include "org/freedesktop/dbus/visibility.h"
+#include <org/freedesktop/dbus/visibility.h>
 
 #include <memory>
 

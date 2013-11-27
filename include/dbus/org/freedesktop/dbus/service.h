@@ -18,20 +18,20 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_SERVICE_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_SERVICE_H_
 
-#include "org/freedesktop/dbus/bus.h"
-#include "org/freedesktop/dbus/codec.h"
-#include "org/freedesktop/dbus/match_rule.h"
-#include "org/freedesktop/dbus/message_router.h"
-#include "org/freedesktop/dbus/result.h"
-#include "org/freedesktop/dbus/visibility.h"
+#include <org/freedesktop/dbus/bus.h>
+#include <org/freedesktop/dbus/codec.h>
+#include <org/freedesktop/dbus/match_rule.h>
+#include <org/freedesktop/dbus/message_router.h>
+#include <org/freedesktop/dbus/result.h>
+#include <org/freedesktop/dbus/visibility.h>
 
-#include "org/freedesktop/dbus/interfaces/properties.h"
-#include "org/freedesktop/dbus/traits/service.h"
-#include "org/freedesktop/dbus/types/any.h"
-#include "org/freedesktop/dbus/types/object_path.h"
-#include "org/freedesktop/dbus/types/variant.h"
-#include "org/freedesktop/dbus/types/stl/map.h"
-#include "org/freedesktop/dbus/types/stl/string.h"
+#include <org/freedesktop/dbus/interfaces/properties.h>
+#include <org/freedesktop/dbus/traits/service.h>
+#include <org/freedesktop/dbus/types/any.h>
+#include <org/freedesktop/dbus/types/object_path.h>
+#include <org/freedesktop/dbus/types/variant.h>
+#include <org/freedesktop/dbus/types/stl/map.h>
+#include <org/freedesktop/dbus/types/stl/string.h>
 
 #include <bitset>
 #include <future>

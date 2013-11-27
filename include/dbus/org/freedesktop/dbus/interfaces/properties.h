@@ -18,8 +18,8 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_INTERFACES_PROPERTIES_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_INTERFACES_PROPERTIES_H_
 
-#include "org/freedesktop/dbus/service.h"
-#include "org/freedesktop/dbus/traits/service.h"
+#include <org/freedesktop/dbus/service.h>
+#include <org/freedesktop/dbus/traits/service.h>
 
 #include <chrono>
 #include <string>

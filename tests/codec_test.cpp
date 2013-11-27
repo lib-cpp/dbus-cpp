@@ -16,23 +16,23 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include "org/freedesktop/dbus/codec.h"
-#include "org/freedesktop/dbus/dbus.h"
-#include "org/freedesktop/dbus/helper/signature.h"
+#include <org/freedesktop/dbus/codec.h>
+#include <org/freedesktop/dbus/dbus.h>
+#include <org/freedesktop/dbus/helper/signature.h>
 
-#include "org/freedesktop/dbus/types/any.h"
-#include "org/freedesktop/dbus/types/object_path.h"
-#include "org/freedesktop/dbus/types/signature.h"
-#include "org/freedesktop/dbus/types/struct.h"
-#include "org/freedesktop/dbus/types/unix_fd.h"
-#include "org/freedesktop/dbus/types/variant.h"
+#include <org/freedesktop/dbus/types/any.h>
+#include <org/freedesktop/dbus/types/object_path.h>
+#include <org/freedesktop/dbus/types/signature.h>
+#include <org/freedesktop/dbus/types/struct.h>
+#include <org/freedesktop/dbus/types/unix_fd.h>
+#include <org/freedesktop/dbus/types/variant.h>
 
 // STL includes
-#include "org/freedesktop/dbus/types/stl/list.h"
-#include "org/freedesktop/dbus/types/stl/map.h"
-#include "org/freedesktop/dbus/types/stl/string.h"
-#include "org/freedesktop/dbus/types/stl/tuple.h"
-#include "org/freedesktop/dbus/types/stl/vector.h"
+#include <org/freedesktop/dbus/types/stl/list.h>
+#include <org/freedesktop/dbus/types/stl/map.h>
+#include <org/freedesktop/dbus/types/stl/string.h>
+#include <org/freedesktop/dbus/types/stl/tuple.h>
+#include <org/freedesktop/dbus/types/stl/vector.h>
 
 #include <gtest/gtest.h>
 

@@ -18,7 +18,7 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_HELPER_IS_COMPOUND_TYPE_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_HELPER_IS_COMPOUND_TYPE_H_
 
-#include "org/freedesktop/dbus/argument_type.h"
+#include <org/freedesktop/dbus/argument_type.h>
 
 namespace org
 {

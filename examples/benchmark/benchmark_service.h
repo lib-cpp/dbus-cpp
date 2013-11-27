@@ -19,9 +19,9 @@
 #ifndef BENCHMARK_SERVICE_H_
 #define BENCHMARK_SERVICE_H_
 
-#include "org/freedesktop/dbus/service.h"
-#include "org/freedesktop/dbus/skeleton.h"
-#include "org/freedesktop/dbus/stub.h"
+#include <org/freedesktop/dbus/service.h>
+#include <org/freedesktop/dbus/skeleton.h>
+#include <org/freedesktop/dbus/stub.h>
 
 namespace dbus = org::freedesktop::dbus;
 

@@ -16,7 +16,7 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include "org/freedesktop/dbus/match_rule.h"
+#include <org/freedesktop/dbus/match_rule.h>
 
 #include <gtest/gtest.h>
 

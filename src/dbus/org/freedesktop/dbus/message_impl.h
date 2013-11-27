@@ -451,6 +451,6 @@ private:
 }
 }
 
-#include "impl/message.h"
+#include "impl/message.h>
 
 #endif // DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_H_

@@ -16,7 +16,7 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include "org/freedesktop/dbus/message.h"
+#include <org/freedesktop/dbus/message.h>
 
 #include <gtest/gtest.h>
 

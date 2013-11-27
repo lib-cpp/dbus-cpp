@@ -16,9 +16,9 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include "org/freedesktop/dbus/dbus.h"
+#include <org/freedesktop/dbus/dbus.h>
 
-#include "org/freedesktop/dbus/asio/executor.h"
+#include <org/freedesktop/dbus/asio/executor.h>
 
 #include "test_service.h"
 #include "cross_process_sync.h"
