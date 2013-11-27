@@ -38,20 +38,12 @@ struct MessageFactory : public org::freedesktop::dbus::MessageFactory
             const std::string& interface,
             const std::string& method)
     {
-        return std::shared_ptr<Message>(
-                    new Message(
-                        dbus_message_new_method_call(
-                            destination.c_str(),
-                            path.as_string().c_str(),
-                            interface.c_str(),
-                            method.c_str())));
+        return Message::make_method_call(destination, path, interface, method);
     }
 
     inline std::shared_ptr<Message> make_method_return(const Message::Ptr& msg)
     {
-        return std::shared_ptr<Message>(
-                    new Message(
-                        dbus_message_new_method_return(msg->get())));
+        return Message::make_method_return(msg);
     }
 
     inline std::shared_ptr<Message> make_signal(
@@ -59,12 +51,7 @@ struct MessageFactory : public org::freedesktop::dbus::MessageFactory
             const std::string& interface,
             const std::string& signal)
     {
-        return std::shared_ptr<Message>(
-                    new Message(
-                        dbus_message_new_signal(
-                            path.c_str(),
-                            interface.c_str(),
-                            signal.c_str())));
+        return Message::make_signal(path, interface, signal);
     }
 
     inline std::shared_ptr<Message> make_error(
@@ -72,14 +59,10 @@ struct MessageFactory : public org::freedesktop::dbus::MessageFactory
             const std::string& error_name,
             const std::string& error_desc)
     {
-        return std::shared_ptr<Message>(
-                    new Message(
-                        dbus_message_new_error(
-                            in_reply_to->get(),
-                            error_name.c_str(),
-                            error_desc.c_str())));
+        return Message::make_error(in_reply_to, error_name, error_desc);
     }
 };
+}
 }
 }
 }

@@ -43,8 +43,6 @@
 #include <thread>
 #include <tuple>
 
-#include <dbus/dbus.h>
-
 namespace org
 {
 namespace freedesktop
@@ -54,11 +52,12 @@ namespace dbus
 class MatchRule;
 class Object;
 /**
- * @brief The Bus class constitutes a very thin wrapper and the starting point to expose low-level DBus functionality for internal purposes.
+ * @brief The Bus class constitutes a very thin wrapper and the starting
+ * point to expose low-level DBus functionality for internal purposes.
  */
 class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Bus
 {
-  public:
+public:
     typedef std::shared_ptr<Bus> Ptr;
 
     /**
@@ -228,8 +227,8 @@ class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Bus
      * @throw std::runtime_error if a timeout occurs.
      */
     std::shared_ptr<Message> send_with_reply_and_block_for_at_most(
-        const std::shared_ptr<Message>& msg,
-        const std::chrono::milliseconds& milliseconds);
+            const std::shared_ptr<Message>& msg,
+            const std::chrono::milliseconds& milliseconds);
 
     /**
      * @brief Invokes a function, returning a waitable pending call that times out after the specified time period.
@@ -238,8 +237,8 @@ class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Bus
      * @return The waitable, pending call for this method invocation.
      */
     PendingCall::Ptr send_with_reply_and_timeout(
-        const std::shared_ptr<Message>& msg,
-        const std::chrono::milliseconds& timeout);    
+            const std::shared_ptr<Message>& msg,
+            const std::chrono::milliseconds& timeout);
 
     /**
      * @brief Installs a match rule to the underlying DBus connection.
@@ -310,12 +309,9 @@ class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Bus
       */
     MessageHandlerResult handle_message(const Message::Ptr& msg);
 
-  private:
-    std::shared_ptr<DBusConnection> connection;
-    std::shared_ptr<MessageFactory> message_factory_impl;
-    Executor::Ptr executor;
-    MessageTypeRouter message_type_router;
-    SignalRouter signal_router;
+private:
+    struct Private;
+    std::unique_ptr<Private> d;
 };
 
 /** @brief Enables usage of RequestNameFlag as a bitfield. */

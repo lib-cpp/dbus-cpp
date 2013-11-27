@@ -15,8 +15,8 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef DBUS_ORG_FREEDESKTOP_DBUS_IMPL_PENDING_CALL_H_
-#define DBUS_ORG_FREEDESKTOP_DBUS_IMPL_PENDING_CALL_H_
+#ifndef DBUS_ORG_FREEDESKTOP_DBUS_PENDING_CALL_IMPL_H_
+#define DBUS_ORG_FREEDESKTOP_DBUS_PENDING_CALL_IMPL_H_
 
 #include <org/freedesktop/dbus/pending_call.h>
 
@@ -109,4 +109,4 @@ private:
 }
 }
 
-#endif // DBUS_ORG_FREEDESKTOP_DBUS_IMPL_PENDING_CALL_H_
+#endif // DBUS_ORG_FREEDESKTOP_DBUS_PENDING_CALL_IMPL_H_

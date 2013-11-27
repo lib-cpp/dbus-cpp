@@ -42,7 +42,7 @@ public:
     /**
      * @brief from_message parses the result from a raw dbus message.
      * @throw std::runtime_error in case of errors.
-     * @param msg The message to parse the result from.
+     * @param message The message to parse the result from.
      */
     inline static Result from_message(const Message::Ptr& message)
     {
@@ -114,7 +114,7 @@ public:
     /**
      * @brief from_message parses the result from a raw dbus message.
      * @throw std::runtime_error in case of errors.
-     * @param msg The message to parse the result from.
+     * @param message The message to parse the result from.
      */
     inline static Result from_message(const Message::Ptr& message)
     {

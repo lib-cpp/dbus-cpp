@@ -171,7 +171,7 @@ TEST(VoidResult, FromErrorYieldsError)
                 dbus::DBus::interface(),
                 "ListNames");
 
-    dbus_message_set_serial(msg->get(), 1);
+    msg->ensure_serial_larger_than_zero_for_testing();
     auto error_reply = dbus::Message::make_error(msg, error_name, error_description);
     dbus::Result<void> result = dbus::Result<void>::from_message(error_reply);
     EXPECT_TRUE(result.is_error());
@@ -186,7 +186,7 @@ TEST(VoidResult, FromNonEmptyMethodReturnYieldsException)
                 dbus::DBus::interface(),
                 "ListNames");
 
-    dbus_message_set_serial(msg->get(), 1);
+    msg->ensure_serial_larger_than_zero_for_testing();
     auto reply = dbus::Message::make_method_return(msg);
     reply->writer() << 42;
 
@@ -223,7 +223,8 @@ TEST(NonVoidResult, FromErrorYieldsError)
                 dbus::DBus::path(),
                 dbus::DBus::interface(),
                 "ListNames");
-    dbus_message_set_serial(msg->get(), 1);
+
+    msg->ensure_serial_larger_than_zero_for_testing();
     auto error_reply = dbus::Message::make_error(msg, error_name, error_description);
     auto result = dbus::Result<int32_t>::from_message(error_reply);
 
@@ -239,7 +240,7 @@ TEST(NonVoidResult, FromEmptyMethodReturnYieldsException)
                 dbus::DBus::interface(),
                 "ListNames");
 
-    dbus_message_set_serial(msg->get(), 1);
+    msg->ensure_serial_larger_than_zero_for_testing();
     auto reply = dbus::Message::make_method_return(msg);
 
     dbus::Result<int32_t> result;

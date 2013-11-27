@@ -21,12 +21,6 @@
 #include <org/freedesktop/dbus/message.h>
 #include <org/freedesktop/dbus/helper/type_mapper.h>
 
-#include <dbus/dbus.h>
-
-#include <iostream>
-#include <string>
-#include <stdexcept>
-
 namespace org
 {
 namespace freedesktop
@@ -375,7 +369,7 @@ inline void encode_message(Message::Writer& out, const Arg& arg, Args... params)
 /**
  * @brief Helper function that decodes the supplied argument relying on a Codec template specialization.
  * @tparam T Type of the argument that should be decoded.
- * @param in Input iterator to read from.
+ * @param out Input iterator to read from.
  * @param arg Argument to decode.
  * @throw std::runtime_error as thrown by Codec<T>::decode_argument.
  */
@@ -388,7 +382,7 @@ inline void decode_argument(Message::Reader& out, T& arg)
 /**
  * @brief Helper function that decodes an argument relying on a Codec template specialization, returning a copy of the argument.
  * @tparam T Type of the argument that should be decoded.
- * @param in Input iterator to read from.
+ * @param out Input iterator to read from.
  * @return An instance of T, filled with values decoded from the underlying message.
  * @throw std::runtime_error as thrown by Codec<T>::decode_argument.
  */

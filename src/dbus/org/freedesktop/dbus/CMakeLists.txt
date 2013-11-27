@@ -36,6 +36,8 @@ add_library(
   service.cpp
 
   asio/executor.cpp
+
+  types/object_path.cpp
 )
 
 target_link_libraries(

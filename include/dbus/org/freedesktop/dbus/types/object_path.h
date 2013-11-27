@@ -18,9 +18,9 @@
 #ifndef DBUS_ORG_FREEDESKTOP_DBUS_TYPES_OBJECT_PATH_H_
 #define DBUS_ORG_FREEDESKTOP_DBUS_TYPES_OBJECT_PATH_H_
 
-#include <dbus/dbus.h>
+#include <org/freedesktop/dbus/visibility.h>
 
-#include <iostream>
+#include <exception>
 #include <stdexcept>
 #include <string>
 
@@ -35,56 +35,85 @@ namespace types
 /**
  * @brief The ObjectPath class encapsulates a DBus object path.
  */
-class ObjectPath
+class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC ObjectPath
 {
 public:
-    inline static std::string root()
-    {
-        return std::string{"/"};
-    }
+    /**
+     * @brief root() returns the default object path.
+     * @return The string representation of the default object path.
+     */
+    static const std::string& root();
 
-    // Specifying a default argument here causes valgrind to report a "possible lost".
-    // However, this is spurious and 
-    //   http://stackoverflow.com/questions/10750299/if-i-specify-a-default-value-for-an-argument-of-type-stdstring-in-c-cou
-    // gives some insight.
-    inline ObjectPath(const std::string& path = ObjectPath::root()) : path(path)
+    /**
+     * @brief The Errors struct summarizes all exceptions thrown by
+     * methods of class ObjectPath.
+     */
+    struct Errors
     {
-        DBusError error;
-        dbus_error_init(std::addressof(error));
-        if (!dbus_validate_path(path.c_str(), std::addressof(error)))
-            throw std::runtime_error("Invalid object path: " + std::string(error.message));
-    }
+        Errors() = delete;
 
-    inline bool empty() const
-    {
-        return path.empty();
-    }
+        /**
+         * @brief The InvalidObjectPath struct is thrown if a string representation of an object path is invalid.
+         */
+        struct InvalidObjectPathStringRepresentation : public std::logic_error
+        {
+            inline InvalidObjectPathStringRepresentation(const std::string& s)
+                : std::logic_error(
+                      "Could not construct valid object path from provided string: " + s)
+            {
+            }
+        };
+    };
 
-    inline const std::string& as_string() const
-    {
-        return path;
-    }
+    /**
+     * @brief Constructs an object path from a string.
+     * @throw Errors::InvalidObjectPathStringRepresentation if path is invalid.
+     * @param [in] path The string to construct the object path from.
+     *
+     * Specifying a default argument here causes valgrind to report a "possible lost".
+     * However, this is spurious and
+     *   http://stackoverflow.com/questions/10750299/if-i-specify-a-default-value-for-an-argument-of-type-stdstring-in-c-cou
+     * gives some insight.
+     */
+    ObjectPath(const std::string& path = ObjectPath::root());
 
-    inline bool operator<(const ObjectPath& rhs) const
-    {
-        return path < rhs.path;
-    }
+    /**
+     * @brief Checks if an object path is empty.
+     * @return true iff the object path is empty.
+     */
+    bool empty() const;
 
-    inline bool operator==(const ObjectPath& rhs) const
-    {
-        return path == rhs.path;
-    }
+    /**
+     * @brief as_string provides a string representation of the object path.
+     * @return A non-mutable reference to a string representation of the object path.
+     */
+    const std::string& as_string() const;
+
+    /**
+     * @brief operator < compares two object path instances.
+     * @param rhs The right-hand-side of the comparison.
+     * @return true iff this instance is smaller than the right-hand-side.
+     */
+    bool operator<(const ObjectPath& rhs) const;
+
+    /**
+     * @brief operator < compares two object path instances for equality.
+     * @param rhs The right-hand-side of the comparison.
+     * @return true iff this instance equals the right-hand-side.
+     */
+    bool operator==(const ObjectPath& rhs) const;
 
 private:
     std::string path;
 };
 
-inline std::ostream& operator<<(std::ostream& out, const ObjectPath& path)
-{
-    out << path.as_string() << std::endl;
-    return out;
-}
-
+/**
+ * @brief operator << pretty prints an object path instance.
+ * @param out The stream to pretty print to.
+ * @param path The instance to be printed.
+ * @return The stream that has been written to.
+ */
+ORG_FREEDESKTOP_DBUS_DLL_PUBLIC std::ostream& operator<<(std::ostream& out, const ObjectPath& path);
 }
 }
 }
@@ -92,14 +121,17 @@ inline std::ostream& operator<<(std::ostream& out, const ObjectPath& path)
 
 namespace std
 {
+/**
+ * @brief Enables usage of ObjectPath instances in hashed containers.
+ */
 template<>
-struct hash<org::freedesktop::dbus::types::ObjectPath>
+struct ORG_FREEDESKTOP_DBUS_DLL_PUBLIC hash<org::freedesktop::dbus::types::ObjectPath>
 {
-    inline size_t operator()(const org::freedesktop::dbus::types::ObjectPath& p) const
-    {
-        static const std::hash<std::string> h {};
-        return h(p.as_string());
-    }
+    /**
+     * @brief operator () calculates the hash of an object path instance.
+     * @param p The instance to calculate the hash value for.
+     */
+    size_t operator()(const org::freedesktop::dbus::types::ObjectPath& p) const;
 };
 }
 

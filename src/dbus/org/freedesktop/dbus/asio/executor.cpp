@@ -94,18 +94,18 @@ namespace asio
 {
 class Executor : public org::freedesktop::dbus::Executor
 {
-  public:
+public:
     template<typename UnderlyingTimeoutType = DBusTimeout>
     struct Timeout : std::enable_shared_from_this<Timeout<UnderlyingTimeoutType>>
     {
-        Timeout(boost::asio::io_service& io_service, UnderlyingTimeoutType* timeout) 
-                : io_service(io_service),
-                timer(io_service),
-                timeout(timeout)
-                {
-                    if (!timeout)
-                        throw std::runtime_error("Precondition violated: timeout has to be non-null");
-                }
+        Timeout(boost::asio::io_service& io_service, UnderlyingTimeoutType* timeout)
+            : io_service(io_service),
+              timer(io_service),
+              timeout(timeout)
+        {
+            if (!timeout)
+                throw std::runtime_error("Precondition violated: timeout has to be non-null");
+        }
 
         ~Timeout() noexcept
         {
@@ -161,12 +161,12 @@ class Executor : public org::freedesktop::dbus::Executor
     struct Watch : std::enable_shared_from_this<Watch<UnderlyingWatchType>>
     {
         Watch(boost::asio::io_service& io_service, UnderlyingWatchType* watch) : io_service(io_service),
-                stream_descriptor(io_service),
-                watch(watch)
-                {
-                    if (!watch)
-                        throw std::runtime_error("Precondition violated: watch has to be non-null");
-                }
+            stream_descriptor(io_service),
+            watch(watch)
+        {
+            if (!watch)
+                throw std::runtime_error("Precondition violated: watch has to be non-null");
+        }
 
         ~Watch() noexcept
         {
@@ -185,24 +185,24 @@ class Executor : public org::freedesktop::dbus::Executor
             if (traits::Watch<UnderlyingWatchType>::is_watch_monitoring_fd_for_readable(watch))
             {
                 stream_descriptor.async_read_some(
-                    boost::asio::null_buffers(),
-                    std::bind(
-                        &Watch::on_stream_descriptor_event,
-                        Watch<UnderlyingWatchType>::shared_from_this(),
-                        traits::Watch<UnderlyingWatchType>::readable_event(),
-                        std::placeholders::_1,
-                        std::placeholders::_2));
+                            boost::asio::null_buffers(),
+                            std::bind(
+                                &Watch::on_stream_descriptor_event,
+                                Watch<UnderlyingWatchType>::shared_from_this(),
+                                traits::Watch<UnderlyingWatchType>::readable_event(),
+                                std::placeholders::_1,
+                                std::placeholders::_2));
             }
             if (traits::Watch<UnderlyingWatchType>::is_watch_monitoring_fd_for_writable(watch))
             {
                 stream_descriptor.async_write_some(
-                    boost::asio::null_buffers(),
-                    std::bind(
-                        &Watch::on_stream_descriptor_event,
-                        Watch<UnderlyingWatchType>::shared_from_this(),
-                        traits::Watch<UnderlyingWatchType>::writeable_event(),
-                        std::placeholders::_1,
-                        std::placeholders::_2));
+                            boost::asio::null_buffers(),
+                            std::bind(
+                                &Watch::on_stream_descriptor_event,
+                                Watch<UnderlyingWatchType>::shared_from_this(),
+                                traits::Watch<UnderlyingWatchType>::writeable_event(),
+                                std::placeholders::_1,
+                                std::placeholders::_2));
             }
         }
 
@@ -227,8 +227,8 @@ class Executor : public org::freedesktop::dbus::Executor
             if (error)
             {
                 traits::Watch<UnderlyingWatchType>::invoke_watch_handler_for_event(
-                    watch,
-                    traits::Watch<UnderlyingWatchType>::error_event());
+                            watch,
+                            traits::Watch<UnderlyingWatchType>::error_event());
             }
             else
             {
@@ -296,9 +296,9 @@ class Executor : public org::freedesktop::dbus::Executor
         auto t = std::shared_ptr<Timeout<>>(new Timeout<>(thiz->io_service, timeout));
         auto holder = new Holder<std::shared_ptr<Timeout<>>>(t);
         dbus_timeout_set_data(
-            timeout,
-            holder,
-            Holder<std::shared_ptr<Timeout<>>>::ptr_delete);
+                    timeout,
+                    holder,
+                    Holder<std::shared_ptr<Timeout<>>>::ptr_delete);
 
         t->start();
         return true;
@@ -321,7 +321,7 @@ class Executor : public org::freedesktop::dbus::Executor
         thiz->io_service.post(std::bind(dbus_connection_dispatch, thiz->bus->raw()));
     }
 
-  public:
+public:
     explicit Executor(const Bus::Ptr& bus) : bus(bus), work(io_service)
     {
         if (!bus)
@@ -346,10 +346,10 @@ class Executor : public org::freedesktop::dbus::Executor
             throw std::runtime_error("Problem installing timeout functions.");
 
         dbus_connection_set_wakeup_main_function(
-            bus->raw(),
-            on_dbus_wakeup_event_loop,
-            this,
-            nullptr);
+                    bus->raw(),
+                    on_dbus_wakeup_event_loop,
+                    this,
+                    nullptr);
     }
 
     ~Executor() noexcept
@@ -367,7 +367,7 @@ class Executor : public org::freedesktop::dbus::Executor
         io_service.stop();
     }
 
-  private:
+private:
     Bus::Ptr bus;
     boost::asio::io_service io_service;
     boost::asio::io_service::work work;

@@ -24,6 +24,8 @@
 
 #include <org/freedesktop/dbus/types/object_path.h>
 
+#include "message_p.h"
+
 #include <dbus/dbus.h>
 
 #include <exception>
@@ -40,44 +42,6 @@ namespace freedesktop
 {
 namespace dbus
 {
-struct Message::Reader::Private
-{    
-    Private(const std::shared_ptr<Message>& msg) : msg(msg)
-    {
-        ::memset(std::addressof(iter), 0, sizeof(iter));
-    }
-
-    ~Private()
-    {
-    }
-
-    void ensure_argument_type_or_throw(ArgumentType expected_type)
-    {
-        auto actual_type = static_cast<ArgumentType>(dbus_message_iter_get_arg_type(std::addressof(iter)));
-        if (actual_type != expected_type)
-        {
-            std::stringstream ss;
-            ss << "Mismatch between expected and actual type reported by iterator: " << std::endl
-               << "\t Expected: " << expected_type << std::endl
-               << "\t Actual: " << actual_type;
-            throw std::runtime_error(ss.str());
-        }
-    }
-
-    const char* pop_string_unchecked()
-    {
-        char* result = nullptr;
-        dbus_message_iter_get_basic(
-                    std::addressof(iter),
-                    std::addressof(result));
-        dbus_message_iter_next(std::addressof(iter));
-        return result;
-    }
-
-    std::shared_ptr<Message> msg;
-    DBusMessageIter iter;
-};
-
 Message::Reader::Reader(const std::shared_ptr<Message>& msg)
     : d(new Private(msg))
 {
@@ -296,12 +260,6 @@ const std::shared_ptr<Message>& Message::Reader::access_message()
 {
     return d->msg;
 }
-
-struct Message::Writer::Private
-{
-    std::shared_ptr<Message> msg;
-    DBusMessageIter iter;
-};
 
 Message::Writer::Writer(const std::shared_ptr<Message>& msg)
     : d(new Private{msg, DBusMessageIter()})
@@ -540,18 +498,23 @@ std::shared_ptr<Message> Message::make_method_call(
 {
     return std::shared_ptr<Message>(
                 new Message(
-                    dbus_message_new_method_call(
-                        destination.c_str(),
-                        path.as_string().c_str(),
-                        interface.c_str(),
-                        method.c_str())));
+                    std::unique_ptr<Message::Private>(
+                        new Message::Private(
+                            dbus_message_new_method_call(
+                                destination.c_str(),
+                                path.as_string().c_str(),
+                                interface.c_str(),
+                                method.c_str())))));
 }
 
 std::shared_ptr<Message> Message::make_method_return(const Message::Ptr& msg)
 {
     return std::shared_ptr<Message>(
                 new Message(
-                    dbus_message_new_method_return(msg->get())));
+                    std::unique_ptr<Message::Private>(
+                        new Message::Private(
+                            dbus_message_new_method_return(
+                                msg->d->dbus_message.get())))));
 }
 
 std::shared_ptr<Message> Message::make_signal(
@@ -561,10 +524,12 @@ std::shared_ptr<Message> Message::make_signal(
 {
     return std::shared_ptr<Message>(
                 new Message(
-                    dbus_message_new_signal(
-                        path.c_str(),
-                        interface.c_str(),
-                        signal.c_str())));
+                    std::unique_ptr<Message::Private>(
+                        new Message::Private(
+                            dbus_message_new_signal(
+                                path.c_str(),
+                                interface.c_str(),
+                                signal.c_str())))));
 }
 
 std::shared_ptr<Message> Message::make_error(
@@ -574,55 +539,61 @@ std::shared_ptr<Message> Message::make_error(
 {
     return std::shared_ptr<Message>(
                 new Message(
-                    dbus_message_new_error(
-                        in_reply_to->get(),
-                        error_name.c_str(),
-                        error_desc.c_str())));
+                    std::unique_ptr<Message::Private>(
+                        new Message::Private(
+                            dbus_message_new_error(
+                                in_reply_to->d->dbus_message.get(),
+                                error_name.c_str(),
+                                error_desc.c_str())))));
 }
 
 std::shared_ptr<Message> Message::from_raw_message(DBusMessage* msg)
 {
-    return std::shared_ptr<Message>(new Message(msg, true));
+    return std::shared_ptr<Message>(
+                new Message(
+                    std::unique_ptr<Message::Private>(
+                        new Message::Private(
+                            msg, true))));
 }
 
 Message::Type Message::type() const
 {
-    return static_cast<Type>(dbus_message_get_type(dbus_message.get()));
+    return static_cast<Type>(dbus_message_get_type(d->dbus_message.get()));
 }
 
 bool Message::expects_reply() const
 {
-    return !dbus_message_get_no_reply(dbus_message.get());
+    return !dbus_message_get_no_reply(d->dbus_message.get());
 }
 
 types::ObjectPath Message::path() const
 {
-    return types::ObjectPath(dbus_message_get_path(dbus_message.get()));
+    return types::ObjectPath(dbus_message_get_path(d->dbus_message.get()));
 }
 
 std::string Message::member() const
 {
-    return dbus_message_get_member(dbus_message.get());
+    return dbus_message_get_member(d->dbus_message.get());
 }
 
 std::string Message::signature() const
 {
-    return dbus_message_get_signature(dbus_message.get());
+    return dbus_message_get_signature(d->dbus_message.get());
 }
 
 std::string Message::interface() const
 {
-    return dbus_message_get_interface(dbus_message.get());
+    return dbus_message_get_interface(d->dbus_message.get());
 }
 
 std::string Message::destination() const
 {
-    return dbus_message_get_destination(dbus_message.get());
+    return dbus_message_get_destination(d->dbus_message.get());
 }
 
 std::string Message::sender() const
 {
-    return dbus_message_get_sender(dbus_message.get());
+    return dbus_message_get_sender(d->dbus_message.get());
 }
 
 Error Message::error() const
@@ -631,7 +602,7 @@ Error Message::error() const
         throw std::runtime_error("Message does not contain error information");
 
     Error result;
-    dbus_set_error_from_message(std::addressof(result.raw()), dbus_message.get());
+    dbus_set_error_from_message(std::addressof(result.raw()), d->dbus_message.get());
 
     return std::move(result);
 }
@@ -640,7 +611,7 @@ Message::Reader Message::reader()
 {
     Reader result{shared_from_this()};
     if (!dbus_message_iter_init(
-                dbus_message.get(),
+                d->dbus_message.get(),
                 std::addressof(result.d->iter)))
         throw std::runtime_error(
                 "Could not initialize reader, message does not have arguments");
@@ -652,28 +623,23 @@ Message::Writer Message::writer()
     Writer w(shared_from_this());
 
     dbus_message_iter_init_append(
-                dbus_message.get(),
+                d->dbus_message.get(),
                 std::addressof(w.d->iter));
 
     return std::move(w);
 }
 
-DBusMessage* Message::get() const
+void Message::ensure_serial_larger_than_zero_for_testing()
 {
-    return dbus_message.get();
+    dbus_message_set_serial(d->dbus_message.get(), 2);
 }
 
-Message::Message(
-        DBusMessage* msg,
-        bool ref_on_construction)
-    : dbus_message(msg, [](DBusMessage* msg) {if (msg) dbus_message_unref(msg);})
+Message::Message(std::unique_ptr<Message::Private> p)
+    : d(std::move(p))
 {
-    if (!msg)
+    if (!d->dbus_message)
         throw std::runtime_error(
-            "Precondition violated, cannot construct Message from null DBusMessage.");
-
-    if (ref_on_construction)
-        dbus_message_ref(msg);
+                "Precondition violated, cannot construct Message from null DBusMessage.");
 }
 
 Message::~Message()
@@ -682,10 +648,7 @@ Message::~Message()
 
 std::shared_ptr<Message> Message::clone()
 {
-    static const bool do_not_ref_on_construction = false;
-    return std::shared_ptr<Message>(new Message(
-                                        dbus_message_copy(dbus_message.get()),
-                                        do_not_ref_on_construction));
+    return std::shared_ptr<Message>(new Message(d->clone()));
 }
 }
 }

@@ -49,7 +49,8 @@ namespace dbus
 template<typename Signal, typename... Args>
 inline void Object::emit_signal(const Args& ... args)
 {
-    auto msg = Message::make_signal(
+    auto msg_factory = parent->get_connection()->message_factory();
+    auto msg = msg_factory->make_signal(
         object_path.as_string(),
         traits::Service<typename Signal::Interface>::interface_name(),
         Signal::name());
@@ -64,7 +65,8 @@ inline void Object::emit_signal(const Args& ... args)
 template<typename Method, typename ResultType, typename... Args>
 inline Result<ResultType> Object::invoke_method_synchronously(const Args& ... args)
 {
-    auto msg = Message::make_method_call(
+    auto msg_factory = parent->get_connection()->message_factory();
+    auto msg = msg_factory->make_method_call(
         parent->get_name(),
         object_path.as_string(),
         traits::Service<typename Method::Interface>::interface_name().c_str(),
@@ -87,7 +89,8 @@ inline Result<ResultType> Object::invoke_method_synchronously(const Args& ... ar
 template<typename Method, typename ResultType, typename... Args>
 inline std::future<Result<ResultType>> Object::invoke_method_asynchronously(const Args& ... args)
 {
-    auto msg = Message::make_method_call(
+    auto msg_factory = parent->get_connection()->message_factory();
+    auto msg = msg_factory->make_method_call(
         parent->get_name(),
         object_path.as_string(),
         traits::Service<typename Method::Interface>::interface_name().c_str(),

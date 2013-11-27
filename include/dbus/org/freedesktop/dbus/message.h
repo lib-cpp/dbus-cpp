@@ -27,8 +27,6 @@
 #include <org/freedesktop/dbus/types/unix_fd.h>
 #include <org/freedesktop/dbus/types/variant.h>
 
-#include <dbus/dbus.h>
-
 #include <exception>
 #include <map>
 #include <memory>
@@ -347,8 +345,8 @@ public:
      * @return An instance of message of type Type::signal.
      */
     static std::shared_ptr<Message> make_signal(
-        const std::string& path, 
-        const std::string& interface, 
+        const std::string& path,
+        const std::string& interface,
         const std::string& signal);
 
     /**
@@ -360,7 +358,7 @@ public:
      */
     static std::shared_ptr<Message> make_error(
         const Message::Ptr& in_reply_to,
-        const std::string& error_name, 
+        const std::string& error_name,
         const std::string& error_desc);
 
     /**
@@ -429,26 +427,38 @@ public:
     Writer writer();
 
     /**
-     * @brief Extracts the raw DBus message contained within this instance. Use with care.
+     * @brief Meant for testing purposes only.
      */
-    DBusMessage* get() const;
+    void ensure_serial_larger_than_zero_for_testing();
 
 private:
+    friend class Bus;
     friend struct Codec<types::Any>;
-    friend class MessageFactory;
 
-    Message(
-        DBusMessage* msg,
-        bool ref_on_construction = false);
-    
     std::shared_ptr<Message> clone();
 
-    std::shared_ptr<DBusMessage> dbus_message;
+    struct Private;
+    std::unique_ptr<Private> d;
+
+    Message(std::unique_ptr<Private> d);
 };
+typedef std::shared_ptr<Message> MessagePtr;
+typedef std::unique_ptr<Message> MessageUPtr;
 }
 }
 }
 
-#include "impl/message.h"
+namespace std
+{
+template<>
+struct hash<org::freedesktop::dbus::Message::Type>
+{
+    size_t operator()(const org::freedesktop::dbus::Message::Type& type) const
+    {
+        static const hash<int> h {};
+        return h(static_cast<int>(type));
+    }
+};
+}
 
 #endif // DBUS_ORG_FREEDESKTOP_DBUS_MESSAGE_H_

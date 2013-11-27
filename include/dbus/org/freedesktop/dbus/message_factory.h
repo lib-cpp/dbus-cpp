@@ -46,7 +46,7 @@ public:
      * @return An instance of message of type Type::method_call.
      * @throw std::runtime_error if any of the parameters violates the DBus specification.
      */
-    virtual Message::Ptr make_method_call(
+    virtual MessagePtr make_method_call(
         const std::string& destination,
         const types::ObjectPath& path,
         const std::string& interface,
@@ -57,7 +57,7 @@ public:
      * @param msg The message to reply to, must not be null. Must be of type Type::method_call.
      * @return An instance of message of type Type::method_return.
      */
-    virtual Message::Ptr make_method_return(const Message::Ptr& msg) = 0;
+    virtual MessagePtr make_method_return(const MessagePtr& msg) = 0;
 
     /**
      * @brief make_signal creates a message instance wrapping a signal emission.
@@ -66,7 +66,7 @@ public:
      * @param signal The actual signal name.
      * @return An instance of message of type Type::signal.
      */
-    virtual Message::Ptr make_signal(
+    virtual MessagePtr make_signal(
         const std::string& path,
         const std::string& interface,
         const std::string& signal) = 0;
@@ -78,8 +78,8 @@ public:
      * @param error_desc Human-readable description of the error.
      * @return An instance of message of type Type::error.
      */
-    virtual Message::Ptr make_error(
-        const Message::Ptr& in_reply_to,
+    virtual MessagePtr make_error(
+        const MessagePtr& in_reply_to,
         const std::string& error_name,
         const std::string& error_desc) = 0;
 

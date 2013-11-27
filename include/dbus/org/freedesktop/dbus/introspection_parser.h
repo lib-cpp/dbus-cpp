@@ -135,11 +135,6 @@ class IntrospectionParser
         Access access; ///< Access specification.
     };
 
-    /**
-     * \brief Constructs a parser for the given filename.
-     * \param [in] filename Name of file to parse introspection XML from.
-     * \throws std::runtime_error if parsing fails.     
-     */
     IntrospectionParser();
     IntrospectionParser(const IntrospectionParser&) = delete;
     virtual ~IntrospectionParser();
