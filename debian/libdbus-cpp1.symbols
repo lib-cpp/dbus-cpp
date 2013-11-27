@@ -1,0 +1,296 @@
++libdbus-cpp.so.1 libdbus-cpp1 #MINVER#
++ (c++)"guard variable for core::dbus::DBus::GetConnectionUnixUser::name()::s@Base" 0replaceme
++ (c++)"guard variable for core::dbus::DBus::GetConnectionUnixProcessID::name()::s@Base" 0replaceme
++ (c++)"guard variable for core::dbus::DBus::ListNames::name()::s@Base" 0replaceme
++ (c++)"core::dbus::Bus::remove_match(core::dbus::MatchRule const&)@Base" 0replaceme
++ (c++)"core::dbus::Bus::handle_message(std::shared_ptr<core::dbus::Message> const&)@Base" 0replaceme
++ (c++)"core::dbus::Bus::message_factory()@Base" 0replaceme
++ (c++)"core::dbus::Bus::install_executor(std::shared_ptr<core::dbus::Executor> const&)@Base" 0replaceme
++ (c++)"core::dbus::Bus::has_owner_for_name(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
++ (c++)"core::dbus::Bus::release_name_on_bus(core::dbus::Bus::Name&&)@Base" 0replaceme
++ (c++)"core::dbus::Bus::request_name_on_bus(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, core::dbus::Bus::RequestNameFlag)@Base" 0replaceme
++ (c++)"core::dbus::Bus::access_signal_router()@Base" 0replaceme
++ (c++)"core::dbus::Bus::unregister_object_path(core::dbus::types::ObjectPath const&)@Base" 0replaceme
++ (c++)"core::dbus::Bus::register_object_for_path(core::dbus::types::ObjectPath const&, std::shared_ptr<core::dbus::Object> const&)@Base" 0replaceme
++ (c++)"core::dbus::Bus::send_with_reply_and_timeout(std::shared_ptr<core::dbus::Message> const&, std::chrono::duration<long, std::ratio<1l, 1000l> > const&)@Base" 0replaceme
++ (c++)"core::dbus::Bus::send_with_reply_and_block_for_at_most(std::shared_ptr<core::dbus::Message> const&, std::chrono::duration<long, std::ratio<1l, 1000l> > const&)@Base" 0replaceme
++ (c++)"core::dbus::Bus::run()@Base" 0replaceme
++ (c++)"core::dbus::Bus::Name::Name(core::dbus::Bus::Name&&)@Base" 0replaceme
++ (c++)"core::dbus::Bus::Name::Name(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
++ (c++)"core::dbus::Bus::Name::Name(core::dbus::Bus::Name&&)@Base" 0replaceme
++ (c++)"core::dbus::Bus::Name::Name(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
++ (c++)"core::dbus::Bus::Name::operator=(core::dbus::Bus::Name&&)@Base" 0replaceme
++ (c++)"core::dbus::Bus::send(std::shared_ptr<core::dbus::Message> const&)@Base" 0replaceme
++ (c++)"core::dbus::Bus::stop()@Base" 0replaceme
++ (c++)"core::dbus::Bus::Errors::AlreadyOwned::~AlreadyOwned()@Base" 0replaceme
++ (c++)"core::dbus::Bus::Errors::AlreadyOwned::~AlreadyOwned()@Base" 0replaceme
++ (c++)"core::dbus::Bus::Errors::AlreadyOwned::~AlreadyOwned()@Base" 0replaceme
++ (c++)"core::dbus::Bus::Errors::AlreadyOwner::~AlreadyOwner()@Base" 0replaceme
++ (c++)"core::dbus::Bus::Errors::AlreadyOwner::~AlreadyOwner()@Base" 0replaceme
++ (c++)"core::dbus::Bus::Errors::AlreadyOwner::~AlreadyOwner()@Base" 0replaceme
++ (c++)"core::dbus::Bus::Errors::NoMemory::~NoMemory()@Base" 0replaceme
++ (c++)"core::dbus::Bus::Errors::NoMemory::~NoMemory()@Base" 0replaceme
++ (c++)"core::dbus::Bus::Errors::NoMemory::~NoMemory()@Base" 0replaceme
++ (c++)"core::dbus::Bus::add_match(core::dbus::MatchRule const&)@Base" 0replaceme
++ (c++)"core::dbus::Bus::Bus(core::dbus::WellKnownBus)@Base" 0replaceme
++ (c++)"core::dbus::Bus::Bus(core::dbus::WellKnownBus)@Base" 0replaceme
++ (c++)"core::dbus::Bus::~Bus()@Base" 0replaceme
++ (c++)"core::dbus::Bus::~Bus()@Base" 0replaceme
++ (c++)"core::dbus::DBus::name()@Base" 0replaceme
++ (c++)"core::dbus::DBus::path()@Base" 0replaceme
++ (c++)"core::dbus::DBus::interface()@Base" 0replaceme
++ (c++)"core::dbus::DBus::DBus(std::shared_ptr<core::dbus::Bus> const&)@Base" 0replaceme
++ (c++)"core::dbus::DBus::DBus(std::shared_ptr<core::dbus::Bus> const&)@Base" 0replaceme
++ (c++)"core::dbus::asio::make_executor(std::shared_ptr<core::dbus::Bus> const&)@Base" 0replaceme
++ (c++)"core::dbus::Error::raw()@Base" 0replaceme
++ (c++)"core::dbus::Error::Error(core::dbus::Error&&)@Base" 0replaceme
++ (c++)"core::dbus::Error::Error()@Base" 0replaceme
++ (c++)"core::dbus::Error::Error(core::dbus::Error&&)@Base" 0replaceme
++ (c++)"core::dbus::Error::Error()@Base" 0replaceme
++ (c++)"core::dbus::Error::~Error()@Base" 0replaceme
++ (c++)"core::dbus::Error::~Error()@Base" 0replaceme
++ (c++)"core::dbus::Error::operator=(core::dbus::Error&&)@Base" 0replaceme
++ (c++)"core::dbus::types::ObjectPath::root()@Base" 0replaceme
++ (c++)"core::dbus::types::ObjectPath::Errors::InvalidObjectPathStringRepresentation::~InvalidObjectPathStringRepresentation()@Base" 0replaceme
++ (c++)"core::dbus::types::ObjectPath::Errors::InvalidObjectPathStringRepresentation::~InvalidObjectPathStringRepresentation()@Base" 0replaceme
++ (c++)"core::dbus::types::ObjectPath::Errors::InvalidObjectPathStringRepresentation::~InvalidObjectPathStringRepresentation()@Base" 0replaceme
++ (c++)"core::dbus::types::ObjectPath::ObjectPath(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
++ (c++)"core::dbus::types::ObjectPath::ObjectPath(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
++ (c++)"core::dbus::types::ObjectPath::~ObjectPath()@Base" 0replaceme
++ (c++)"core::dbus::types::ObjectPath::~ObjectPath()@Base" 0replaceme
++ (c++)"core::dbus::types::operator<<(std::basic_ostream<char, std::char_traits<char> >&, core::dbus::types::ObjectPath const&)@Base" 0replaceme
++ (c++)"core::dbus::Message::make_error(std::shared_ptr<core::dbus::Message> const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
++ (c++)"core::dbus::Message::make_signal(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
++ (c++)"core::dbus::Message::from_raw_message(DBusMessage*)@Base" 0replaceme
++ (c++)"core::dbus::Message::make_method_call(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, core::dbus::types::ObjectPath const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
++ (c++)"core::dbus::Message::make_method_return(std::shared_ptr<core::dbus::Message> const&)@Base" 0replaceme
++ (c++)"core::dbus::Message::ensure_serial_larger_than_zero_for_testing()@Base" 0replaceme
++ (c++)"core::dbus::Message::clone()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::pop_string()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::pop_uint16()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::pop_uint32()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::pop_uint64()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::pop_boolean()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::pop_unix_fd()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::pop_variant()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::pop_signature()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::pop_structure()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::access_message()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::pop_dict_entry()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::pop_object_path()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::pop_floating_point()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::pop()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::pop_byte()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::pop_array()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::pop_int16()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::pop_int32()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::pop_int64()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::Reader(core::dbus::Message::Reader&&)@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::Reader(std::shared_ptr<core::dbus::Message> const&)@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::Reader(core::dbus::Message::Reader&&)@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::Reader(std::shared_ptr<core::dbus::Message> const&)@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::~Reader()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::~Reader()@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::operator=(core::dbus::Message::Reader&&)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::open_array(core::dbus::types::Signature const&)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::push_int16(short)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::push_int32(int)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::push_int64(long)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::close_array(core::dbus::Message::Writer)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::push_uint16(unsigned short)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::push_uint32(unsigned int)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::push_uint64(unsigned long)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::open_variant(core::dbus::types::Signature const&)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::push_boolean(bool)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::push_stringn(char const*, unsigned long)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::push_unix_fd(core::dbus::types::UnixFd const&)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::close_variant(core::dbus::Message::Writer)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::open_structure()@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::push_signature(core::dbus::types::Signature const&)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::close_structure(core::dbus::Message::Writer)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::open_dict_entry()@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::close_dict_entry(core::dbus::Message::Writer)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::push_object_path(core::dbus::types::ObjectPath const&)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::push_floating_point(double)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::push_byte(signed char)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::Writer(core::dbus::Message::Writer&&)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::Writer(std::shared_ptr<core::dbus::Message> const&)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::Writer(core::dbus::Message::Writer&&)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::Writer(std::shared_ptr<core::dbus::Message> const&)@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::~Writer()@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::~Writer()@Base" 0replaceme
++ (c++)"core::dbus::Message::Writer::operator=(core::dbus::Message::Writer&&)@Base" 0replaceme
++ (c++)"core::dbus::Message::reader()@Base" 0replaceme
++ (c++)"core::dbus::Message::writer()@Base" 0replaceme
++ (c++)"core::dbus::Message::Message(std::unique_ptr<core::dbus::Message::Private, std::default_delete<core::dbus::Message::Private> >)@Base" 0replaceme
++ (c++)"core::dbus::Message::Message(std::unique_ptr<core::dbus::Message::Private, std::default_delete<core::dbus::Message::Private> >)@Base" 0replaceme
++ (c++)"core::dbus::Message::~Message()@Base" 0replaceme
++ (c++)"core::dbus::Message::~Message()@Base" 0replaceme
++ (c++)"core::dbus::Service::root_object()@Base" 0replaceme
++ (c++)"core::dbus::Service::use_service(std::shared_ptr<core::dbus::Bus> const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
++ (c++)"core::dbus::Service::remove_match(core::dbus::MatchRule const&)@Base" 0replaceme
++ (c++)"core::dbus::Service::object_for_path(core::dbus::types::ObjectPath const&)@Base" 0replaceme
++ (c++)"core::dbus::Service::add_object_for_path(core::dbus::types::ObjectPath const&)@Base" 0replaceme
++ (c++)"core::dbus::Service::use_service_or_throw_if_not_available(std::shared_ptr<core::dbus::Bus> const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
++ (c++)"core::dbus::Service::add_match(core::dbus::MatchRule const&)@Base" 0replaceme
++ (c++)"core::dbus::Service::Service(std::shared_ptr<core::dbus::Bus> const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
++ (c++)"core::dbus::Service::Service(std::shared_ptr<core::dbus::Bus> const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, core::dbus::Bus::RequestNameFlag const&)@Base" 0replaceme
++ (c++)"core::dbus::Service::Service(std::shared_ptr<core::dbus::Bus> const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
++ (c++)"core::dbus::Service::Service(std::shared_ptr<core::dbus::Bus> const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, core::dbus::Bus::RequestNameFlag const&)@Base" 0replaceme
++ (c++)"core::dbus::Service::~Service()@Base" 0replaceme
++ (c++)"core::dbus::Service::~Service()@Base" 0replaceme
++ (c++)"core::dbus::MatchRule::path(core::dbus::types::ObjectPath const&)@Base" 0replaceme
++ (c++)"core::dbus::MatchRule::type(core::dbus::Message::Type)@Base" 0replaceme
++ (c++)"core::dbus::MatchRule::member(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
++ (c++)"core::dbus::MatchRule::sender(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
++ (c++)"core::dbus::MatchRule::interface(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
++ (c++)"core::dbus::MatchRule::MatchRule(core::dbus::MatchRule const&)@Base" 0replaceme
++ (c++)"core::dbus::MatchRule::MatchRule()@Base" 0replaceme
++ (c++)"core::dbus::MatchRule::MatchRule(core::dbus::MatchRule const&)@Base" 0replaceme
++ (c++)"core::dbus::MatchRule::MatchRule()@Base" 0replaceme
++ (c++)"core::dbus::MatchRule::~MatchRule()@Base" 0replaceme
++ (c++)"core::dbus::MatchRule::~MatchRule()@Base" 0replaceme
++ (c++)"core::dbus::MatchRule::operator=(core::dbus::MatchRule const&)@Base" 0replaceme
++ (c++)"boost::exception_detail::error_info_injector<boost::system::system_error>::~error_info_injector()@Base" 0replaceme
++ (c++)"boost::exception_detail::error_info_injector<boost::system::system_error>::~error_info_injector()@Base" 0replaceme
++ (c++)"boost::exception_detail::error_info_injector<boost::system::system_error>::~error_info_injector()@Base" 0replaceme
++ (c++)"boost::exception_detail::error_info_injector<std::runtime_error>::~error_info_injector()@Base" 0replaceme
++ (c++)"boost::exception_detail::error_info_injector<std::runtime_error>::~error_info_injector()@Base" 0replaceme
++ (c++)"boost::exception_detail::error_info_injector<std::runtime_error>::~error_info_injector()@Base" 0replaceme
++ (c++)"core::dbus::Bus::raw() const@Base" 0replaceme
++ (c++)"core::dbus::Bus::Name::as_string() const@Base" 0replaceme
++ (c++)"core::dbus::DBus::list_names() const@Base" 0replaceme
++ (c++)"core::dbus::DBus::get_connection_unix_user(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) const@Base" 0replaceme
++ (c++)"core::dbus::DBus::get_connection_unix_process_id(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) const@Base" 0replaceme
++ (c++)"core::dbus::Error::name() const@Base" 0replaceme
++ (c++)"core::dbus::Error::print() const@Base" 0replaceme
++ (c++)"core::dbus::Error::message() const@Base" 0replaceme
++ (c++)"core::dbus::Error::operator bool() const@Base" 0replaceme
++ (c++)"core::dbus::types::ObjectPath::empty() const@Base" 0replaceme
++ (c++)"core::dbus::types::ObjectPath::as_string() const@Base" 0replaceme
++ (c++)"core::dbus::types::ObjectPath::operator==(core::dbus::types::ObjectPath const&) const@Base" 0replaceme
++ (c++)"core::dbus::types::ObjectPath::operator<(core::dbus::types::ObjectPath const&) const@Base" 0replaceme
++ (c++)"core::dbus::Message::destination() const@Base" 0replaceme
++ (c++)"core::dbus::Message::expects_reply() const@Base" 0replaceme
++ (c++)"core::dbus::Message::path() const@Base" 0replaceme
++ (c++)"core::dbus::Message::type() const@Base" 0replaceme
++ (c++)"core::dbus::Message::error() const@Base" 0replaceme
++ (c++)"core::dbus::Message::Reader::type() const@Base" 0replaceme
++ (c++)"core::dbus::Message::member() const@Base" 0replaceme
++ (c++)"core::dbus::Message::sender() const@Base" 0replaceme
++ (c++)"core::dbus::Message::interface() const@Base" 0replaceme
++ (c++)"core::dbus::Message::signature() const@Base" 0replaceme
++ (c++)"core::dbus::Service::get_connection() const@Base" 0replaceme
++ (c++)"core::dbus::Service::is_stub() const@Base" 0replaceme
++ (c++)"core::dbus::Service::get_name() const@Base" 0replaceme
++ (c++)"core::dbus::MatchRule::path(core::dbus::types::ObjectPath const&) const@Base" 0replaceme
++ (c++)"core::dbus::MatchRule::type(core::dbus::Message::Type) const@Base" 0replaceme
++ (c++)"core::dbus::MatchRule::member(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) const@Base" 0replaceme
++ (c++)"core::dbus::MatchRule::sender(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) const@Base" 0replaceme
++ (c++)"core::dbus::MatchRule::as_string() const@Base" 0replaceme
++ (c++)"core::dbus::MatchRule::interface(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) const@Base" 0replaceme
++ (c++)"boost::system::system_error::what() const@Base" 0replaceme
++ (c++)"std::hash<core::dbus::types::ObjectPath>::operator()(core::dbus::types::ObjectPath const&) const@Base" 0replaceme
++ (c++)"char* std::basic_string<char, std::char_traits<char>, std::allocator<char> >::_S_construct<char*>(char*, char*, std::allocator<char> const&, std::forward_iterator_tag)@Base" 0replaceme
++ (c++)"std::logic_error::logic_error(std::logic_error const&)@Base" 0replaceme
++ (c++)"std::logic_error::logic_error(std::logic_error const&)@Base" 0replaceme
++ (c++)"std::unique_lock<std::mutex>::unlock()@Base" 0replaceme
++ (c++)"std::_Function_base::_Base_manager<core::dbus::Bus::Private::Private()::{lambda(std::shared_ptr<core::dbus::Message> const&)#2}>::_M_manager(std::_Any_data&, std::_Function_base::_Base_manager<core::dbus::Bus::Private::Private()::{lambda(std::shared_ptr<core::dbus::Message> const&)#2}> const&, std::_Manager_operation)@Base" 0replaceme
++ (c++)"std::_Function_base::_Base_manager<core::dbus::Bus::Private::Private()::{lambda(std::shared_ptr<core::dbus::Message> const&)#1}>::_M_manager(std::_Any_data&, std::_Function_base::_Base_manager<core::dbus::Bus::Private::Private()::{lambda(std::shared_ptr<core::dbus::Message> const&)#1}> const&, std::_Manager_operation)@Base" 0replaceme
++ (c++)"std::_Sp_counted_ptr<core::dbus::Message*, (__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 0replaceme
++ (c++)"std::_Sp_counted_ptr<core::dbus::Message*, (__gnu_cxx::_Lock_policy)2>::_M_dispose()@Base" 0replaceme
++ (c++)"std::_Sp_counted_ptr<core::dbus::Message*, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&)@Base" 0replaceme
++ (c++)"std::_Sp_counted_ptr<core::dbus::Message*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 0replaceme
++ (c++)"std::_Sp_counted_ptr<core::dbus::Message*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 0replaceme
++ (c++)"std::_Sp_counted_ptr<core::dbus::Message*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 0replaceme
++ (c++)"std::_Sp_counted_ptr<core::dbus::Service*, (__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 0replaceme
++ (c++)"std::_Sp_counted_ptr<core::dbus::Service*, (__gnu_cxx::_Lock_policy)2>::_M_dispose()@Base" 0replaceme
++ (c++)"std::_Sp_counted_ptr<core::dbus::Service*, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&)@Base" 0replaceme
++ (c++)"std::_Sp_counted_ptr<core::dbus::Service*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 0replaceme
++ (c++)"std::_Sp_counted_ptr<core::dbus::Service*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 0replaceme
++ (c++)"std::_Sp_counted_ptr<core::dbus::Service*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 0replaceme
++ (c++)"std::basic_stringbuf<char, std::char_traits<char>, std::allocator<char> >::~basic_stringbuf()@Base" 0replaceme
++ (c++)"std::basic_stringbuf<char, std::char_traits<char>, std::allocator<char> >::~basic_stringbuf()@Base" 0replaceme
++ (c++)"std::basic_stringbuf<char, std::char_traits<char>, std::allocator<char> >::~basic_stringbuf()@Base" 0replaceme
++ (c++)"std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 0replaceme
++ (c++)"std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_release()@Base" 0replaceme
++ (c++)"std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_weak_release()@Base" 0replaceme
++ (c++)"std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::~_Sp_counted_base()@Base" 0replaceme
++ (c++)"std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::~_Sp_counted_base()@Base" 0replaceme
++ (c++)"std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::~_Sp_counted_base()@Base" 0replaceme
++ (c++)"std::map<core::dbus::ArgumentType, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<core::dbus::ArgumentType>, std::allocator<std::pair<core::dbus::ArgumentType const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::~map()@Base" 0replaceme
++ (c++)"std::map<core::dbus::ArgumentType, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<core::dbus::ArgumentType>, std::allocator<std::pair<core::dbus::ArgumentType const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::~map()@Base" 0replaceme
++ (c++)"std::map<core::dbus::Message::Type, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<core::dbus::Message::Type>, std::allocator<std::pair<core::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::~map()@Base" 0replaceme
++ (c++)"std::map<core::dbus::Message::Type, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<core::dbus::Message::Type>, std::allocator<std::pair<core::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::~map()@Base" 0replaceme
++ (c++)"std::tuple<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >::~tuple()@Base" 0replaceme
++ (c++)"std::tuple<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >::~tuple()@Base" 0replaceme
++ (c++)"std::tuple<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >::~tuple()@Base" 0replaceme
++ (c++)"std::tuple<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >::~tuple()@Base" 0replaceme
++ (c++)"void std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::_M_emplace_back_aux<std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&>(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
++ (c++)"void std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::_M_emplace_back_aux<std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&>(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
++ (c++)"std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::~vector()@Base" 0replaceme
++ (c++)"std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::~vector()@Base" 0replaceme
++ (c++)"std::_Rb_tree<core::dbus::ArgumentType, std::pair<core::dbus::ArgumentType const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::_Select1st<std::pair<core::dbus::ArgumentType const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::less<core::dbus::ArgumentType>, std::allocator<std::pair<core::dbus::ArgumentType const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::_M_get_insert_unique_pos(core::dbus::ArgumentType const&)@Base" 0replaceme
++ (c++)"std::_Rb_tree<core::dbus::ArgumentType, std::pair<core::dbus::ArgumentType const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::_Select1st<std::pair<core::dbus::ArgumentType const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::less<core::dbus::ArgumentType>, std::allocator<std::pair<core::dbus::ArgumentType const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::_M_get_insert_hint_unique_pos(std::_Rb_tree_const_iterator<std::pair<core::dbus::ArgumentType const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, core::dbus::ArgumentType const&)@Base" 0replaceme
++ (c++)"std::_Rb_tree<core::dbus::ArgumentType, std::pair<core::dbus::ArgumentType const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::_Select1st<std::pair<core::dbus::ArgumentType const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::less<core::dbus::ArgumentType>, std::allocator<std::pair<core::dbus::ArgumentType const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::_M_erase(std::_Rb_tree_node<std::pair<core::dbus::ArgumentType const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >*)@Base" 0replaceme
++ (c++)"std::_Rb_tree<core::dbus::Message::Type, std::pair<core::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::_Select1st<std::pair<core::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::less<core::dbus::Message::Type>, std::allocator<std::pair<core::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::_M_get_insert_unique_pos(core::dbus::Message::Type const&)@Base" 0replaceme
++ (c++)"std::_Rb_tree<core::dbus::Message::Type, std::pair<core::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::_Select1st<std::pair<core::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::less<core::dbus::Message::Type>, std::allocator<std::pair<core::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::_M_get_insert_hint_unique_pos(std::_Rb_tree_const_iterator<std::pair<core::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, core::dbus::Message::Type const&)@Base" 0replaceme
++ (c++)"std::_Rb_tree<core::dbus::Message::Type, std::pair<core::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::_Select1st<std::pair<core::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::less<core::dbus::Message::Type>, std::allocator<std::pair<core::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::_M_erase(std::_Rb_tree_node<std::pair<core::dbus::Message::Type const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >*)@Base" 0replaceme
++ (c++)"typeinfo for core::dbus::PendingCall@Base" 0replaceme
++ (c++)"typeinfo for core::dbus::Bus::Errors::AlreadyOwned@Base" 0replaceme
++ (c++)"typeinfo for core::dbus::Bus::Errors::AlreadyOwner@Base" 0replaceme
++ (c++)"typeinfo for core::dbus::Bus::Errors::NoMemory@Base" 0replaceme
++ (c++)"typeinfo for core::dbus::types::ObjectPath::Errors::InvalidObjectPathStringRepresentation@Base" 0replaceme
++ (c++)"typeinfo for core::dbus::Executor@Base" 0replaceme
++ (c++)"typeinfo for boost::exception_detail::clone_base@Base" 0replaceme
++ (c++)"typeinfo for boost::exception_detail::error_info_injector<boost::system::system_error>@Base" 0replaceme
++ (c++)"typeinfo for boost::exception_detail::error_info_injector<std::runtime_error>@Base" 0replaceme
++ (c++)"typeinfo for boost::system::system_error@Base" 0replaceme
++ (c++)"typeinfo for boost::exception@Base" 0replaceme
++ (c++)"typeinfo for std::_Mutex_base<(__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
++ (c++)"typeinfo for std::_Sp_counted_ptr<core::dbus::Message*, (__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
++ (c++)"typeinfo for std::_Sp_counted_ptr<core::dbus::Service*, (__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
++ (c++)"typeinfo for std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
++ (c++)"typeinfo for std::_Sp_make_shared_tag@Base" 0replaceme
++ (c++)"typeinfo for core::dbus::Bus::Private::Private()::{lambda(std::shared_ptr<core::dbus::Message> const&)#2}@Base" 0replaceme
++ (c++)"typeinfo for core::dbus::Bus::Private::Private()::{lambda(std::shared_ptr<core::dbus::Message> const&)#1}@Base" 0replaceme
++ (c++)"typeinfo name for core::dbus::PendingCall@Base" 0replaceme
++ (c++)"typeinfo name for core::dbus::Bus::Errors::AlreadyOwned@Base" 0replaceme
++ (c++)"typeinfo name for core::dbus::Bus::Errors::AlreadyOwner@Base" 0replaceme
++ (c++)"typeinfo name for core::dbus::Bus::Errors::NoMemory@Base" 0replaceme
++ (c++)"typeinfo name for core::dbus::types::ObjectPath::Errors::InvalidObjectPathStringRepresentation@Base" 0replaceme
++ (c++)"typeinfo name for core::dbus::Executor@Base" 0replaceme
++ (c++)"typeinfo name for boost::exception_detail::clone_base@Base" 0replaceme
++ (c++)"typeinfo name for boost::exception_detail::error_info_injector<boost::system::system_error>@Base" 0replaceme
++ (c++)"typeinfo name for boost::exception_detail::error_info_injector<std::runtime_error>@Base" 0replaceme
++ (c++)"typeinfo name for boost::system::system_error@Base" 0replaceme
++ (c++)"typeinfo name for boost::exception@Base" 0replaceme
++ (c++)"typeinfo name for std::_Mutex_base<(__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
++ (c++)"typeinfo name for std::_Sp_counted_ptr<core::dbus::Message*, (__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
++ (c++)"typeinfo name for std::_Sp_counted_ptr<core::dbus::Service*, (__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
++ (c++)"typeinfo name for std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
++ (c++)"typeinfo name for std::_Sp_make_shared_tag@Base" 0replaceme
++ (c++)"typeinfo name for core::dbus::Bus::Private::Private()::{lambda(std::shared_ptr<core::dbus::Message> const&)#2}@Base" 0replaceme
++ (c++)"typeinfo name for core::dbus::Bus::Private::Private()::{lambda(std::shared_ptr<core::dbus::Message> const&)#1}@Base" 0replaceme
++ (c++)"typeinfo name for core::dbus::Message::Private::Private(DBusMessage*, bool)::{lambda(DBusMessage*)#1}@Base" 0replaceme
++ (c++)"vtable for core::dbus::PendingCall@Base" 0replaceme
++ (c++)"vtable for core::dbus::Bus::Errors::AlreadyOwned@Base" 0replaceme
++ (c++)"vtable for core::dbus::Bus::Errors::AlreadyOwner@Base" 0replaceme
++ (c++)"vtable for core::dbus::Bus::Errors::NoMemory@Base" 0replaceme
++ (c++)"vtable for core::dbus::types::ObjectPath::Errors::InvalidObjectPathStringRepresentation@Base" 0replaceme
++ (c++)"vtable for core::dbus::Executor@Base" 0replaceme
++ (c++)"vtable for boost::exception_detail::clone_base@Base" 0replaceme
++ (c++)"vtable for boost::exception_detail::error_info_injector<boost::system::system_error>@Base" 0replaceme
++ (c++)"vtable for boost::exception_detail::error_info_injector<std::runtime_error>@Base" 0replaceme
++ (c++)"vtable for boost::system::system_error@Base" 0replaceme
++ (c++)"vtable for boost::exception@Base" 0replaceme
++ (c++)"vtable for std::_Sp_counted_ptr<core::dbus::Message*, (__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
++ (c++)"vtable for std::_Sp_counted_ptr<core::dbus::Service*, (__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
++ (c++)"vtable for std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
++ (c++)"non-virtual thunk to boost::exception_detail::error_info_injector<std::runtime_error>::~error_info_injector()@Base" 0replaceme
++ (c++)"non-virtual thunk to boost::exception_detail::error_info_injector<std::runtime_error>::~error_info_injector()@Base" 0replaceme
++ (c++)"non-virtual thunk to boost::exception_detail::error_info_injector<boost::system::system_error>::~error_info_injector()@Base" 0replaceme
++ (c++)"non-virtual thunk to boost::exception_detail::error_info_injector<boost::system::system_error>::~error_info_injector()@Base" 0replaceme
++ (c++)"core::dbus::DBus::GetConnectionUnixUser::name()::s@Base" 0replaceme
++ (c++)"core::dbus::DBus::GetConnectionUnixProcessID::name()::s@Base" 0replaceme
++ (c++)"core::dbus::DBus::ListNames::name()::s@Base" 0replaceme
