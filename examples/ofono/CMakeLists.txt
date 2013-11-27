@@ -21,7 +21,7 @@ find_package(Threads)
 pkg_check_modules(DBUS dbus-1)
 
 include_directories(
-  ${CMAKE_SOURCE_DIR}/include/dbus
+  ${CMAKE_SOURCE_DIR}/include
   ${DBUS_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
   )

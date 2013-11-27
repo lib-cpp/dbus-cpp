@@ -15,6 +15,6 @@
 # Authored by: Thomas Voss <thomas.voss@canonical.com>
 
 install(
-	DIRECTORY dbus
-	DESTINATION include/dbus-cpp-${DBUS_CPP_VERSION_MAJOR}
+    DIRECTORY core/dbus
+    DESTINATION include/dbus-cpp-${DBUS_CPP_VERSION_MAJOR}
 )

@@ -18,13 +18,13 @@
 
 #include "geoclue.h"
 
-#include <org/freedesktop/dbus/bus.h>
+#include <core/dbus/bus.h>
 
-#include <org/freedesktop/dbus/asio/executor.h>
-#include <org/freedesktop/dbus/interfaces/properties.h>
-#include <org/freedesktop/dbus/types/stl/tuple.h>
-#include <org/freedesktop/dbus/types/stl/vector.h>
-#include <org/freedesktop/dbus/types/struct.h>
+#include <core/dbus/asio/executor.h>
+#include <core/dbus/interfaces/properties.h>
+#include <core/dbus/types/stl/tuple.h>
+#include <core/dbus/types/stl/vector.h>
+#include <core/dbus/types/struct.h>
 
 #include <sys/types.h>
 #include <signal.h>
@@ -46,7 +46,7 @@ int main(int, char**)
     bus->install_executor(core::dbus::asio::make_executor(bus));
     std::thread t {std::bind(&dbus::Bus::run, bus)};
     auto ubuntu_geoip = dbus::Service::use_service(bus, "org.freedesktop.Geoclue.Providers.UbuntuGeoIP");
-    auto ubuntu_geoip_obj = ubuntu_geoip->object_for_path(dbus::types::ObjectPath("/org/freedesktop/Geoclue/Providers/UbuntuGeoIP"));
+    auto ubuntu_geoip_obj = ubuntu_geoip->object_for_path(dbus::types::ObjectPath("/core/Geoclue/Providers/UbuntuGeoIP"));
 
     // Connect to signal
     auto position_changed_signal = ubuntu_geoip_obj->get_signal<core::Geoclue::Position::Signals::PositionChanged>();
@@ -86,7 +86,7 @@ int main(int, char**)
         std::cout << p.first << " -> " << p.second << std::endl;
     });
     auto geoclue = dbus::Service::use_service(bus, dbus::traits::Service<core::Geoclue::Master>::interface_name());
-    auto geoclue_obj = geoclue->object_for_path(dbus::types::ObjectPath("/org/freedesktop/Geoclue/Master"));
+    auto geoclue_obj = geoclue->object_for_path(dbus::types::ObjectPath("/core/Geoclue/Master"));
     auto session_path = geoclue_obj->invoke_method_synchronously<core::Geoclue::Master::Create, dbus::types::ObjectPath>().value();
     auto geoclue_client = geoclue->object_for_path(session_path);
 

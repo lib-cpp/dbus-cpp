@@ -16,8 +16,8 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include <org/freedesktop/dbus/dbus.h>
-#include <org/freedesktop/dbus/types/stl/tuple.h>
+#include <core/dbus/dbus.h>
+#include <core/dbus/types/stl/tuple.h>
 
 #include <gtest/gtest.h>
 

@@ -16,9 +16,9 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include <org/freedesktop/dbus/compiler.h>
-#include <org/freedesktop/dbus/generator.h>
-#include <org/freedesktop/dbus/generator_configuration.h>
+#include <core/dbus/compiler.h>
+#include <core/dbus/generator.h>
+#include <core/dbus/generator_configuration.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -65,7 +65,7 @@ void ensure_test_introspection_file(const std::string& fn)
     std::ofstream out(fn.c_str());
     out << "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\"" << std::endl
         << "\"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">" << std::endl
-        << "<node name=\"/org/freedesktop/sample_object\">" << std::endl
+        << "<node name=\"/core/sample_object\">" << std::endl
         << "  <interface name=\"org.freedesktop.SampleInterface\">" << std::endl
         << "    <method name=\"Frobate\">" << std::endl
         << "      <arg name=\"foo\" type=\"i\" direction=\"in\"/>" << std::endl

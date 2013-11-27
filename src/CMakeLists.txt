@@ -14,4 +14,4 @@
 #
 # Authored by: Thomas Voss <thomas.voss@canonical.com>
 
-add_subdirectory(dbus)
+add_subdirectory(core)

@@ -54,7 +54,7 @@ set(DBUS_CPP_VERSION_PATCH 0)
 include(CTest)
 
 include_directories(
-  include/dbus
+  include
   ${LIBXML2_INCLUDE_DIR}
 )
 

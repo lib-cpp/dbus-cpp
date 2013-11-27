@@ -16,15 +16,15 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include <org/freedesktop/dbus/dbus.h>
-#include <org/freedesktop/dbus/object.h>
-#include <org/freedesktop/dbus/property.h>
-#include <org/freedesktop/dbus/service.h>
-#include <org/freedesktop/dbus/interfaces/properties.h>
-#include <org/freedesktop/dbus/types/stl/tuple.h>
-#include <org/freedesktop/dbus/types/stl/vector.h>
+#include <core/dbus/dbus.h>
+#include <core/dbus/object.h>
+#include <core/dbus/property.h>
+#include <core/dbus/service.h>
+#include <core/dbus/interfaces/properties.h>
+#include <core/dbus/types/stl/tuple.h>
+#include <core/dbus/types/stl/vector.h>
 
-#include <org/freedesktop/dbus/asio/executor.h>
+#include <core/dbus/asio/executor.h>
 
 #include "cross_process_sync.h"
 #include "fork_and_run.h"

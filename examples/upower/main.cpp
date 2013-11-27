@@ -18,16 +18,16 @@
 
 #include "upower.h"
 
-#include <org/freedesktop/dbus/bus.h>
-#include <org/freedesktop/dbus/object.h>
-#include <org/freedesktop/dbus/property.h>
-#include <org/freedesktop/dbus/service.h>
+#include <core/dbus/bus.h>
+#include <core/dbus/object.h>
+#include <core/dbus/property.h>
+#include <core/dbus/service.h>
 
-#include <org/freedesktop/dbus/asio/executor.h>
-#include <org/freedesktop/dbus/interfaces/properties.h>
-#include <org/freedesktop/dbus/types/struct.h>
-#include <org/freedesktop/dbus/types/stl/tuple.h>
-#include <org/freedesktop/dbus/types/stl/vector.h>
+#include <core/dbus/asio/executor.h>
+#include <core/dbus/interfaces/properties.h>
+#include <core/dbus/types/struct.h>
+#include <core/dbus/types/stl/tuple.h>
+#include <core/dbus/types/stl/vector.h>
 
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
@@ -55,7 +55,7 @@ int main(int, char**)
 bus->install_executor(core::dbus::asio::make_executor(bus));
     std::thread t {std::bind(&dbus::Bus::run, bus)};
     auto upower = dbus::Service::use_service(bus, dbus::traits::Service<core::UPower>::interface_name());
-    auto upower_object = upower->object_for_path(dbus::types::ObjectPath("/org/freedesktop/UPower"));
+    auto upower_object = upower->object_for_path(dbus::types::ObjectPath("/core/UPower"));
 
     auto all_properties = upower_object->get_all_properties<core::UPower>();
     std::for_each(all_properties.begin(), all_properties.end(), [](const std::pair<const std::string, dbus::types::Variant<dbus::types::Any>>& pair)

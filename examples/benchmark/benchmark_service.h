@@ -19,9 +19,9 @@
 #ifndef BENCHMARK_SERVICE_H_
 #define BENCHMARK_SERVICE_H_
 
-#include <org/freedesktop/dbus/service.h>
-#include <org/freedesktop/dbus/skeleton.h>
-#include <org/freedesktop/dbus/stub.h>
+#include <core/dbus/service.h>
+#include <core/dbus/skeleton.h>
+#include <core/dbus/stub.h>
 
 namespace dbus = core::dbus;
 
@@ -105,7 +105,7 @@ public:
     typedef std::shared_ptr<BenchmarkServiceStub> Ptr;
 
     BenchmarkServiceStub(const dbus::Bus::Ptr& bus) : dbus::Stub<IBenchmarkService>(bus),
-        object(access_service()->object_for_path(dbus::types::ObjectPath("/org/freedesktop/dbus/benchmark/Service")))
+        object(access_service()->object_for_path(dbus::types::ObjectPath("/core/dbus/benchmark/Service")))
     {
     }
 
@@ -137,7 +137,7 @@ class BenchmarkServiceSkeleton : public dbus::Skeleton<IBenchmarkService>
 {
 public:
     BenchmarkServiceSkeleton(const dbus::Bus::Ptr& bus) : dbus::Skeleton<IBenchmarkService>(bus),
-        object(access_service()->add_object_for_path(dbus::types::ObjectPath("/org/freedesktop/dbus/benchmark/Service")))
+        object(access_service()->add_object_for_path(dbus::types::ObjectPath("/core/dbus/benchmark/Service")))
     {
         object->install_method_handler<IBenchmarkService::MethodInt64>(
                     std::bind(&BenchmarkServiceSkeleton::handle_method_int64, this, std::placeholders::_1));

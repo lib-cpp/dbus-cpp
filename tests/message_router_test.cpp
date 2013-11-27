@@ -16,8 +16,8 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include <org/freedesktop/dbus/message.h>
-#include <org/freedesktop/dbus/message_router.h>
+#include <core/dbus/message.h>
+#include <core/dbus/message_router.h>
 
 #include <gtest/gtest.h>
 
@@ -47,7 +47,7 @@ TEST(MessageRouterForType, ARegisteredRouteIsInvokedForMessageOfMatchingType)
         if (msg->type() == dbus::Message::Type::signal)
             invoked = true;
     });
-    auto signal = a_signal_message("/org/freedesktop/DBus", "org.freedesktop.DBus", "LaLeLu");
+    auto signal = a_signal_message("/core/DBus", "org.freedesktop.DBus", "LaLeLu");
     router(signal);
 
     EXPECT_TRUE(invoked);

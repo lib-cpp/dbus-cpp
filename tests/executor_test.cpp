@@ -16,10 +16,10 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include <org/freedesktop/dbus/asio/executor.h>
+#include <core/dbus/asio/executor.h>
 
-#include <org/freedesktop/dbus/dbus.h>
-#include <org/freedesktop/dbus/service.h>
+#include <core/dbus/dbus.h>
+#include <core/dbus/service.h>
 
 #include "cross_process_sync.h"
 #include "fork_and_run.h"

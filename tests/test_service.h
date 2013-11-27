@@ -72,7 +72,7 @@ struct Service
 };
 }
 
-#include <org/freedesktop/dbus/traits/service.h>
+#include <core/dbus/traits/service.h>
 
 namespace core
 {

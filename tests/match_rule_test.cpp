@@ -16,7 +16,7 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include <org/freedesktop/dbus/match_rule.h>
+#include <core/dbus/match_rule.h>
 
 #include <gtest/gtest.h>
 
@@ -28,10 +28,10 @@ TEST(MatchRule, ConstructingAMatchRuleYieldsCorrectResult)
             .sender("org.freedesktop.DBus")
             .interface("org.freedesktop.DBus")
             .member("ListNames")
-            .path(core::dbus::types::ObjectPath("/org/freedesktop/DBus"));
+            .path(core::dbus::types::ObjectPath("/core/DBus"));
 
     const std::string expected_rule
-    {"type='signal',sender='org.freedesktop.DBus',interface='org.freedesktop.DBus',member='ListNames',path='/org/freedesktop/DBus'"
+    {"type='signal',sender='org.freedesktop.DBus',interface='org.freedesktop.DBus',member='ListNames',path='/core/DBus'"
     };
 
     EXPECT_EQ(expected_rule, rule.as_string());
