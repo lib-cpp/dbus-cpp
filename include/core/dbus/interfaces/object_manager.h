@@ -19,6 +19,7 @@
 #define CORE_DBUS_INTERFACES_OBJECT_MANAGER_H_
 
 #include <core/dbus/service.h>
+#include <core/dbus/traits.h>
 #include <core/dbus/types/any.h>
 #include <core/dbus/types/object_path.h>
 #include <core/dbus/types/variant.h>
@@ -65,8 +66,10 @@ private:
     Service::Ptr service;
 };
 }
+namespace traits
+{
 template<>
-struct ServiceTraits<interfaces::ObjectManager>
+struct Service<interfaces::ObjectManager>
 {
     inline static const std::string& interface_name()
     {
@@ -77,6 +80,7 @@ struct ServiceTraits<interfaces::ObjectManager>
         return s;
     }
 };
+}
 }
 }
 
