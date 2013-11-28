@@ -292,3 +292,13 @@ libdbus-cpp.so.1 libdbus-cpp1 #MINVER#
  (c++)"core::dbus::DBus::GetConnectionUnixUser::name()::s@Base" 0replaceme
  (c++)"core::dbus::DBus::GetConnectionUnixProcessID::name()::s@Base" 0replaceme
  (c++)"core::dbus::DBus::ListNames::name()::s@Base" 0replaceme
+ (c++|optional)"boost::exception_detail::error_info_injector<boost::system::system_error>::error_info_injector(boost::exception_detail::error_info_injector<boost::system::system_error> const&)@Base" 0replaceme
+ (c++|optional)"boost::exception_detail::error_info_injector<boost::system::system_error>::error_info_injector(boost::exception_detail::error_info_injector<boost::system::system_error> const&)@Base" 0replaceme
+ (c++|optional)"boost::exception_detail::error_info_injector<std::runtime_error>::error_info_injector(boost::exception_detail::error_info_injector<std::runtime_error> const&)@Base" 0replaceme
+ (c++|optional)"boost::exception_detail::error_info_injector<std::runtime_error>::error_info_injector(boost::exception_detail::error_info_injector<std::runtime_error> const&)@Base" 0replaceme
+ (c++|optional)"boost::system::system_error::system_error(boost::system::system_error const&)@Base" 0replaceme
+ (c++|optional)"boost::system::system_error::system_error(boost::system::system_error const&)@Base" 0replaceme
+ (c++|optional)"std::__weak_count<(__gnu_cxx::_Lock_policy)2>::operator=(std::__shared_count<(__gnu_cxx::_Lock_policy)2> const&)@Base" 0replaceme
+ (c++|optional)"std::basic_string<char, std::char_traits<char>, std::allocator<char> > std::operator+<char, std::char_traits<char>, std::allocator<char> >(std::basic_string<char, std::char_traits<char>, std::allocator<char> >&&, std::basic_string<char, std::char_traits<char>, std::allocator<char> >&&)@Base" 0replaceme
+ (c++|optional)"std::basic_string<char, std::char_traits<char>, std::allocator<char> > std::operator+<char, std::char_traits<char>, std::allocator<char> >(char const*, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
+ (c++|optional)"std::basic_string<char, std::char_traits<char>, std::allocator<char> > std::operator+<char, std::char_traits<char>, std::allocator<char> >(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*)@Base" 0replaceme

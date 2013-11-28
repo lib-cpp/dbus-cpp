@@ -31,19 +31,22 @@ namespace core
 {
 namespace dbus
 {
+/**
+ * @brief The DBus class provides access to dbus daemon on the bus.
+ */
 class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC DBus
 {
 public:
     /** @brief Query the well-known name of the DBus daemon. */
-    ORG_FREEDESKTOP_DBUS_DLL_PUBLIC static const std::string& name();
+    static const std::string& name();
 
     /** @brief Query the object path of the DBus daemon. */
-    ORG_FREEDESKTOP_DBUS_DLL_PUBLIC static const types::ObjectPath& path();
+    static const types::ObjectPath& path();
 
     /** @brief Query the interface name of the DBus daemon. */
-    ORG_FREEDESKTOP_DBUS_DLL_PUBLIC static const std::string& interface();
+    static const std::string& interface();
 
-    ORG_FREEDESKTOP_DBUS_DLL_PUBLIC DBus(const Bus::Ptr& bus);
+    DBus(const Bus::Ptr& bus);
     DBus(const DBus&) = delete;
 
     DBus& operator=(const DBus&) = delete;
