@@ -16,18 +16,20 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include "org/freedesktop/dbus/bus.h"
-#include "org/freedesktop/dbus/service.h"
+#include <core/dbus/bus.h>
+#include <core/dbus/object.h>
+#include <core/dbus/service.h>
+#include <core/dbus/signal.h>
 
-#include "org/freedesktop/dbus/asio/executor.h"
-#include "org/freedesktop/dbus/types/stl/tuple.h"
-#include "org/freedesktop/dbus/types/stl/vector.h"
-#include "org/freedesktop/dbus/types/struct.h"
+#include <core/dbus/asio/executor.h>
+#include <core/dbus/types/stl/tuple.h>
+#include <core/dbus/types/stl/vector.h>
+#include <core/dbus/types/struct.h>
 
 #include <sys/types.h>
 #include <signal.h>
 
-namespace dbus = org::freedesktop::dbus;
+namespace dbus = core::dbus;
 
 namespace
 {
@@ -75,7 +77,7 @@ struct VoiceCallManager
 }
 }
 
-namespace org { namespace freedesktop { namespace dbus { namespace traits {
+namespace core { namespace dbus { namespace traits {
 template<>
 struct Service<org::ofono::MessageManager>
 {
@@ -86,12 +88,12 @@ struct Service<org::ofono::VoiceCallManager>
 {
     static std::string interface_name() { return "org.ofono.VoiceCallManager"; }
 };
-}}}}
+}}}
 
 int main(int, char**)
 {
     auto bus = the_session_bus();
-    bus->install_executor(org::freedesktop::dbus::Executor::Ptr(new org::freedesktop::dbus::asio::Executor{bus}));
+    bus->install_executor(core::dbus::asio::make_executor(bus));
     std::thread t {std::bind(&dbus::Bus::run, bus)};
 
     auto ofono = dbus::Service::use_service(bus, "org.ofono");

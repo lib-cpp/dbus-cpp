@@ -16,22 +16,22 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include "org/freedesktop/dbus/match_rule.h"
+#include <core/dbus/match_rule.h>
 
 #include <gtest/gtest.h>
 
 TEST(MatchRule, ConstructingAMatchRuleYieldsCorrectResult)
 {
-    org::freedesktop::dbus::MatchRule rule;
+    core::dbus::MatchRule rule;
     rule
-    .type(org::freedesktop::dbus::Message::Type::signal)
-    .sender("org.freedesktop.DBus")
-    .interface("org.freedesktop.DBus")
-    .member("ListNames")
-    .path(org::freedesktop::dbus::types::ObjectPath("/org/freedesktop/DBus"));
+            .type(core::dbus::Message::Type::signal)
+            .sender("org.freedesktop.DBus")
+            .interface("org.freedesktop.DBus")
+            .member("ListNames")
+            .path(core::dbus::types::ObjectPath("/core/DBus"));
 
     const std::string expected_rule
-    {"type='signal',sender='org.freedesktop.DBus',interface='org.freedesktop.DBus',member='ListNames',path='/org/freedesktop/DBus'"
+    {"type='signal',sender='org.freedesktop.DBus',interface='org.freedesktop.DBus',member='ListNames',path='/core/DBus'"
     };
 
     EXPECT_EQ(expected_rule, rule.as_string());

@@ -18,14 +18,19 @@ cmake_minimum_required(VERSION 2.8)
 
 project(dbus-cpp)
 
+find_package(Boost COMPONENTS filesystem program_options system REQUIRED)
+find_package(LibXml2 REQUIRED)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(cmake/EnableCoverageReport.cmake)
 include(cmake/PrePush.cmake)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall -pedantic -Wextra -fPIC -pthread")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Werror -Wall -fno-strict-aliasing -pedantic -Wextra -fPIC -pthread")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined -lc++abi")
+include(GNUInstallDirs)
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall -pedantic -Wextra -fvisibility=hidden -fPIC -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Werror -Wall -fno-strict-aliasing -fvisibility=hidden -fvisibility-inlines-hidden -pedantic -Wextra -fPIC -pthread")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined")
 
 #####################################################################
 # Enable code coverage calculation with gcov/gcovr/lcov
@@ -42,18 +47,22 @@ IF(CMAKE_BUILD_TYPE MATCHES [cC][oO][vV][eE][rR][aA][gG][eE])
   SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -ftest-coverage -fprofile-arcs" )
 ENDIF(CMAKE_BUILD_TYPE MATCHES [cC][oO][vV][eE][rR][aA][gG][eE])
 
-set(DBUS_CPP_VERSION_MAJOR 0)
+set(DBUS_CPP_VERSION_MAJOR 1)
 set(DBUS_CPP_VERSION_MINOR 0)
-set(DBUS_CPP_VERSION_PATCH 1)
+set(DBUS_CPP_VERSION_PATCH 0)
 
 include(CTest)
 
-include_directories(include/dbus)
+include_directories(
+  include
+  ${LIBXML2_INCLUDE_DIR}
+)
 
 add_subdirectory(data)
 add_subdirectory(doc)
 add_subdirectory(examples)
 add_subdirectory(include)
+add_subdirectory(src)
 add_subdirectory(tests)
 
 enable_coverage_report(benchmark)

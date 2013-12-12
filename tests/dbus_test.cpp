@@ -16,9 +16,9 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include "org/freedesktop/dbus/dbus.h"
+#include <core/dbus/dbus.h>
 
-#include "org/freedesktop/dbus/asio/executor.h"
+#include <core/dbus/asio/executor.h>
 
 #include "test_service.h"
 #include "cross_process_sync.h"
@@ -26,7 +26,7 @@
 
 #include <gtest/gtest.h>
 
-namespace dbus = org::freedesktop::dbus;
+namespace dbus = core::dbus;
 
 namespace
 {
@@ -41,16 +41,15 @@ TEST(DBus, QueryingUnixProcessIdReturnsCorrectResult)
 {
     const std::string path{"/this/is/just/a/test/service"};
 
-    auto pid = getpid();
-    auto uid = getuid();
+    uint32_t pid = getpid();
+    uint32_t uid = getuid();
 
     test::CrossProcessSync barrier;
 
     auto child = [path, pid, uid, &barrier]()
     {
         auto bus = the_session_bus();
-        bus->install_executor(
-            org::freedesktop::dbus::Executor::Ptr(new org::freedesktop::dbus::asio::Executor{bus}));
+        bus->install_executor(core::dbus::asio::make_executor(bus));
         dbus::DBus daemon{bus};
 
         auto service = dbus::Service::add_service<test::Service>(bus);
@@ -58,15 +57,14 @@ TEST(DBus, QueryingUnixProcessIdReturnsCorrectResult)
 
         uint32_t sender_pid = 0, sender_uid = 0;
 
-        auto handler = [&daemon, &sender_pid, &sender_uid, bus](DBusMessage* msg)
+        auto handler = [&daemon, &sender_pid, &sender_uid, bus](const dbus::Message::Ptr& msg)
         {
-            auto tmp = dbus::Message::from_raw_message(msg); 
-            auto sender = tmp->sender();
+            auto sender = msg->sender();
             sender_pid = daemon.get_connection_unix_process_id(sender);
             sender_uid = daemon.get_connection_unix_user(sender);
 
             auto reply = dbus::Message::make_method_return(msg);
-            bus->send(reply->get());
+            bus->send(reply);
             bus->stop();
         };
 

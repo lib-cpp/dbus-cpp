@@ -16,21 +16,21 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include "org/freedesktop/dbus/message.h"
-#include "org/freedesktop/dbus/message_router.h"
+#include <core/dbus/message.h>
+#include <core/dbus/message_router.h>
 
 #include <gtest/gtest.h>
 
+namespace dbus = core::dbus;
+
 namespace
 {
-std::shared_ptr<DBusMessage> a_signal_message(const std::string& path, const std::string& interface, const std::string& name)
+dbus::Message::Ptr a_signal_message(const std::string& path, const std::string& interface, const std::string& name)
 {
-    DBusMessage* msg = dbus_message_new_signal(path.c_str(), interface.c_str(), name.c_str());
-    return std::shared_ptr<DBusMessage> {msg, [](DBusMessage* msg)
-    {
-        dbus_message_unref(msg);
-    }
-                                        };
+    return dbus::Message::make_signal(
+                path,
+                interface,
+                name);
 }
 }
 
@@ -38,17 +38,17 @@ TEST(MessageRouterForType, ARegisteredRouteIsInvokedForMessageOfMatchingType)
 {
     bool invoked {false};
 
-    org::freedesktop::dbus::MessageRouter<org::freedesktop::dbus::Message::Type> router([](DBusMessage* msg)
+    dbus::MessageRouter<dbus::Message::Type> router([](const dbus::Message::Ptr& msg)
     {
-        return static_cast<org::freedesktop::dbus::Message::Type>(dbus_message_get_type(msg));
+        return msg->type();
     });
-    router.install_route(org::freedesktop::dbus::Message::Type::signal, [&](DBusMessage* msg)
+    router.install_route(dbus::Message::Type::signal, [&](const dbus::Message::Ptr& msg)
     {
-        if (dbus_message_get_type(msg) == dbus_message_get_type(msg))
+        if (msg->type() == dbus::Message::Type::signal)
             invoked = true;
     });
-    auto msg = a_signal_message("/org/freedesktop/DBus", "org.freedesktop.DBus", "LaLeLu");
-    router(msg.get());
+    auto signal = a_signal_message("/core/DBus", "org.freedesktop.DBus", "LaLeLu");
+    router(signal);
 
     EXPECT_TRUE(invoked);
 }

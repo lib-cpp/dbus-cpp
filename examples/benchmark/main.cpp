@@ -18,10 +18,10 @@
 
 #include "benchmark_service.h"
 
-#include "org/freedesktop/dbus/announcer.h"
-#include "org/freedesktop/dbus/resolver.h"
-#include "org/freedesktop/dbus/asio/executor.h"
-#include "org/freedesktop/dbus/types/stl/vector.h"
+#include <core/dbus/announcer.h>
+#include <core/dbus/resolver.h>
+#include <core/dbus/asio/executor.h>
+#include <core/dbus/types/stl/vector.h>
 
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
@@ -37,7 +37,7 @@
 #include <unistd.h>
 
 namespace acc = boost::accumulators;
-namespace dbus = org::freedesktop::dbus;
+namespace dbus = core::dbus;
 
 namespace
 {
@@ -120,7 +120,7 @@ int main(int argc, char** argv)
     auto server = [&cross_process_sync](int, char**)
     {
         auto bus = the_session_bus();
-        bus->install_executor(org::freedesktop::dbus::Executor::Ptr(new org::freedesktop::dbus::asio::Executor{bus}));
+        bus->install_executor(core::dbus::asio::make_executor(bus));
         std::thread t1
         {
             [&]()

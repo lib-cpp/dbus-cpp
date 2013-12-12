@@ -21,25 +21,28 @@ find_package(Threads)
 pkg_check_modules(DBUS dbus-1)
 
 include_directories(
-	${CMAKE_SOURCE_DIR}/include/dbus
-    ${DBUS_INCLUDE_DIRS}
-    ${Boost_INCLUDE_DIRS}
-    ${GTEST_INCLUDE_DIRS}
-)
+  ${CMAKE_SOURCE_DIR}/include
+  ${DBUS_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
+  ${GTEST_INCLUDE_DIRS}
+  )
 
 add_executable(
-	benchmark
-	main.cpp
-)
+  benchmark
+  main.cpp
+  )
 
 target_link_libraries(
-    benchmark
-    ${CMAKE_THREAD_LIBS_INIT}
-    ${Boost_LIBRARIES}
-    ${DBUS_LIBRARIES}
-)
+  benchmark
+
+  dbus-cpp
+
+  ${CMAKE_THREAD_LIBS_INIT}
+  ${Boost_LIBRARIES}
+  ${DBUS_LIBRARIES}
+  )
 
 install(
-    TARGETS benchmark 
-    DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/examples/benchmark/
-)
+  TARGETS benchmark
+  DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/examples/benchmark/
+  )

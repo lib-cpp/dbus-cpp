@@ -81,7 +81,7 @@ int fork_and_run(const std::function<void()>& service, const std::function<void(
 
             ::kill(service_pid, SIGKILL);
 
-            int return_status;
+            int return_status = EXIT_FAILURE;
             if (WIFEXITED(status))
             {
                 std::cout << "Client exited with status: " << WEXITSTATUS(status) << std::endl;

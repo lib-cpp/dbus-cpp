@@ -21,27 +21,29 @@ find_package(Threads)
 pkg_check_modules(DBUS dbus-1)
 
 include_directories(
-	${CMAKE_SOURCE_DIR}/include/dbus
-    ${DBUS_INCLUDE_DIRS}
-    ${Boost_INCLUDE_DIRS}
-    ${GTEST_INCLUDE_DIRS}
-)
+  ${CMAKE_SOURCE_DIR}/include
+  ${DBUS_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
+  ${GTEST_INCLUDE_DIRS}
+  )
 
 add_executable(
-	upower
-	main.cpp
-)
+  upower
+  main.cpp
+  )
 
 target_link_libraries(
-    upower
-    ${CMAKE_THREAD_LIBS_INIT}
-    ${Boost_LIBRARIES}
-    ${DBUS_LIBRARIES}
-    gtest
-    gtest_main
-)
+  upower
+
+  dbus-cpp
+
+  ${CMAKE_THREAD_LIBS_INIT}
+  ${Boost_LIBRARIES}
+  ${DBUS_LIBRARIES}
+  ${GTEST_BOTH_LIBRARIES}
+  )
 
 install(
-    TARGETS upower
-    DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/examples/upower/
-)
+  TARGETS upower
+  DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/examples/upower/
+  )
