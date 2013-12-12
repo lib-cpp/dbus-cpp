@@ -49,6 +49,9 @@ Multi-Arch: same
 Depends: ${misc:Depends},
          ${shlibs:Depends},
          libdbus-cpp1 (= ${binary:Version})
+Replaces: dbus-cpp-dev
+Conflicts: dbus-cpp-dev
+Provides: dbus-cpp-dev
 Description: header-only dbus-binding leveraging C++-11
  A header-only dbus-binding leveraging C++-11, relying on compile-time
  polymorphism to integrate with arbitrary type systems.
