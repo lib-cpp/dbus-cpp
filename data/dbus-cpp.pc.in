@@ -7,4 +7,5 @@ Name: @CMAKE_PROJECT_NAME@
 Description: A DBus binding to C++11, relying on generic programming to abstract away from type systems.
 Version: @DBUS_CPP_VERSION_MAJOR@.@DBUS_CPP_VERSION_MINOR@.@DBUS_CPP_VERSION_PATCH@
 Cflags: -I${includedir}
+Libs: -L${libdir} -ldbus-cpp
 Requires: dbus-1
