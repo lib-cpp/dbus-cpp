@@ -94,7 +94,7 @@ TEST(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
         auto stub_service = dbus::Service::use_service(bus, dbus::traits::Service<test::Service>::interface_name());
         auto stub = stub_service->object_for_path(dbus::types::ObjectPath("/this/is/unlikely/to/exist/Service"));
         auto writable_property = stub->get_property<test::Service::Properties::Dummy>();
-        writable_property->subscribe_to_changes([](double d)
+        writable_property->changed().connect([](double d)
         {
             std::cout << "Dummy property changed: " << d << std::endl;
         });
