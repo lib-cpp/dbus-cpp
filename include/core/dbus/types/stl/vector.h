@@ -58,29 +58,25 @@ struct Codec<std::vector<T>>
 {
     static void encode_argument(Message::Writer& out, const std::vector<T>& arg)
     {
-        auto vw = out.open_array(
-                    types::Signature(helper::TypeMapper<T>::signature()));
+        auto aw = out.open_array(
+                    types::Signature(
+                        helper::TypeMapper<T>::signature()));
         {
             for(auto element : arg)
-                core::dbus::encode_argument(vw, element);
+                core::dbus::encode_argument(aw, element);
         }
-        out.close_array(std::move(vw));
+        out.close_array(std::move(aw));
     }
 
     static void decode_argument(Message::Reader& in, std::vector<T>& out)
     {
         Message::Reader ar = in.pop_array();
 
-        while (true)
+        while (ar.type() != ArgumentType::invalid)
         {
-            try
-            {
-                auto value = core::dbus::decode_argument<T>(ar);
-                out.push_back(value);
-            } catch(...)
-            {
-                break;
-            }
+            T value;
+            Codec<T>::decode_argument(ar, value);
+            out.push_back(value);
         }
     }
 };
