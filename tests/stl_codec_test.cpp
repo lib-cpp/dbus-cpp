@@ -17,6 +17,7 @@
  */
 
 #include <core/dbus/dbus.h>
+#include <core/dbus/types/stl/map.h>
 #include <core/dbus/types/stl/tuple.h>
 
 #include <gtest/gtest.h>
@@ -53,3 +54,44 @@ TEST(CodecForTuple, encoding_of_tuples_works)
     EXPECT_EQ(std::get<0>(t1), std::get<0>(t2));
     EXPECT_EQ(std::get<1>(t1), std::get<1>(t2));
 }
+
+TEST(CodecForMaps, DictionaryMappingToVariantsIsEncodedAndDecodedCorrectly)
+{
+    namespace dbus = core::dbus;
+
+    auto msg = a_method_call();
+
+    {
+        auto writer = msg->writer();
+        auto array = writer.open_array(dbus::types::Signature{"(sv)"});
+        for(unsigned int i = 0; i < 5; i++)
+        {
+            auto entry = array.open_dict_entry();
+            {
+                auto key = std::to_string(i);
+                entry.push_stringn(key.c_str(), key.size());
+                auto variant = entry.open_variant(dbus::types::Signature{dbus::helper::TypeMapper<std::uint32_t>::signature()});
+                {
+                    variant.push_uint32(i);
+
+                } entry.close_variant(std::move(variant));
+            } array.close_dict_entry(std::move(entry));
+        } writer.close_array(std::move(array));
+    }
+
+    unsigned int counter = 0;
+
+    std::map<std::string, dbus::types::Variant<dbus::types::Any>> result;
+    msg->reader() >> result;
+
+    EXPECT_EQ(5, result.size());
+
+    for (const auto& element : result)
+    {
+        EXPECT_EQ(std::to_string(counter), element.first);
+        EXPECT_EQ(counter, element.second.get().reader().pop_uint32());
+
+        counter++;
+    }
+}
+

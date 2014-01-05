@@ -157,12 +157,12 @@ Property<PropertyType>::handle_set(const Message::Ptr& msg)
 
 template<typename PropertyType>
 void
-Property<PropertyType>::handle_changed(const Message::Ptr& msg)
+Property<PropertyType>::handle_changed(const types::Variant<types::Any>& arg)
 {
     try
     {
         typename PropertyType::ValueType value;
-        msg->reader() >> value;
+        arg.get().reader() >> value;
         set(value);
     }
     catch (...)

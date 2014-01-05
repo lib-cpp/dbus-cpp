@@ -18,6 +18,9 @@
 #ifndef CORE_DBUS_PROPERTY_H_
 #define CORE_DBUS_PROPERTY_H_
 
+#include <core/dbus/types/any.h>
+#include <core/dbus/types/variant.h>
+
 #include <core/property.h>
 
 #include <list>
@@ -73,7 +76,7 @@ private:
 
     inline void handle_get(const Message::Ptr& msg);
     inline void handle_set(const Message::Ptr& msg);
-    inline void handle_changed(const Message::Ptr& msg);
+    inline void handle_changed(const types::Variant<types::Any>& msg);
 
     std::shared_ptr<Object> parent;
     std::string interface;
