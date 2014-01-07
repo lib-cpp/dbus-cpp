@@ -348,3 +348,48 @@ TEST(Signature, EncodingAndDecodingWorksCorrectly)
     auto signature = dbus::decode_argument<dbus::types::Signature>(reader);
     ASSERT_EQ(expected_value, signature);
 }
+
+TEST(Properties, DictionaryMappingToVariantsIsEncodedCorrectly)
+{
+    namespace dbus = core::dbus;
+
+    const std::string key{"key"};
+
+    auto msg = a_method_call();
+
+    {
+        auto writer = msg->writer();
+        auto array = writer.open_array(dbus::types::Signature{"(sv)"});
+        for(unsigned int i = 0; i < 5; i++)
+        {
+            auto entry = array.open_dict_entry();
+            {
+                entry.push_stringn(key.c_str(), key.size());
+                auto variant = entry.open_variant(dbus::types::Signature{dbus::helper::TypeMapper<std::uint32_t>::signature()});
+                {
+                    variant.push_uint32(i);
+
+                } entry.close_variant(std::move(variant));
+            } array.close_dict_entry(std::move(entry));
+        } writer.close_array(std::move(array));
+    }
+    unsigned int counter = 0;
+
+    auto reader = msg->reader();
+    auto array = reader.pop_array();
+
+    while (array.type() != dbus::ArgumentType::invalid)
+    {
+        auto entry = array.pop_dict_entry();
+        {
+            EXPECT_EQ(key, std::string{entry.pop_string()});
+            auto variant = entry.pop_variant();
+            {
+                EXPECT_EQ(counter, variant.pop_uint32());
+            }
+        }
+        counter++;
+    }
+
+    EXPECT_EQ(5, counter);
+}

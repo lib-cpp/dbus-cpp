@@ -21,11 +21,9 @@
 #include <core/dbus/argument_type.h>
 #include <core/dbus/visibility.h>
 
-#include <core/dbus/types/any.h>
 #include <core/dbus/types/object_path.h>
 #include <core/dbus/types/signature.h>
 #include <core/dbus/types/unix_fd.h>
-#include <core/dbus/types/variant.h>
 
 #include <exception>
 #include <map>
@@ -66,10 +64,11 @@ public:
     class Reader
     {
     public:
+        Reader();
         ~Reader();
 
-        Reader(const Reader&) = delete;
-        Reader& operator=(const Reader&) = delete;
+        Reader(const Reader&) = default;
+        Reader& operator=(const Reader&) = default;
 
         Reader(Reader&&);
         Reader& operator=(Reader&&);
@@ -175,14 +174,13 @@ public:
         Reader pop_dict_entry();
 
     private:
-        friend struct Codec<types::Any>;
         friend class Message;
         explicit Reader(const std::shared_ptr<Message>& msg);
 
         const std::shared_ptr<Message>& access_message();
 
         struct Private;
-        std::unique_ptr<Private> d;
+        std::shared_ptr<Private> d;
     };
 
     /**
@@ -431,7 +429,6 @@ public:
 
 private:
     friend class Bus;
-    friend struct Codec<types::Any>;
 
     std::shared_ptr<Message> clone();
 

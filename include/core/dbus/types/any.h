@@ -18,13 +18,14 @@
 #ifndef CORE_DBUS_TYPES_ANY_H_
 #define CORE_DBUS_TYPES_ANY_H_
 
+#include <core/dbus/message.h>
+
 #include <memory>
 
 namespace core
 {
 namespace dbus
 {
-class Message;
 namespace types
 {
 /**
@@ -36,8 +37,8 @@ public:
     /**
       * @brief Constructs an empty instance.
       */
-    Any(const std::shared_ptr<Message>& msg = std::shared_ptr<Message>{})
-        : msg(msg)
+    Any(const Message::Reader& reader = Message::Reader())
+        : reader_(reader)
     {
     }
 
@@ -49,13 +50,13 @@ public:
      * typing is preferred via template-specializations of Codec to ensure maximum
      * stability.
      */
-    inline const std::shared_ptr<Message>& message() const
+    inline Message::Reader& reader() const
     {
-        return msg;
+        return reader_;
     }
 
 private:
-    std::shared_ptr<Message> msg;
+    mutable Message::Reader reader_;
 };
 }
 }

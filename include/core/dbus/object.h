@@ -198,7 +198,7 @@ class Object : public std::enable_shared_from_this<Object>
     MessageRouter<PropertyKey> set_property_router;
     std::map<
         std::tuple<std::string, std::string>,
-        std::function<void(const Message::Ptr&)>
+        std::function<void(const types::Variant<types::Any>&)>
     > property_changed_vtable;
     std::shared_ptr<
         Signal<

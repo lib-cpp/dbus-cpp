@@ -40,6 +40,10 @@ namespace core
 {
 namespace dbus
 {
+Message::Reader::Reader()
+{
+}
+
 Message::Reader::Reader(const std::shared_ptr<Message>& msg)
     : d(new Private(msg))
 {

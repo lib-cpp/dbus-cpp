@@ -314,7 +314,7 @@ inline void Object::on_properties_changed(
         auto it = property_changed_vtable.find(std::make_tuple(interface, value.first));
         if (it != property_changed_vtable.end())
         {
-            it->second(value.second.get().message());
+            it->second(value.second);
         }
     }
 }

@@ -99,7 +99,7 @@ int main(int, char**)
     auto ofono = dbus::Service::use_service(bus, "org.ofono");
     auto obj = ofono->object_for_path(dbus::types::ObjectPath("/org/ofono"));
     
-    auto incoming_message_signal = obj->get_signal<org::ofono::MessageManager::Signals::IncomingMessage>();
+    /*auto incoming_message_signal = obj->get_signal<org::ofono::MessageManager::Signals::IncomingMessage>();
     incoming_message_signal->connect([](const std::tuple<std::string, std::map<std::string, dbus::types::Variant<dbus::types::Any>>>& arg)
                     {
                         std::cout << "Incoming message: " << std::get<0>(arg) << std::endl;
@@ -109,7 +109,7 @@ int main(int, char**)
     call_added_signal->connect([](const std::tuple<dbus::types::ObjectPath, std::map<std::string, dbus::types::Variant<dbus::types::Any>>>& arg)
                     {
                         std::cout << "Call added: " << std::get<0>(arg) << std::endl;
-                    });
+                    });*/
 
     sigset_t signal_set;
     sigemptyset(&signal_set);
