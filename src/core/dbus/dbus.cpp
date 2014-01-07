@@ -18,6 +18,9 @@
 
 #include <core/dbus/dbus.h>
 
+#include <core/dbus/object.h>
+#include <core/dbus/service.h>
+
 #include <core/dbus/types/stl/string.h>
 #include <core/dbus/types/stl/vector.h>
 
@@ -34,6 +37,25 @@ struct DBus::ListNames
         static const std::string s
         {
             "ListNames"
+        };
+        return s;
+    }
+
+    inline static const std::chrono::milliseconds default_timeout()
+    {
+        return std::chrono::seconds{1};
+    }
+};
+
+struct DBus::Hello
+{
+    typedef DBus Interface;
+
+    inline static const std::string& name()
+    {
+        static const std::string s
+        {
+            "Hello"
         };
         return s;
     }
@@ -120,6 +142,11 @@ uint32_t DBus::get_connection_unix_process_id(const std::string& name) const
 uint32_t DBus::get_connection_unix_user(const std::string& name) const
 {
     return object->invoke_method_synchronously<GetConnectionUnixUser, uint32_t>(name).value();
+}
+
+std::string DBus::hello() const
+{
+    return object->invoke_method_synchronously<Hello, std::string>().value();
 }
 }
 }

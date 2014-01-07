@@ -19,8 +19,21 @@
 #ifndef TEST_DATA_H_
 #define TEST_DATA_H_
 
+namespace core
+{
 namespace testing
 {
+
+const char* session_bus_configuration_file()
+{
+    return "@CMAKE_SOURCE_DIR@/data/session.conf";
+}
+
+const char* system_bus_configuration_file()
+{
+    return "@CMAKE_SOURCE_DIR@/data/system.conf";
+}
+
 namespace com
 {
 namespace canonical
@@ -92,5 +105,5 @@ constexpr const char* ussd_introspection_file()
 }
 }
 }
-
+}
 #endif // TEST_DATA_H_

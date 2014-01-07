@@ -17,12 +17,16 @@
  */
 
 #include <core/dbus/dbus.h>
-
+#include <core/dbus/fixture.h>
+#include <core/dbus/object.h>
+#include <core/dbus/service.h>
 #include <core/dbus/asio/executor.h>
 
+#include "test_data.h"
 #include "test_service.h"
-#include "cross_process_sync.h"
-#include "fork_and_run.h"
+
+#include <core/testing/cross_process_sync.h>
+#include <core/testing/fork_and_run.h>
 
 #include <gtest/gtest.h>
 
@@ -39,14 +43,18 @@ dbus::Bus::Ptr the_session_bus()
 
 TEST(DBus, QueryingUnixProcessIdReturnsCorrectResult)
 {
+    core::dbus::Fixture fixture(
+                core::testing::session_bus_configuration_file(),
+                core::testing::system_bus_configuration_file());
+
     const std::string path{"/this/is/just/a/test/service"};
 
     uint32_t pid = getpid();
     uint32_t uid = getuid();
 
-    test::CrossProcessSync barrier;
+    core::testing::CrossProcessSync barrier;
 
-    auto child = [path, pid, uid, &barrier]()
+    auto service = [path, pid, uid, &barrier]()
     {
         auto bus = the_session_bus();
         bus->install_executor(core::dbus::asio::make_executor(bus));
@@ -69,24 +77,28 @@ TEST(DBus, QueryingUnixProcessIdReturnsCorrectResult)
         };
 
         object->install_method_handler<test::Service::Method>(handler);
-        barrier.signal_ready();
+        barrier.try_signal_ready_for(std::chrono::milliseconds{500});
         bus->run();
 
         EXPECT_EQ(pid, sender_pid);
         EXPECT_EQ(uid, sender_uid);
+
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
 
-    auto parent = [path, &barrier]()
+    auto client = [path, &barrier]()
     {
         auto bus = the_session_bus();
         
         auto service = dbus::Service::use_service<test::Service>(bus);
         auto object = service->object_for_path(dbus::types::ObjectPath{path});
 
-        barrier.wait_for_signal_ready();
+        barrier.wait_for_signal_ready_for(std::chrono::milliseconds{500});
 
-        object->invoke_method_synchronously<test::Service::Method, void>();        
+        object->invoke_method_synchronously<test::Service::Method, void>();
+
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
 
-    ASSERT_NO_FATAL_FAILURE(test::fork_and_run(child, parent));
+    ASSERT_NO_FATAL_FAILURE(core::testing::fork_and_run(service, client));
 }

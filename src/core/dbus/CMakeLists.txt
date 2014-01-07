@@ -23,10 +23,13 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/include
   ${DBUS_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
-  )
+  ${PROCESS_CPP_INCLUDE_DIR}
+)
 
 add_library(
   dbus-cpp SHARED
+
+  fixture.cpp
 
   bus.cpp
   dbus.cpp
@@ -46,6 +49,7 @@ target_link_libraries(
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
   ${LIBXML2_LIBRARIES}
+  ${PROCESS_CPP_LIBRARIES}
 )
 
 set_target_properties(

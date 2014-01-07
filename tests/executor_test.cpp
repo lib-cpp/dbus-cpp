@@ -19,11 +19,15 @@
 #include <core/dbus/asio/executor.h>
 
 #include <core/dbus/dbus.h>
+#include <core/dbus/fixture.h>
+#include <core/dbus/object.h>
 #include <core/dbus/service.h>
 
-#include "cross_process_sync.h"
-#include "fork_and_run.h"
+#include "test_data.h"
 #include "test_service.h"
+
+#include <core/testing/cross_process_sync.h>
+#include <core/testing/fork_and_run.h>
 
 #include <gtest/gtest.h>
 
@@ -45,16 +49,23 @@ TEST(Executor, ThrowsOnConstructionFromNullBus)
 
 TEST(Executor, DoesNotThrowForExistingBus)
 {
+    core::dbus::Fixture fixture(
+                core::testing::session_bus_configuration_file(),
+                core::testing::system_bus_configuration_file());
+
     core::dbus::Bus::Ptr bus{new core::dbus::Bus{core::dbus::WellKnownBus::session}};
     EXPECT_NO_THROW(bus->install_executor(core::dbus::asio::make_executor(bus)));
 }
 
 TEST(Executor, ABusRunByAnExecutorReceivesSignals)
 {
-    test::CrossProcessSync cross_process_sync;
+    core::dbus::Fixture fixture(
+                core::testing::session_bus_configuration_file(),
+                core::testing::system_bus_configuration_file());
+    core::testing::CrossProcessSync cross_process_sync;
     
     const int64_t expected_value = 42;
-    auto child = [expected_value, &cross_process_sync]()
+    auto service = [expected_value, &cross_process_sync]()
     {
         auto bus = the_session_bus();        
         bus->install_executor(dbus::asio::make_executor(bus));
@@ -68,16 +79,19 @@ TEST(Executor, ABusRunByAnExecutorReceivesSignals)
             bus->send(reply);
             skeleton->emit_signal<test::Service::Signals::Dummy, int64_t>(expected_value);
         });
-        cross_process_sync.signal_ready();
+        cross_process_sync.try_signal_ready_for(std::chrono::milliseconds{500});
         bus->run();
+
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
-    auto parent = [expected_value, cross_process_sync]()
+
+    auto client = [expected_value, &cross_process_sync]() -> core::posix::exit::Status
     {
         auto bus = the_session_bus();
         bus->install_executor(dbus::asio::make_executor(bus));
         std::thread t{[bus](){bus->run();}};
         
-        cross_process_sync.wait_for_signal_ready();
+        EXPECT_EQ(1, cross_process_sync.wait_for_signal_ready_for(std::chrono::milliseconds{500}));
 
         auto stub_service = dbus::Service::use_service(bus, dbus::traits::Service<test::Service>::interface_name());
         auto stub = stub_service->object_for_path(dbus::types::ObjectPath("/this/is/unlikely/to/exist/Service"));
@@ -93,12 +107,14 @@ TEST(Executor, ABusRunByAnExecutorReceivesSignals)
         if (t.joinable())
             t.join();
 
-        ASSERT_FALSE(result.is_error());
-        ASSERT_EQ(expected_value, result.value());
+        EXPECT_FALSE(result.is_error());
+        EXPECT_EQ(expected_value, result.value());
         EXPECT_EQ(expected_value, received_signal_value);
+
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
 
-    EXPECT_NO_FATAL_FAILURE(test::fork_and_run(child, parent));
+    EXPECT_NO_FATAL_FAILURE(core::testing::fork_and_run(service, client));
 }
 
 /*TEST(Bus, TimeoutThrowsForNullDBusWatch)

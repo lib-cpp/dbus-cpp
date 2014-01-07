@@ -17,7 +17,10 @@
  */
 
 #include <core/dbus/dbus.h>
+#include <core/dbus/message_streaming_operators.h>
+
 #include <core/dbus/types/stl/map.h>
+#include <core/dbus/types/stl/string.h>
 #include <core/dbus/types/stl/tuple.h>
 
 #include <gtest/gtest.h>

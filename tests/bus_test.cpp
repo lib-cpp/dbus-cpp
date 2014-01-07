@@ -17,10 +17,20 @@
  */
 
 #include <core/dbus/bus.h>
+#include <core/dbus/codec.h>
 #include <core/dbus/dbus.h>
+#include <core/dbus/fixture.h>
 #include <core/dbus/match_rule.h>
+#include <core/dbus/message_streaming_operators.h>
+
+#include <core/dbus/types/stl/string.h>
+#include <core/dbus/types/stl/vector.h>
 
 #include <core/dbus/asio/executor.h>
+
+#include "test_data.h"
+
+#include <core/posix/exec.h>
 
 #include <boost/asio.hpp>
 
@@ -31,25 +41,12 @@
 
 namespace dbus = core::dbus;
 
-namespace
-{
-core::dbus::Bus::Ptr the_session_bus()
-{
-    core::dbus::Bus::Ptr session_bus = std::make_shared<core::dbus::Bus>(core::dbus::WellKnownBus::session);
-    return session_bus;
-}
-}
-
-TEST(Bus, ConstructionForSessionBusDoesNotThrow)
-{
-    std::shared_ptr<core::dbus::Bus> bus;
-    EXPECT_NO_THROW(bus.reset(new core::dbus::Bus(core::dbus::WellKnownBus::session)););
-
-    EXPECT_TRUE(bus->raw() != nullptr);
-}
-
 TEST(Bus, BlockingMethodInvocationSucceedsForValidMessage)
 {
+    core::dbus::Fixture fixture(
+                core::testing::session_bus_configuration_file(),
+                core::testing::system_bus_configuration_file());
+
     static const char* expected_signature = DBUS_TYPE_ARRAY_AS_STRING DBUS_TYPE_STRING_AS_STRING;
     auto msg = core::dbus::Message::make_method_call(
                 dbus::DBus::name(),
@@ -57,7 +54,7 @@ TEST(Bus, BlockingMethodInvocationSucceedsForValidMessage)
                 dbus::DBus::name(),
                 "ListNames");
 
-    auto bus = the_session_bus();
+    auto bus = fixture.create_connection_to_session_bus();
     const std::chrono::milliseconds timeout = std::chrono::seconds(10);
     std::shared_ptr<core::dbus::Message> reply = nullptr;
     EXPECT_NO_THROW(
@@ -72,13 +69,17 @@ TEST(Bus, BlockingMethodInvocationSucceedsForValidMessage)
 
 TEST(Bus, NonBlockingMethodInvocationSucceedsForValidMessage)
 {
+    core::dbus::Fixture fixture(
+                core::testing::session_bus_configuration_file(),
+                core::testing::system_bus_configuration_file());
+
     auto msg = core::dbus::Message::make_method_call(
                 dbus::DBus::name(),
                 dbus::DBus::path(),
                 dbus::DBus::name(),
                 "ListNames");
 
-    auto bus = the_session_bus();
+    auto bus = fixture.create_connection_to_session_bus();
     const std::chrono::milliseconds timeout = std::chrono::seconds(10);
 
     auto call = bus->send_with_reply_and_timeout(msg, timeout);
@@ -90,21 +91,32 @@ TEST(Bus, NonBlockingMethodInvocationSucceedsForValidMessage)
 
 TEST(Bus, HasOwnerForNameReturnsTrueForExistingName)
 {
-    core::dbus::Bus bus(core::dbus::WellKnownBus::session);
+    core::dbus::Fixture fixture(
+                core::testing::session_bus_configuration_file(),
+                core::testing::system_bus_configuration_file());
 
-    EXPECT_TRUE(bus.has_owner_for_name(dbus::DBus::name()));
+    auto bus = fixture.create_connection_to_session_bus();
+    EXPECT_TRUE(bus->has_owner_for_name(dbus::DBus::name()));
 }
 
 TEST(Bus, HasOwnerForNameReturnsFalseForNonExistingName)
 {
-    auto bus = the_session_bus();
+    core::dbus::Fixture fixture(
+                core::testing::session_bus_configuration_file(),
+                core::testing::system_bus_configuration_file());
+
+    auto bus = fixture.create_connection_to_session_bus();
     static const std::string non_existing_name = "com.canonical.does.not.exist";
     EXPECT_FALSE(bus->has_owner_for_name(non_existing_name));
 }
 
 TEST(Bus, AddingAndRemovingAValidMatchRuleDoesNotThrow)
 {
-    auto bus = the_session_bus();
+    core::dbus::Fixture fixture(
+                core::testing::session_bus_configuration_file(),
+                core::testing::system_bus_configuration_file());
+
+    auto bus = fixture.create_connection_to_session_bus();
 
     static const dbus::MatchRule valid_match_rule = dbus::MatchRule().type(dbus::Message::Type::signal);
 
@@ -137,12 +149,17 @@ dbus::Message::Ptr a_signal_message(const std::string& path, const std::string& 
                 name);
 }
 }
+
 TEST(Bus, InstallingARouteForSignalsResultsInTheRouteBeingInvoked)
 {
+    core::dbus::Fixture fixture(
+                core::testing::session_bus_configuration_file(),
+                core::testing::system_bus_configuration_file());
+
     const std::string path{"/org/gnome/SettingsDaemon/Power"};
     const core::dbus::types::ObjectPath to_route_for(path);
     bool invoked {false};
-    auto bus = the_session_bus();
+    auto bus = fixture.create_connection_to_session_bus();
     bus->install_executor(core::dbus::asio::make_executor(bus));
     bus->access_signal_router().install_route(to_route_for,[&](const dbus::Message::Ptr&)
                                               {
@@ -155,4 +172,3 @@ TEST(Bus, InstallingARouteForSignalsResultsInTheRouteBeingInvoked)
                 "LaLeLu");
     bus->access_signal_router()(signal);
 }
-
