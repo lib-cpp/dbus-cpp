@@ -48,11 +48,7 @@ struct core::dbus::Fixture::Private
                         env,
                         core::posix::StandardStream::stdout);
 
-            std::this_thread::sleep_for(std::chrono::milliseconds{500});
-
             daemon.cout() >> address;
-
-            std::cout << "Daemon address: " << address << std::endl;
 
             if (address.empty())
                 throw std::runtime_error("Session: Could not read address of bus instance.");
@@ -89,11 +85,7 @@ struct core::dbus::Fixture::Private
                         env,
                         core::posix::StandardStream::stdout);
 
-            std::this_thread::sleep_for(std::chrono::milliseconds{500});
-
             daemon.cout() >> address;
-
-            std::cout << "Daemon address: " << address << std::endl;
 
             if (address.empty())
                 throw std::runtime_error("System: Could not read address of bus instance.");
