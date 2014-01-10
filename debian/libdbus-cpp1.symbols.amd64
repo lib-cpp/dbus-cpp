@@ -389,6 +389,8 @@ libdbus-cpp.so.1 libdbus-cpp1 #MINVER#
  (c++)"vtable for core::dbus::Fixture@Base" 0replaceme
  (c++)"vtable for std::_Sp_counted_ptr<core::dbus::Bus*, (__gnu_cxx::_Lock_policy)2>@Base" 0replaceme
  (c++)"core::dbus::DBus::Hello::name()::s@Base" 0replaceme
+ (c++)"core::dbus::Fixture::default_system_bus_config_file()@Base" 0replaceme
+ (c++)"core::dbus::Fixture::default_session_bus_config_file()@Base" 0replaceme
  (c++|optional)"boost::exception_detail::error_info_injector<boost::system::system_error>::error_info_injector(boost::exception_detail::error_info_injector<boost::system::system_error> const&)@Base" 0replaceme
  (c++|optional)"boost::exception_detail::error_info_injector<boost::system::system_error>::error_info_injector(boost::exception_detail::error_info_injector<boost::system::system_error> const&)@Base" 0replaceme
  (c++|optional)"boost::exception_detail::error_info_injector<std::runtime_error>::error_info_injector(boost::exception_detail::error_info_injector<std::runtime_error> const&)@Base" 0replaceme

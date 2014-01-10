@@ -26,10 +26,14 @@ include_directories(
   ${PROCESS_CPP_INCLUDE_DIR}
 )
 
+configure_file(
+  fixture.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/fixture.cpp @ONLY
+)
+
 add_library(
   dbus-cpp SHARED
 
-  fixture.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/fixture.cpp
 
   bus.cpp
   dbus.cpp

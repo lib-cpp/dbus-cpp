@@ -39,32 +39,38 @@
 
 namespace dbus = core::dbus;
 
-TEST(Service, AccessingAnExistingServiceAndItsObjectsOnTheBusWorks)
+namespace
 {
-    core::dbus::Fixture fixture(
-                core::testing::session_bus_configuration_file(),
-                core::testing::system_bus_configuration_file());
+struct Service : public core::dbus::testing::Fixture
+{
+};
 
-    auto bus = fixture.create_connection_to_session_bus();
+auto session_bus_config_file =
+        core::dbus::testing::Fixture::default_session_bus_config_file() =
+        core::testing::session_bus_configuration_file();
+
+auto system_bus_config_file =
+        core::dbus::testing::Fixture::default_system_bus_config_file() =
+        core::testing::system_bus_configuration_file();
+}
+
+TEST_F(Service, AccessingAnExistingServiceAndItsObjectsOnTheBusWorks)
+{
+    auto bus = session_bus();
     auto names = dbus::DBus(bus).list_names();
 
     ASSERT_GT(names.size(), std::size_t{0});
 }
 
-TEST(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
+TEST_F(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
 {
-    core::dbus::Fixture fixture(
-                core::testing::session_bus_configuration_file(),
-                core::testing::system_bus_configuration_file());
-
-    {
         core::testing::CrossProcessSync cps1;
 
         const int64_t expected_value = 42;
 
-        auto service = [expected_value, &cps1, &fixture]()
+        auto service = [this, expected_value, &cps1]()
         {
-            auto bus = fixture.create_connection_to_session_bus();
+            auto bus = session_bus();
             bus->install_executor(core::dbus::asio::make_executor(bus));
             auto service = dbus::Service::add_service<test::Service>(bus);
             auto skeleton = service->add_object_for_path(dbus::types::ObjectPath("/this/is/unlikely/to/exist/Service"));
@@ -88,9 +94,9 @@ TEST(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
             return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
         };
 
-        auto client = [expected_value, &cps1, &fixture]()
+        auto client = [this, expected_value, &cps1]()
         {
-            auto bus = fixture.create_connection_to_session_bus();
+            auto bus = session_bus();
             bus->install_executor(core::dbus::asio::make_executor(bus));
             std::thread t{[bus](){ bus->run(); }};
             EXPECT_EQ(1, cps1.wait_for_signal_ready_for(std::chrono::milliseconds{500}));
@@ -125,33 +131,25 @@ TEST(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
         };
 
         EXPECT_NO_FATAL_FAILURE(core::testing::fork_and_run(service, client));
-    }
 }
 
-TEST(Service, AddingANonExistingServiceDoesNotThrow)
+TEST_F(Service, AddingANonExistingServiceDoesNotThrow)
 {
-    core::dbus::Fixture fixture(
-                core::testing::session_bus_configuration_file(),
-                core::testing::system_bus_configuration_file());
     const std::string service_name
     {
         "very.unlikely.that.this.name.exists"
     };
-    ASSERT_NO_THROW(auto service = dbus::Service::add_service<test::Service>(fixture.create_connection_to_session_bus()););
+    ASSERT_NO_THROW(auto service = dbus::Service::add_service<test::Service>(session_bus()););
 }
 
-TEST(Service, AddingAnExistingServiceThrowsForSpecificFlags)
+TEST_F(Service, AddingAnExistingServiceThrowsForSpecificFlags)
 {
-    core::dbus::Fixture fixture(
-                core::testing::session_bus_configuration_file(),
-                core::testing::system_bus_configuration_file());
-
     const std::string service_name
     {
         "org.freedesktop.DBus"
     };
     dbus::Bus::RequestNameFlag flags{dbus::Bus::RequestNameFlag::not_set};
-    ASSERT_ANY_THROW(auto service = dbus::Service::add_service<dbus::DBus>(fixture.create_connection_to_session_bus(), flags););
+    ASSERT_ANY_THROW(auto service = dbus::Service::add_service<dbus::DBus>(session_bus(), flags););
 }
 
 TEST(VoidResult, DefaultConstructionYieldsANonErrorResult)

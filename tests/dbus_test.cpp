@@ -34,19 +34,21 @@ namespace dbus = core::dbus;
 
 namespace
 {
-dbus::Bus::Ptr the_session_bus()
+struct DBus : public core::dbus::testing::Fixture
 {
-    dbus::Bus::Ptr session_bus = std::make_shared<dbus::Bus>(dbus::WellKnownBus::session);
-    return session_bus;
-}
+};
+
+auto session_bus_config_file =
+        core::dbus::testing::Fixture::default_session_bus_config_file() =
+        core::testing::session_bus_configuration_file();
+
+auto system_bus_config_file =
+        core::dbus::testing::Fixture::default_system_bus_config_file() =
+        core::testing::system_bus_configuration_file();
 }
 
-TEST(DBus, QueryingUnixProcessIdReturnsCorrectResult)
+TEST_F(DBus, QueryingUnixProcessIdReturnsCorrectResult)
 {
-    core::dbus::Fixture fixture(
-                core::testing::session_bus_configuration_file(),
-                core::testing::system_bus_configuration_file());
-
     const std::string path{"/this/is/just/a/test/service"};
 
     uint32_t pid = getpid();
@@ -54,9 +56,9 @@ TEST(DBus, QueryingUnixProcessIdReturnsCorrectResult)
 
     core::testing::CrossProcessSync barrier;
 
-    auto service = [path, pid, uid, &barrier]()
+    auto service = [this, path, pid, uid, &barrier]()
     {
-        auto bus = the_session_bus();
+        auto bus = session_bus();
         bus->install_executor(core::dbus::asio::make_executor(bus));
         dbus::DBus daemon{bus};
 
@@ -86,9 +88,9 @@ TEST(DBus, QueryingUnixProcessIdReturnsCorrectResult)
         return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
 
-    auto client = [path, &barrier]()
+    auto client = [this, path, &barrier]()
     {
-        auto bus = the_session_bus();
+        auto bus = session_bus();
         
         auto service = dbus::Service::use_service<test::Service>(bus);
         auto object = service->object_for_path(dbus::types::ObjectPath{path});

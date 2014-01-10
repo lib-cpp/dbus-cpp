@@ -35,39 +35,38 @@ namespace dbus = core::dbus;
 
 namespace
 {
-dbus::Bus::Ptr the_session_bus()
+struct Executor : public core::dbus::testing::Fixture
 {
-    dbus::Bus::Ptr session_bus = std::make_shared<dbus::Bus>(dbus::WellKnownBus::session);
-    return session_bus;
-}
+};
+
+auto session_bus_config_file =
+        core::dbus::testing::Fixture::default_session_bus_config_file() =
+        core::testing::session_bus_configuration_file();
+
+auto system_bus_config_file =
+        core::dbus::testing::Fixture::default_system_bus_config_file() =
+        core::testing::system_bus_configuration_file();
 }
 
-TEST(Executor, ThrowsOnConstructionFromNullBus)
+TEST_F(Executor, ThrowsOnConstructionFromNullBus)
 {
     EXPECT_ANY_THROW(core::dbus::asio::make_executor(core::dbus::Bus::Ptr{}));
 }
 
-TEST(Executor, DoesNotThrowForExistingBus)
+TEST_F(Executor, DoesNotThrowForExistingBus)
 {
-    core::dbus::Fixture fixture(
-                core::testing::session_bus_configuration_file(),
-                core::testing::system_bus_configuration_file());
-
-    core::dbus::Bus::Ptr bus{new core::dbus::Bus{core::dbus::WellKnownBus::session}};
+    auto bus = session_bus();
     EXPECT_NO_THROW(bus->install_executor(core::dbus::asio::make_executor(bus)));
 }
 
-TEST(Executor, ABusRunByAnExecutorReceivesSignals)
+TEST_F(Executor, ABusRunByAnExecutorReceivesSignals)
 {
-    core::dbus::Fixture fixture(
-                core::testing::session_bus_configuration_file(),
-                core::testing::system_bus_configuration_file());
     core::testing::CrossProcessSync cross_process_sync;
     
     const int64_t expected_value = 42;
-    auto service = [expected_value, &cross_process_sync]()
+    auto service = [this, expected_value, &cross_process_sync]()
     {
-        auto bus = the_session_bus();        
+        auto bus = session_bus();
         bus->install_executor(dbus::asio::make_executor(bus));
         auto service = dbus::Service::add_service<test::Service>(bus);
         auto skeleton = service->add_object_for_path(dbus::types::ObjectPath("/this/is/unlikely/to/exist/Service"));
@@ -85,9 +84,9 @@ TEST(Executor, ABusRunByAnExecutorReceivesSignals)
         return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
 
-    auto client = [expected_value, &cross_process_sync]() -> core::posix::exit::Status
+    auto client = [this, expected_value, &cross_process_sync]() -> core::posix::exit::Status
     {
-        auto bus = the_session_bus();
+        auto bus = session_bus();
         bus->install_executor(dbus::asio::make_executor(bus));
         std::thread t{[bus](){bus->run();}};
         

@@ -23,6 +23,8 @@ set (CMAKE_CXX_FLAGS ${OLD_CMAKE_CXX_FLAGS})
 
 find_package(Threads)
 
+add_definitions(-DCORE_DBUS_ENABLE_GOOGLE_TEST_FIXTURE)
+
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/test_data.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/test_data.h @ONLY)
@@ -30,17 +32,6 @@ configure_file(
 include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
 )
-
-option(
-  DBUS_CPP_ENABLE_DBUS_TEST_RUNNER
-  "Rely on dbus test runner to start a private session for testing purposes"
-  ON
-  )
-
-if (DBUS_CPP_ENABLE_DBUS_TEST_RUNNER)
-  find_program(DBUS_TEST_RUNNER_EXECUTABLE dbus-test-runner)
-  message(STATUS "Executing test suite under dbus-test-runner")
-endif (DBUS_CPP_ENABLE_DBUS_TEST_RUNNER)
 
 include_directories(
   ${DBUS_INCLUDE_DIRS}

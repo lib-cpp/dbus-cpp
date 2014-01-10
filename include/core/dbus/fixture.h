@@ -35,6 +35,19 @@ class Bus;
 class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Fixture
 {
 public:
+
+    /**
+     * @brief default_session_bus_config_file provides the filename of the default session
+     * bus configuration file.
+     */
+    static const std::string& default_session_bus_config_file();
+
+    /**
+     * @brief default_system_bus_config_file provides the filename of the default system
+     * bus configuration file.
+     */
+    static const std::string& default_system_bus_config_file();
+
     /**
      * @brief Constructs a fixture instance with the two given configuration files.
      *
@@ -66,4 +79,75 @@ private:
 }
 }
 
+#if defined(CORE_DBUS_ENABLE_GOOGLE_TEST_FIXTURE)
+#include <gtest/gtest.h>
+namespace core
+{
+namespace dbus
+{
+namespace testing
+{
+/**
+ * @brief The Fixture class provides a Google Test fixture for running
+ * tests in a private dbus environment.
+ */
+class Fixture : public ::testing::Test
+{
+public:
+
+    /**
+     * @brief default_session_bus_config_file provides the filename of the default session
+     * bus configuration file.
+     */
+    inline static std::string& default_session_bus_config_file()
+    {
+        static std::string s{core::dbus::Fixture::default_session_bus_config_file()};
+        return s;
+    }
+
+    /**
+     * @brief default_system_bus_config_file provides the filename of the default system
+     * bus configuration file.
+     */
+    inline static std::string& default_system_bus_config_file()
+    {
+        static std::string s{core::dbus::Fixture::default_system_bus_config_file()};
+        return s;
+    }
+
+    /**
+     * @brief Constructs an instance and sets up connections to the private
+     * session and system bus.
+     *
+     * @throw std::runtime_error in case of issues.
+     */
+    inline Fixture() :
+        fixture(default_session_bus_config_file(),
+                default_system_bus_config_file())
+    {
+    }
+
+    /**
+     * @brief session_bus provides access to the private session bus.
+     */
+    inline std::shared_ptr<Bus> session_bus()
+    {
+        return fixture.create_connection_to_session_bus();
+    }
+
+    /**
+     * @brief system_bus provides access to the private system bus.
+     */
+    inline std::shared_ptr<Bus> system_bus()
+    {
+        return fixture.create_connection_to_system_bus();
+    }
+
+private:
+    core::dbus::Fixture fixture;
+};
+}
+}
+}
+#endif // CORE_DBUS_ENABLE_GOOGLE_TEST_FIXTURE
 #endif // CORE_DBUS_FIXTURE_H_

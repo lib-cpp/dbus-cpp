@@ -16,6 +16,7 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
+#include <core/dbus/dbus.h>
 #include <core/dbus/message.h>
 
 #include <gtest/gtest.h>
@@ -27,9 +28,9 @@ namespace dbus = core::dbus;
 
 TEST(Message, BuildingAMethodCallMessageSucceedsForValidArguments)
 {
-    const std::string destination = DBUS_SERVICE_DBUS;
-    const std::string path = DBUS_PATH_DBUS;
-    const std::string interface = DBUS_SERVICE_DBUS;
+    const std::string destination = core::dbus::DBus::name();
+    const std::string path = core::dbus::DBus::path().as_string();
+    const std::string interface = core::dbus::DBus::name();
     const std::string member = "ListNames";
 
     std::shared_ptr<core::dbus::Message> msg;
@@ -39,9 +40,9 @@ TEST(Message, BuildingAMethodCallMessageSucceedsForValidArguments)
 
 TEST(Message, BuildingAMethodCallMessageThrowsForInvalidArguments)
 {
-    const std::string destination = DBUS_SERVICE_DBUS;
+    const std::string destination = core::dbus::DBus::name();
     const std::string path = "an:invalid:path";
-    const std::string interface = DBUS_SERVICE_DBUS;
+    const std::string interface = core::dbus::DBus::name();
     const std::string member = "ListNames";
 
     std::shared_ptr<core::dbus::Message> msg;
@@ -51,9 +52,9 @@ TEST(Message, BuildingAMethodCallMessageThrowsForInvalidArguments)
 
 TEST(Message, AccessingAReaderOnAnEmptyMessageThrows)
 {
-    const std::string destination = DBUS_SERVICE_DBUS;
-    const std::string path = DBUS_PATH_DBUS;
-    const std::string interface = DBUS_SERVICE_DBUS;
+    const std::string destination = core::dbus::DBus::name();
+    const std::string path = core::dbus::DBus::path().as_string();
+    const std::string interface = core::dbus::DBus::name();
     const std::string member = "ListNames";
 
     auto msg = core::dbus::Message::make_method_call(destination, path, interface, member);
@@ -63,9 +64,9 @@ TEST(Message, AccessingAReaderOnAnEmptyMessageThrows)
 
 TEST(Message, AccessingAWriterOnAnyMessageSucceeds)
 {
-    const std::string destination = DBUS_SERVICE_DBUS;
-    const std::string path = DBUS_PATH_DBUS;
-    const std::string interface = DBUS_SERVICE_DBUS;
+    const std::string destination = core::dbus::DBus::name();
+    const std::string path = core::dbus::DBus::path().as_string();
+    const std::string interface = core::dbus::DBus::name();
     const std::string member = "ListNames";
 
     auto msg = core::dbus::Message::make_method_call(
@@ -86,9 +87,9 @@ TEST(Message, AccessingAWriterOnAnyMessageSucceeds)
 
 TEST(Message, WriteAndSuccessiveReadAreIdempotent)
 {
-    const std::string destination = DBUS_SERVICE_DBUS;
-    const std::string path = DBUS_PATH_DBUS;
-    const std::string interface = DBUS_SERVICE_DBUS;
+    const std::string destination = core::dbus::DBus::name();
+    const std::string path = core::dbus::DBus::path().as_string();
+    const std::string interface = core::dbus::DBus::name();
     const std::string member = "ListNames";
 
     auto msg = core::dbus::Message::make_method_call(
@@ -122,9 +123,9 @@ TEST(Message, WriteAndSuccessiveReadAreIdempotent)
 
 TEST(Message, WriteAndSuccessiveIterationAreIdempotent)
 {
-    const std::string destination = DBUS_SERVICE_DBUS;
-    const std::string path = DBUS_PATH_DBUS;
-    const std::string interface = DBUS_SERVICE_DBUS;
+    const std::string destination = core::dbus::DBus::name();
+    const std::string path = core::dbus::DBus::path().as_string();
+    const std::string interface = core::dbus::DBus::name();
     const std::string member = "ListNames";
 
     auto msg = core::dbus::Message::make_method_call(
