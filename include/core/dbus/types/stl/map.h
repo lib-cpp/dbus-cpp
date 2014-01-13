@@ -114,6 +114,8 @@ struct Codec<std::map<T, U>>
 
     static void decode_argument(Message::Reader& in, std::map<T,U>& out)
     {
+        out.clear();
+
         auto array_reader = in.pop_array();
 
         while (array_reader.type() != ArgumentType::invalid)
