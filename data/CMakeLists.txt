@@ -23,3 +23,9 @@ install(
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
 )
 
+install(
+  FILES ${CMAKE_CURRENT_SOURCE_DIR}/session.conf ${CMAKE_CURRENT_SOURCE_DIR}/system.conf
+  DESTINATION
+  "${CMAKE_INSTALL_DATADIR}/dbus-cpp/"
+)
+

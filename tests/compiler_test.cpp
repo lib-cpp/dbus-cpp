@@ -262,35 +262,35 @@ TEST(CompilerMain, generates_correct_protocol_definition_header_file_for_com_can
     const char* argv[] =
     {
         "dbus-cppc",
-        testing::com::canonical::user_metrics_introspection_file()
+        core::testing::com::canonical::user_metrics_introspection_file()
     };
 
     EXPECT_EQ(EXIT_SUCCESS, dbus::Compiler::main(2, argv));
 
-    argv[1] = testing::com::canonical::url_dispatcher_introspection_file();
+    argv[1] = core::testing::com::canonical::url_dispatcher_introspection_file();
     EXPECT_EQ(EXIT_SUCCESS, dbus::Compiler::main(2, argv));
 
-    argv[1] = testing::org::freedesktop::modem_manager::modem::cdma_introspection_file();
+    argv[1] = core::testing::org::freedesktop::modem_manager::modem::cdma_introspection_file();
     EXPECT_EQ(EXIT_SUCCESS, dbus::Compiler::main(2, argv));
 
-    argv[1] = testing::org::freedesktop::modem_manager::modem::firmware_introspection_file();
+    argv[1] = core::testing::org::freedesktop::modem_manager::modem::firmware_introspection_file();
     EXPECT_EQ(EXIT_SUCCESS, dbus::Compiler::main(2, argv));
 
-    argv[1] = testing::org::freedesktop::modem_manager::modem::gsm::card_introspection_file();
+    argv[1] = core::testing::org::freedesktop::modem_manager::modem::gsm::card_introspection_file();
     EXPECT_EQ(EXIT_SUCCESS, dbus::Compiler::main(2, argv));
 
-    argv[1] = testing::org::freedesktop::modem_manager::modem::gsm::contact_introspection_file();
+    argv[1] = core::testing::org::freedesktop::modem_manager::modem::gsm::contact_introspection_file();
     EXPECT_EQ(EXIT_SUCCESS, dbus::Compiler::main(2, argv));
 
-    argv[1] = testing::org::freedesktop::modem_manager::modem::gsm::hso_introspection_file();
+    argv[1] = core::testing::org::freedesktop::modem_manager::modem::gsm::hso_introspection_file();
     EXPECT_EQ(EXIT_SUCCESS, dbus::Compiler::main(2, argv));
 
-    argv[1] = testing::org::freedesktop::modem_manager::modem::gsm::network_introspection_file();
+    argv[1] = core::testing::org::freedesktop::modem_manager::modem::gsm::network_introspection_file();
     EXPECT_EQ(EXIT_SUCCESS, dbus::Compiler::main(2, argv));
 
-    argv[1] = testing::org::freedesktop::modem_manager::modem::gsm::sms_introspection_file();
+    argv[1] = core::testing::org::freedesktop::modem_manager::modem::gsm::sms_introspection_file();
     EXPECT_EQ(EXIT_SUCCESS, dbus::Compiler::main(2, argv));
 
-    argv[1] = testing::org::freedesktop::modem_manager::modem::gsm::ussd_introspection_file();
+    argv[1] = core::testing::org::freedesktop::modem_manager::modem::gsm::ussd_introspection_file();
     EXPECT_EQ(EXIT_SUCCESS, dbus::Compiler::main(2, argv));
 }

@@ -18,19 +18,23 @@
 #ifndef CORE_DBUS_DBUS_H_
 #define CORE_DBUS_DBUS_H_
 
-#include <core/dbus/bus.h>
-#include <core/dbus/codec.h>
-#include <core/dbus/object.h>
-#include <core/dbus/service.h>
 #include <core/dbus/visibility.h>
-#include <core/dbus/types/object_path.h>
 
-#include <sstream>
+#include <memory>
+#include <string>
+#include <vector>
 
 namespace core
 {
 namespace dbus
 {
+class Bus;
+class Object;
+class Service;
+namespace types
+{
+class ObjectPath;
+}
 /**
  * @brief The DBus class provides access to dbus daemon on the bus.
  */
@@ -46,7 +50,7 @@ public:
     /** @brief Query the interface name of the DBus daemon. */
     static const std::string& interface();
 
-    DBus(const Bus::Ptr& bus);
+    DBus(const std::shared_ptr<Bus>& bus);
     DBus(const DBus&) = delete;
 
     DBus& operator=(const DBus&) = delete;
@@ -57,29 +61,36 @@ public:
      * @param [in] name Name of the remote peer.
      * @return The process id of the remote peer.
      */
-    ORG_FREEDESKTOP_DBUS_DLL_PUBLIC uint32_t get_connection_unix_process_id(const std::string& name) const;
+    uint32_t get_connection_unix_process_id(const std::string& name) const;
 
     /**
      * @brief Queries the user ID given a name on the bus.
      * @param [in] name Name of the remote peer.
      * @return The user id that the remote peer runs under.
      */
-    ORG_FREEDESKTOP_DBUS_DLL_PUBLIC uint32_t get_connection_unix_user(const std::string& name) const;
+    uint32_t get_connection_unix_user(const std::string& name) const;
+
+    /**
+      * @brief Say hello to the message bus daemon.
+      * @return The unique name assigned to this connection.
+      */
+    std::string hello() const;
 
     /**
       * @brief List all known names on the bus.
       * @return A vector of all known participants on the bus.
       */
-    ORG_FREEDESKTOP_DBUS_DLL_PUBLIC std::vector<std::string> list_names() const;
+    std::vector<std::string> list_names() const;
 
 private:
     struct ListNames;
+    struct Hello;
     struct GetConnectionUnixProcessID;
     struct GetConnectionUnixUser;
 
-    Bus::Ptr bus;
-    Service::Ptr service;
-    Object::Ptr object;
+    std::shared_ptr<Bus> bus;
+    std::shared_ptr<Service> service;
+    std::shared_ptr<Object> object;
 };
 }
 }

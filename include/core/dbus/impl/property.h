@@ -65,47 +65,46 @@ Property<PropertyType>::is_writable() const
 
 template<typename PropertyType>
 std::shared_ptr<Property<PropertyType>>
-                                        Property<PropertyType>::make_property(
-                                            const std::shared_ptr<Object>& parent)
+Property<PropertyType>::make_property(const std::shared_ptr<Object>& parent)
 {
-                                        return std::shared_ptr<Property<PropertyType>>(
-                                                                                          new Property<PropertyType>(
-                                                                                              parent,
-                                                                                              traits::Service<typename PropertyType::Interface>::interface_name(),
-                                                                                              PropertyType::name(),
-                                                                                              PropertyType::writable));
+    return std::shared_ptr<Property<PropertyType>>(
+                                                new Property<PropertyType>(
+                                                    parent,
+                                                    traits::Service<typename PropertyType::Interface>::interface_name(),
+                                                    PropertyType::name(),
+                                                    PropertyType::writable));
 }
 
-                                        template<typename PropertyType>
-                                        Property<PropertyType>::Property(
-                                            const std::shared_ptr<Object>& parent,
-                                            const std::string& interface,
-                                            const std::string& name,
-                                            bool writable)
-                                        : parent(parent),
-interface(interface),
-name(name),
-writable(writable)
+template<typename PropertyType>
+Property<PropertyType>::Property(
+    const std::shared_ptr<Object>& parent,
+    const std::string& interface,
+    const std::string& name,
+    bool writable)
+    : parent(parent),
+      interface(interface),
+      name(name),
+      writable(writable)
 {
     if (!parent->is_stub())
     {
         parent->get_property_router.install_route(
-                    Object::PropertyKey
-        {
-                        traits::Service<typename PropertyType::Interface>::interface_name(),
-                        PropertyType::name()
-                    },
-                    std::bind(&Property::handle_get, this, std::placeholders::_1));
+            Object::PropertyKey
+            {
+                traits::Service<typename PropertyType::Interface>::interface_name(),
+                PropertyType::name()
+            },
+            std::bind(&Property::handle_get, this, std::placeholders::_1));
         parent->set_property_router.install_route(
-                    Object::PropertyKey
-        {
-                        traits::Service<typename PropertyType::Interface>::interface_name(),
-                        PropertyType::name()
-                    },
-                    std::bind(
-                        &Property::handle_set,
-                        this,
-                        std::placeholders::_1));
+            Object::PropertyKey
+            {
+                traits::Service<typename PropertyType::Interface>::interface_name(),
+                PropertyType::name()
+            },
+            std::bind(
+                &Property::handle_set,
+                this,
+                std::placeholders::_1));
     }
 }
 

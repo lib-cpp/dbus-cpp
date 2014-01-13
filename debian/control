@@ -2,7 +2,7 @@ Source: dbus-cpp
 Priority: optional
 Maintainer: Thomas Voß <thomas.voss@ubuntu.com>
 Build-Depends: cmake,
-               dbus-test-runner,
+               dbus,
                debhelper (>= 9),
                doxygen,
                google-mock,

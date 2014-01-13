@@ -172,6 +172,12 @@ public:
     typedef std::function<MessageHandlerResult(const Message::Ptr& msg)> MessageHandler;
 
     /**
+     * @brief Constructs an instance of Bus and connected to the bus specified by address.
+     * @param address The address of the bus to connect to.
+     */
+    explicit Bus(const std::string& address);
+
+    /**
      * @brief Creates a connection to a well-known bus. The implementation takes care of setting up thread-safety flags for DBus.
      * @param bus The well-known bus the instance should connect to.
      */

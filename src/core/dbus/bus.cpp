@@ -17,7 +17,7 @@
  */
 
 #include <core/dbus/bus.h>
-
+#include <core/dbus/dbus.h>
 #include <core/dbus/match_rule.h>
 #include <core/dbus/object.h>
 
@@ -68,6 +68,12 @@ DBusHandlerResult static_handle_message(
                     core::dbus::Message::from_raw_message(
                         message)));
 }
+
+void init_libdbus_thread_support_and_install_shutdown_handler()
+{
+    static std::once_flag once;
+    std::call_once(once, []() { dbus_threads_init_default(); std::atexit(dbus_shutdown); });
+}
 }
 
 namespace core
@@ -101,6 +107,7 @@ struct Bus::Private
           message_type_router([](const Message::Ptr& msg) { return msg->type(); }),
           signal_router([](const Message::Ptr& msg){ return msg->path(); })
     {
+        init_libdbus_thread_support_and_install_shutdown_handler();
     }
 
     std::shared_ptr<DBusConnection> connection;
@@ -116,12 +123,46 @@ Bus::MessageHandlerResult Bus::handle_message(const Message::Ptr& message)
     return Bus::MessageHandlerResult::not_yet_handled;
 }
 
+Bus::Bus(const std::string& address)
+    : d(new Private())
+{
+    Error se;
+    d->connection.reset(
+                dbus_connection_open_private(address.c_str(), std::addressof(se.raw())),
+                [](DBusConnection*){}
+    );
+
+    if (!d->connection)
+        throw std::runtime_error(se.print());
+
+    d->message_type_router.install_route(
+                Message::Type::signal,
+                std::bind(
+                    &Bus::SignalRouter::operator(),
+                    std::ref(d->signal_router),
+                    std::placeholders::_1));
+
+    dbus_connection_add_filter(
+                d->connection.get(),
+                static_handle_message,
+                this,
+                nullptr);
+
+    auto message = dbus::Message::make_method_call(
+                DBus::name(),
+                DBus::path(),
+                DBus::interface(),
+                "Hello");
+
+    auto reply = send_with_reply_and_block_for_at_most(message, std::chrono::seconds(1));
+
+    if (reply->type() == Message::Type::error)
+        throw std::runtime_error(reply->error().print());
+}
+
 Bus::Bus(WellKnownBus bus)
     : d(new Private())
 {
-    static std::once_flag once;
-    std::call_once(once, []() { dbus_threads_init_default(); std::atexit(dbus_shutdown); });
-
     Error se;
     d->connection.reset(
                 dbus_bus_get_private(static_cast<DBusBusType>(bus), std::addressof(se.raw())),

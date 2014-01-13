@@ -20,6 +20,10 @@ project(dbus-cpp)
 
 find_package(Boost COMPONENTS filesystem program_options system REQUIRED)
 find_package(LibXml2 REQUIRED)
+find_package(PkgConfig REQUIRED)
+
+pkg_check_modules(DBUS dbus-1)
+pkg_check_modules(PROCESS_CPP process-cpp)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 

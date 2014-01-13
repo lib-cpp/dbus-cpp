@@ -19,11 +19,15 @@
 #include <core/dbus/asio/executor.h>
 
 #include <core/dbus/dbus.h>
+#include <core/dbus/fixture.h>
+#include <core/dbus/object.h>
 #include <core/dbus/service.h>
 
-#include "cross_process_sync.h"
-#include "fork_and_run.h"
+#include "test_data.h"
 #include "test_service.h"
+
+#include <core/testing/cross_process_sync.h>
+#include <core/testing/fork_and_run.h>
 
 #include <gtest/gtest.h>
 
@@ -31,32 +35,38 @@ namespace dbus = core::dbus;
 
 namespace
 {
-dbus::Bus::Ptr the_session_bus()
+struct Executor : public core::dbus::testing::Fixture
 {
-    dbus::Bus::Ptr session_bus = std::make_shared<dbus::Bus>(dbus::WellKnownBus::session);
-    return session_bus;
-}
+};
+
+auto session_bus_config_file =
+        core::dbus::testing::Fixture::default_session_bus_config_file() =
+        core::testing::session_bus_configuration_file();
+
+auto system_bus_config_file =
+        core::dbus::testing::Fixture::default_system_bus_config_file() =
+        core::testing::system_bus_configuration_file();
 }
 
-TEST(Executor, ThrowsOnConstructionFromNullBus)
+TEST_F(Executor, ThrowsOnConstructionFromNullBus)
 {
     EXPECT_ANY_THROW(core::dbus::asio::make_executor(core::dbus::Bus::Ptr{}));
 }
 
-TEST(Executor, DoesNotThrowForExistingBus)
+TEST_F(Executor, DoesNotThrowForExistingBus)
 {
-    core::dbus::Bus::Ptr bus{new core::dbus::Bus{core::dbus::WellKnownBus::session}};
+    auto bus = session_bus();
     EXPECT_NO_THROW(bus->install_executor(core::dbus::asio::make_executor(bus)));
 }
 
-TEST(Executor, ABusRunByAnExecutorReceivesSignals)
+TEST_F(Executor, ABusRunByAnExecutorReceivesSignals)
 {
-    test::CrossProcessSync cross_process_sync;
+    core::testing::CrossProcessSync cross_process_sync;
     
     const int64_t expected_value = 42;
-    auto child = [expected_value, &cross_process_sync]()
+    auto service = [this, expected_value, &cross_process_sync]()
     {
-        auto bus = the_session_bus();        
+        auto bus = session_bus();
         bus->install_executor(dbus::asio::make_executor(bus));
         auto service = dbus::Service::add_service<test::Service>(bus);
         auto skeleton = service->add_object_for_path(dbus::types::ObjectPath("/this/is/unlikely/to/exist/Service"));
@@ -68,16 +78,19 @@ TEST(Executor, ABusRunByAnExecutorReceivesSignals)
             bus->send(reply);
             skeleton->emit_signal<test::Service::Signals::Dummy, int64_t>(expected_value);
         });
-        cross_process_sync.signal_ready();
+        cross_process_sync.try_signal_ready_for(std::chrono::milliseconds{500});
         bus->run();
+
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
-    auto parent = [expected_value, cross_process_sync]()
+
+    auto client = [this, expected_value, &cross_process_sync]() -> core::posix::exit::Status
     {
-        auto bus = the_session_bus();
+        auto bus = session_bus();
         bus->install_executor(dbus::asio::make_executor(bus));
         std::thread t{[bus](){bus->run();}};
         
-        cross_process_sync.wait_for_signal_ready();
+        EXPECT_EQ(1, cross_process_sync.wait_for_signal_ready_for(std::chrono::milliseconds{500}));
 
         auto stub_service = dbus::Service::use_service(bus, dbus::traits::Service<test::Service>::interface_name());
         auto stub = stub_service->object_for_path(dbus::types::ObjectPath("/this/is/unlikely/to/exist/Service"));
@@ -93,12 +106,14 @@ TEST(Executor, ABusRunByAnExecutorReceivesSignals)
         if (t.joinable())
             t.join();
 
-        ASSERT_FALSE(result.is_error());
-        ASSERT_EQ(expected_value, result.value());
+        EXPECT_FALSE(result.is_error());
+        EXPECT_EQ(expected_value, result.value());
         EXPECT_EQ(expected_value, received_signal_value);
+
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
 
-    EXPECT_NO_FATAL_FAILURE(test::fork_and_run(child, parent));
+    EXPECT_NO_FATAL_FAILURE(core::testing::fork_and_run(service, client));
 }
 
 /*TEST(Bus, TimeoutThrowsForNullDBusWatch)
