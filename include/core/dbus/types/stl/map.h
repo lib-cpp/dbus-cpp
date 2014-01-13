@@ -121,10 +121,18 @@ struct Codec<std::map<T, U>>
             auto de = array_reader.pop_dict_entry();
             std::pair<T, U> v;
             Codec<std::pair<T, U>>::decode_argument(de, v);
-            bool inserted = false;
-            std::tie(std::ignore, inserted) = out.insert(v);
-            if (!inserted)
-                throw std::runtime_error("Could not insert decoded element into map");
+            auto it = out.find(v.first);
+
+            if (it == out.end())
+            {
+                bool inserted = false;
+                std::tie(std::ignore, inserted) = out.insert(v);
+                if (!inserted)
+                    throw std::runtime_error("Could not insert decoded element into map");
+            } else
+            {
+                it->second = v.second;
+            }
         }
     }
 };
