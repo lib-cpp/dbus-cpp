@@ -22,6 +22,7 @@
 #include <core/dbus/service.h>
 #include <core/dbus/asio/executor.h>
 
+#include "sig_term_catcher.h"
 #include "test_data.h"
 #include "test_service.h"
 
@@ -51,13 +52,29 @@ TEST_F(DBus, QueryingUnixProcessIdReturnsCorrectResult)
 {
     const std::string path{"/this/is/just/a/test/service"};
 
-    uint32_t pid = getpid();
-    uint32_t uid = getuid();
-
     core::testing::CrossProcessSync barrier;
 
-    auto service = [this, path, pid, uid, &barrier]()
+    auto client = core::posix::fork([this, path, &barrier]()
     {
+        barrier.wait_for_signal_ready_for(std::chrono::milliseconds{500});
+
+        auto bus = session_bus();
+
+        auto service = dbus::Service::use_service<test::Service>(bus);
+        auto object = service->object_for_path(dbus::types::ObjectPath{path});
+
+        object->invoke_method_synchronously<test::Service::Method, void>();
+
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
+    }, core::posix::StandardStream::empty);
+
+    uint32_t pid = client.pid();
+    uint32_t uid = getuid();
+
+    auto service = core::posix::fork([this, path, pid, uid, &barrier]()
+    {
+        core::testing::SigTermCatcher sc;
+
         auto bus = session_bus();
         bus->install_executor(core::dbus::asio::make_executor(bus));
         dbus::DBus daemon{bus};
@@ -80,27 +97,32 @@ TEST_F(DBus, QueryingUnixProcessIdReturnsCorrectResult)
 
         object->install_method_handler<test::Service::Method>(handler);
         barrier.try_signal_ready_for(std::chrono::milliseconds{500});
-        bus->run();
+
+        std::thread t{[bus](){ bus->run(); }};
+
+        sc.wait_for_signal_for(std::chrono::seconds{2});
+
+        if (t.joinable())
+            t.join();
 
         EXPECT_EQ(pid, sender_pid);
         EXPECT_EQ(uid, sender_uid);
 
         return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
-    };
+    }, core::posix::StandardStream::empty);
 
-    auto client = [this, path, &barrier]()
-    {
-        auto bus = session_bus();
-        
-        auto service = dbus::Service::use_service<test::Service>(bus);
-        auto object = service->object_for_path(dbus::types::ObjectPath{path});
+    auto client_result = client.wait_for(core::posix::wait::Flags::untraced);
 
-        barrier.wait_for_signal_ready_for(std::chrono::milliseconds{500});
+    EXPECT_EQ(core::posix::wait::Result::Status::exited,
+              client_result.status);
+    EXPECT_EQ(core::posix::exit::Status::success,
+              client_result.detail.if_exited.status);
 
-        object->invoke_method_synchronously<test::Service::Method, void>();
+    service.send_signal_or_throw(core::posix::Signal::sig_term);
+    auto service_result = service.wait_for(core::posix::wait::Flags::untraced);
 
-        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
-    };
-
-    ASSERT_NO_FATAL_FAILURE(core::testing::fork_and_run(service, client));
+    EXPECT_EQ(core::posix::wait::Result::Status::exited,
+              service_result.status);
+    EXPECT_EQ(core::posix::exit::Status::success,
+              service_result.detail.if_exited.status);
 }
