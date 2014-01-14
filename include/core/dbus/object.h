@@ -178,6 +178,11 @@ class Object : public std::enable_shared_from_this<Object>
      */
     inline bool on_new_message(const Message::Ptr& msg);
 
+    /**
+     * @return object path of the Object
+     */
+    inline const types::ObjectPath& path() const;
+
   private:
     friend class Service;
     template<typename T, typename U> friend class Signal;
