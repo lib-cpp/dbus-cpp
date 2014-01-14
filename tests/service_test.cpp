@@ -27,6 +27,7 @@
 
 #include <core/dbus/asio/executor.h>
 
+#include "sig_term_catcher.h"
 #include "test_data.h"
 #include "test_service.h"
 
@@ -35,6 +36,7 @@
 
 #include <gtest/gtest.h>
 
+#include <system_error>
 #include <thread>
 
 namespace dbus = core::dbus;
@@ -70,6 +72,8 @@ TEST_F(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
 
         auto service = [this, expected_value, &cps1]()
         {
+            core::testing::SigTermCatcher sc;
+
             auto bus = session_bus();
             bus->install_executor(core::dbus::asio::make_executor(bus));
             auto service = dbus::Service::add_service<test::Service>(bus);
@@ -88,6 +92,11 @@ TEST_F(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
 
             std::thread t{[bus](){ bus->run(); }};
             cps1.try_signal_ready_for(std::chrono::milliseconds{500});
+
+            sc.wait_for_signal_for(std::chrono::seconds{10});
+
+            bus->stop();
+
             if (t.joinable())
                 t.join();
 
@@ -131,7 +140,7 @@ TEST_F(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
             return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
         };
 
-        EXPECT_NO_FATAL_FAILURE(core::testing::fork_and_run(service, client));
+        EXPECT_EQ(core::testing::ForkAndRunResult::empty, core::testing::fork_and_run(service, client));
 }
 
 TEST_F(Service, AddingANonExistingServiceDoesNotThrow)
