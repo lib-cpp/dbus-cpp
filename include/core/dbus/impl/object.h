@@ -233,6 +233,11 @@ inline bool Object::on_new_message(const Message::Ptr& msg)
     return method_router(msg);
 }
 
+inline const types::ObjectPath& Object::path() const
+{
+    return object_path;
+}
+
 inline Object::Object(
     const std::shared_ptr<Service> parent, 
     const types::ObjectPath& path)
