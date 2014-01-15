@@ -102,7 +102,7 @@ public:
     bool operator==(const ObjectPath& rhs) const;
 
     /**
-     * @brief operator == compares two object path instances for inequality.
+     * @brief operator != compares two object path instances for inequality.
      * @param rhs The right-hand-side of the comparison.
      * @return true iff this instance does not equal the right-hand-side.
      */
