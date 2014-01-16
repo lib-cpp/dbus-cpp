@@ -58,6 +58,7 @@ libdbus-cpp.so.1 libdbus-cpp1 #MINVER#
  (c++)"core::dbus::types::ObjectPath::ObjectPath(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
  (c++)"core::dbus::types::ObjectPath::~ObjectPath()@Base" 0replaceme
  (c++)"core::dbus::types::ObjectPath::~ObjectPath()@Base" 0replaceme
+ (c++)"core::dbus::types::ObjectPath::operator!=(core::dbus::types::ObjectPath const&) const@Base" 0replaceme
  (c++)"core::dbus::types::operator<<(std::basic_ostream<char, std::char_traits<char> >&, core::dbus::types::ObjectPath const&)@Base" 0replaceme
  (c++)"core::dbus::Message::make_error(std::shared_ptr<core::dbus::Message> const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
  (c++)"core::dbus::Message::make_signal(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme

@@ -67,6 +67,11 @@ bool ObjectPath::operator==(const ObjectPath& rhs) const
     return path == rhs.path;
 }
 
+bool ObjectPath::operator!=(const ObjectPath& rhs) const
+{
+    return path != rhs.path;
+}
+
 std::ostream& operator<<(std::ostream& out, const ObjectPath& path)
 {
     out << path.as_string() << std::endl;
