@@ -56,7 +56,7 @@ auto system_bus_config_file =
         core::testing::system_bus_configuration_file();
 }
 
-TEST_F(Service, SignalDeliverySingleObjectSingleRecipient)
+TEST_F(Service, SignalDeliveryMultipleObjectsSameInterface)
 {
         core::testing::CrossProcessSync cps1;
 

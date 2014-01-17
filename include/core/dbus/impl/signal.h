@@ -62,7 +62,7 @@ Signal<SignalDescription, Argument>::make_signal(
     const std::string& interface,
     const std::string& name)
 {
-    static auto sp =
+    auto sp =
             std::shared_ptr<Signal<SignalDescription, void>>(
                 new Signal<SignalDescription, void>(
                     parent,
@@ -169,7 +169,7 @@ Signal<
     const std::string& interface,
     const std::string& name)
 {
-    static auto sp =
+    auto sp =
             std::shared_ptr<Signal<SignalDescription, typename SignalDescription::ArgumentType>>(
                 new Signal<SignalDescription, typename SignalDescription::ArgumentType>(
                     parent,
