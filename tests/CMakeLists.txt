@@ -95,6 +95,11 @@ add_executable(
   types_test.cpp
   )
 
+add_executable(
+  signal_delivery_test
+  signal_delivery_test.cpp
+  )
+
 target_link_libraries(
   bus_test
 
@@ -229,6 +234,17 @@ target_link_libraries(
   ${GTEST_BOTH_LIBRARIES}
   )
 
+target_link_libraries(
+  signal_delivery_test
+
+  dbus-cpp
+
+  ${CMAKE_THREAD_LIBS_INIT}
+  ${Boost_LIBRARIES}
+  ${DBUS_LIBRARIES}
+  ${GTEST_BOTH_LIBRARIES}
+  )
+
 add_test(bus_test ${CMAKE_CURRENT_BINARY_DIR}/bus_test)
 add_test(dbus_test ${CMAKE_CURRENT_BINARY_DIR}/dbus_test)
 add_test(executor_test ${CMAKE_CURRENT_BINARY_DIR}/executor_test)
@@ -240,3 +256,4 @@ add_test(message_test ${CMAKE_CURRENT_BINARY_DIR}/message_test)
 add_test(match_rule_test ${CMAKE_CURRENT_BINARY_DIR}/match_rule_test)
 add_test(message_router_test ${CMAKE_CURRENT_BINARY_DIR}/message_router_test)
 add_test(service_test ${CMAKE_CURRENT_BINARY_DIR}/service_test)
+add_test(signal_delivery_test ${CMAKE_CURRENT_BINARY_DIR}/signal_delivery_test)
