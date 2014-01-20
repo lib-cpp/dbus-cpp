@@ -44,7 +44,7 @@ namespace dbus = core::dbus;
 TEST(Codec, BasicTypesMatchSizeAndAlignOfDBusTypes)
 {
     ::testing::StaticAssertTypeEq<dbus_bool_t, typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::boolean>::Type>();
-    ::testing::StaticAssertTypeEq<int8_t, typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::byte>::Type>();
+    ::testing::StaticAssertTypeEq<uint8_t, typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::byte>::Type>();
     ::testing::StaticAssertTypeEq<int16_t, typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::int16>::Type>();
     ::testing::StaticAssertTypeEq<uint16_t, typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::uint16>::Type>();
     ::testing::StaticAssertTypeEq<int32_t, typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::int32>::Type>();
