@@ -130,8 +130,8 @@ class Object : public std::enable_shared_from_this<Object>
      * @brief Queries all properties in one go for the object.
      */
     template<typename Interface>
-    std::map<std::string, types::Variant>
-    inline get_all_properties();
+    inline std::map<std::string, types::Variant>
+    get_all_properties();
 
     /**
      * @brief Accesses a signal of the object.

@@ -304,7 +304,7 @@ TEST(Variant, TypeMapperSpecializationReturnsCorrectValues)
     ASSERT_EQ(dbus::ArgumentType::variant, dbus::helper::TypeMapper<dbus::types::Variant>::type_value());
     ASSERT_TRUE(dbus::helper::TypeMapper<dbus::types::ObjectPath>::is_basic_type());
     ASSERT_TRUE(dbus::helper::TypeMapper<dbus::types::ObjectPath>::requires_signature());
-    ASSERT_STREQ(DBUS_TYPE_VARIANT_AS_STRING DBUS_TYPE_DOUBLE_AS_STRING, dbus::helper::TypeMapper<dbus::types::Variant>::signature().c_str());
+    ASSERT_STREQ(DBUS_TYPE_VARIANT_AS_STRING, dbus::helper::TypeMapper<dbus::types::Variant>::signature().c_str());
 }
 
 TEST(Variant, EncodingAndDecodingWorksCorrectly)
@@ -364,7 +364,7 @@ TEST(Properties, DictionaryMappingToVariantsIsEncodedCorrectly)
 
     {
         auto writer = msg->writer();
-        auto array = writer.open_array(dbus::types::Signature{"(sv)"});
+        auto array = writer.open_array(dbus::types::Signature{"{sv}"});
         for(unsigned int i = 0; i < 5; i++)
         {
             auto entry = array.open_dict_entry();
@@ -424,4 +424,9 @@ TEST(Properties, DictionaryMappingToVariantsIsEncodedCorrectlyWithMap)
     reader >> map;
 
     EXPECT_EQ(5, map.size());
+    EXPECT_EQ(1, map.at("key1").as<std::uint32_t>());
+    EXPECT_EQ(2, map.at("key2").as<std::uint32_t>());
+    EXPECT_EQ(3, map.at("key3").as<std::uint32_t>());
+    EXPECT_EQ(4, map.at("key4").as<std::uint32_t>());
+    EXPECT_EQ(5, map.at("key5").as<std::uint32_t>());
 }

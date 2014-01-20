@@ -156,13 +156,11 @@ Property<PropertyType>::handle_set(const Message::Ptr& msg)
 
 template<typename PropertyType>
 void
-Property<PropertyType>::handle_changed(const types::Variant&)
+Property<PropertyType>::handle_changed(const types::Variant& arg)
 {
     try
     {
-        typename PropertyType::ValueType value;
-        // TODO(tvoss): Reenable this behavior
-        // arg.get().reader() >> value;
+        auto value = arg.as<typename PropertyType::ValueType>();
         set(value);
     }
     catch (...)

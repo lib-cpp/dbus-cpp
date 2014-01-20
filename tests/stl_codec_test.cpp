@@ -19,6 +19,8 @@
 #include <core/dbus/dbus.h>
 #include <core/dbus/message_streaming_operators.h>
 
+#include <core/dbus/types/variant.h>
+
 #include <core/dbus/types/stl/map.h>
 #include <core/dbus/types/stl/string.h>
 #include <core/dbus/types/stl/tuple.h>
@@ -66,7 +68,7 @@ TEST(CodecForMaps, DictionaryMappingToVariantsIsEncodedAndDecodedCorrectly)
 
     {
         auto writer = msg->writer();
-        auto array = writer.open_array(dbus::types::Signature{"(sv)"});
+        auto array = writer.open_array(dbus::types::Signature{"{sv}"});
         for(unsigned int i = 0; i < 5; i++)
         {
             auto entry = array.open_dict_entry();

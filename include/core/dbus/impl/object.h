@@ -177,12 +177,12 @@ template<typename Interface>
 inline std::map<std::string, types::Variant>
 Object::get_all_properties()
 {
-    return std::map<std::string, types::Variant>();
-    /*std::move(
+    return
+        std::move(
                 invoke_method_synchronously<
                     interfaces::Properties::GetAll,
                     std::map<std::string, types::Variant>
-                >(traits::Service<Interface>::interface_name()).value());*/
+                >(traits::Service<Interface>::interface_name()).value());
 }
 
 template<typename SignalDescription>

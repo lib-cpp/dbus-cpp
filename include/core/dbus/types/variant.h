@@ -94,9 +94,13 @@ public:
         };
     }
 
+    inline Variant(const Variant& rhs) = default;
+
     inline Variant(Variant&& rhs)
         : encoder(std::move(rhs.encoder)),
-          decoder(std::move(rhs.decoder))
+          decoder(std::move(rhs.decoder)),
+          any(std::move(rhs.any)),
+          signature_(std::move(rhs.signature_))
     {
     }
 
@@ -106,6 +110,8 @@ public:
     {
         encoder = std::move(rhs.encoder);
         decoder = std::move(rhs.decoder);
+        signature_ = std::move(rhs.signature_);
+        any = std::move(rhs.any);
 
         return *this;
     }
@@ -141,19 +147,13 @@ public:
     }
 
 protected:
-    inline Variant(const Variant& rhs) = default;
-
     inline void set_encoder(const Encoder& encoder)
     {
-        if (!encoder)
-            throw std::runtime_error("Variant::set_encoder: Missing a decoder specification.");
-
         this->encoder = encoder;
     }
 
     inline void set_decoder(const Decoder& decoder)
     {
-
         this->decoder = decoder;
     }
 
