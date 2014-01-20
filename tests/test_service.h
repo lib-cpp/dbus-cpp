@@ -69,6 +69,31 @@ struct Service
             static const bool writable = true;
         };
     };
+
+    struct Interfaces
+    {
+        struct Foo
+        {
+            static const std::string& name()
+            {
+                static const std::string s{"this.is.unlikely.to.exist.Service.Foo"};
+                return s;
+            }
+
+            struct Signals
+            {
+                struct Dummy
+                {
+                    inline static std::string name()
+                    {
+                        return "Dummy";
+                    }
+                    typedef Foo Interface;
+                    typedef int64_t ArgumentType;
+                };
+            };
+        };
+    };
 };
 }
 
