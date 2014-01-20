@@ -84,7 +84,7 @@ TEST(CodecForMaps, DictionaryMappingToVariantsIsEncodedAndDecodedCorrectly)
 
     unsigned int counter = 0;
 
-    std::map<std::string, dbus::types::Variant<dbus::types::Any>> result;
+    std::map<std::string, dbus::types::Variant> result;
     msg->reader() >> result;
 
     EXPECT_EQ(5, result.size());
@@ -92,7 +92,7 @@ TEST(CodecForMaps, DictionaryMappingToVariantsIsEncodedAndDecodedCorrectly)
     for (const auto& element : result)
     {
         EXPECT_EQ(std::to_string(counter), element.first);
-        EXPECT_EQ(counter, element.second.get().reader().pop_uint32());
+        EXPECT_EQ(counter, element.second.as<std::uint32_t>());
 
         counter++;
     }

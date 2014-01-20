@@ -66,7 +66,6 @@ namespace types
 {
 class Any;
 class ObjectPath;
-template<typename T>
 class Variant;
 }
 class MatchRule;
@@ -131,7 +130,7 @@ class Object : public std::enable_shared_from_this<Object>
      * @brief Queries all properties in one go for the object.
      */
     template<typename Interface>
-    std::map<std::string, types::Variant<types::Any>>
+    std::map<std::string, types::Variant>
     inline get_all_properties();
 
     /**
@@ -203,7 +202,7 @@ class Object : public std::enable_shared_from_this<Object>
     MessageRouter<PropertyKey> set_property_router;
     std::map<
         std::tuple<std::string, std::string>,
-        std::function<void(const types::Variant<types::Any>&)>
+        std::function<void(const types::Variant&)>
     > property_changed_vtable;
     std::shared_ptr<
         Signal<

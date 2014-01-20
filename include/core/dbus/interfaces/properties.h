@@ -89,7 +89,7 @@ public:
             typedef Properties Interface;
             typedef std::tuple<
                 std::string,
-                std::map<std::string, core::dbus::types::Variant<>>,
+                std::map<std::string, core::dbus::types::Variant>,
                 std::vector<std::string>
             > ArgumentType;
         };
