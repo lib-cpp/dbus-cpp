@@ -410,11 +410,11 @@ TEST(Properties, DictionaryMappingToVariantsIsEncodedCorrectlyWithMap)
     {
         std::map<std::string, dbus::types::Variant> map;
 
-        map["key1"] = std::move(dbus::types::Variant::encode<std::uint32_t>(1));
-        map["key2"] = std::move(dbus::types::Variant::encode<std::uint32_t>(2));
-        map["key3"] = std::move(dbus::types::Variant::encode<std::uint32_t>(3));
-        map["key4"] = std::move(dbus::types::Variant::encode<std::uint32_t>(4));
-        map["key5"] = std::move(dbus::types::Variant::encode<std::uint32_t>(5));
+        map["key1"] = dbus::types::Variant::encode<std::uint32_t>(1);
+        map["key2"] = dbus::types::Variant::encode<std::uint32_t>(2);
+        map["key3"] = dbus::types::Variant::encode<std::uint32_t>(3);
+        map["key4"] = dbus::types::Variant::encode<std::uint32_t>(4);
+        map["key5"] = dbus::types::Variant::encode<std::uint32_t>(5);
 
         msg->writer() << map;
     }
