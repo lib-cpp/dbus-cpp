@@ -403,8 +403,6 @@ TEST(Properties, DictionaryMappingToVariantsIsEncodedCorrectlyWithMap)
 {
     namespace dbus = core::dbus;
 
-    const std::string key{"key"};
-
     auto msg = a_method_call();
 
     {
