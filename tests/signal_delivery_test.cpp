@@ -150,3 +150,186 @@ TEST_F(Service, SignalDeliveryMultipleObjectsSameInterface)
     EXPECT_EQ(core::testing::ForkAndRunResult::empty, core::testing::fork_and_run(service, client));
 }
 
+TEST_F(Service, SignalDeliverySameObjectSameInterfaceDifferentSignal)
+{
+    core::testing::CrossProcessSync server_is_running;
+    core::testing::CrossProcessSync client_has_setup_signals_and_connections;
+
+    const int64_t expected_value = 42;
+
+    auto service = [this, expected_value, &server_is_running, &client_has_setup_signals_and_connections]()
+    {
+        core::testing::SigTermCatcher sc;
+
+        auto bus = session_bus();
+        bus->install_executor(core::dbus::asio::make_executor(bus));
+        auto service = dbus::Service::add_service<test::Service>(bus);
+
+        auto foo1 = service->add_object_for_path(dbus::types::ObjectPath("/this/is/unlikely/to/exist/Service/Foo1"));
+
+        std::thread t{[bus](){ bus->run(); }};
+
+        server_is_running.try_signal_ready_for(std::chrono::milliseconds{1000});
+        EXPECT_EQ(1,
+                  client_has_setup_signals_and_connections.wait_for_signal_ready_for(
+                      std::chrono::milliseconds{500}));
+
+        foo1->emit_signal<
+                test::Service::Interfaces::Foo::Signals::Dummy,
+                test::Service::Interfaces::Foo::Signals::Dummy::ArgumentType
+                > (1);
+
+        foo1->emit_signal<
+                test::Service::Interfaces::Foo::Signals::Bar,
+                test::Service::Interfaces::Foo::Signals::Bar::ArgumentType
+                > (2);
+
+
+        sc.wait_for_signal_for(std::chrono::seconds{10});
+
+        bus->stop();
+
+        if (t.joinable())
+            t.join();
+
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
+    };
+
+    auto client = [this, expected_value, &server_is_running, &client_has_setup_signals_and_connections]()
+    {
+        auto bus = session_bus();
+        auto executor = core::dbus::asio::make_executor(bus);
+        bus->install_executor(executor);
+        std::thread t{[bus](){ bus->run(); }};
+
+        test::Service::Interfaces::Foo::Signals::Dummy::ArgumentType received1 = -1;
+        test::Service::Interfaces::Foo::Signals::Bar::ArgumentType received2 = -1;
+
+        // server ready
+        EXPECT_EQ(1,
+                  server_is_running.wait_for_signal_ready_for(std::chrono::milliseconds{500}));
+
+        auto stub_service = dbus::Service::use_service(bus, dbus::traits::Service<test::Service>::interface_name());
+
+        auto foo1 = stub_service->object_for_path(dbus::types::ObjectPath("/this/is/unlikely/to/exist/Service/Foo1"));
+
+        auto foo1signal = foo1->get_signal<test::Service::Interfaces::Foo::Signals::Dummy>();
+        auto foo2signal = foo1->get_signal<test::Service::Interfaces::Foo::Signals::Bar>();
+
+        foo1signal->connect([&received1](test::Service::Interfaces::Foo::Signals::Dummy::ArgumentType value)
+        {
+            received1 = value;
+        });
+
+        foo2signal->connect([bus, &received2](test::Service::Interfaces::Foo::Signals::Bar::ArgumentType value)
+        {
+            received2 = value;
+            bus->stop();
+        });
+
+        // signals connected
+        client_has_setup_signals_and_connections.try_signal_ready_for(std::chrono::milliseconds{500});
+
+        if (t.joinable())
+            t.join();
+
+        EXPECT_EQ(received1, 1);
+        EXPECT_EQ(received2, 2);
+
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
+    };
+
+    EXPECT_EQ(core::testing::ForkAndRunResult::empty, core::testing::fork_and_run(service, client));
+}
+
+TEST_F(Service, SignalDeliverySameObjectSameInterfaceSameSignal)
+{
+    core::testing::CrossProcessSync server_is_running;
+    core::testing::CrossProcessSync client_has_setup_signals_and_connections;
+
+    const int64_t expected_value = 42;
+
+    auto service = [this, expected_value, &server_is_running, &client_has_setup_signals_and_connections]()
+    {
+        core::testing::SigTermCatcher sc;
+
+        auto bus = session_bus();
+        bus->install_executor(core::dbus::asio::make_executor(bus));
+        auto service = dbus::Service::add_service<test::Service>(bus);
+
+        auto foo1 = service->add_object_for_path(dbus::types::ObjectPath("/this/is/unlikely/to/exist/Service/Foo1"));
+
+        std::thread t{[bus](){ bus->run(); }};
+
+        server_is_running.try_signal_ready_for(std::chrono::milliseconds{1000});
+        EXPECT_EQ(1,
+                  client_has_setup_signals_and_connections.wait_for_signal_ready_for(
+                      std::chrono::milliseconds{500}));
+
+        foo1->emit_signal<
+                test::Service::Interfaces::Foo::Signals::Dummy,
+                test::Service::Interfaces::Foo::Signals::Dummy::ArgumentType
+                > (1);
+
+        foo1->emit_signal<
+                test::Service::Interfaces::Foo::Signals::Dummy,
+                test::Service::Interfaces::Foo::Signals::Dummy::ArgumentType
+                > (2);
+
+
+        sc.wait_for_signal_for(std::chrono::seconds{10});
+
+        bus->stop();
+
+        if (t.joinable())
+            t.join();
+
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
+    };
+
+    auto client = [this, expected_value, &server_is_running, &client_has_setup_signals_and_connections]()
+    {
+        auto bus = session_bus();
+        auto executor = core::dbus::asio::make_executor(bus);
+        bus->install_executor(executor);
+        std::thread t{[bus](){ bus->run(); }};
+
+        test::Service::Interfaces::Foo::Signals::Dummy::ArgumentType received1 = -1;
+        test::Service::Interfaces::Foo::Signals::Dummy::ArgumentType received2 = -1;
+
+        // server ready
+        EXPECT_EQ(1,
+                  server_is_running.wait_for_signal_ready_for(std::chrono::milliseconds{500}));
+
+        auto stub_service = dbus::Service::use_service(bus, dbus::traits::Service<test::Service>::interface_name());
+
+        auto foo1 = stub_service->object_for_path(dbus::types::ObjectPath("/this/is/unlikely/to/exist/Service/Foo1"));
+
+        auto foo1signal = foo1->get_signal<test::Service::Interfaces::Foo::Signals::Dummy>();
+        auto foo2signal = foo1->get_signal<test::Service::Interfaces::Foo::Signals::Dummy>();
+
+        foo1signal->connect([&received1](test::Service::Interfaces::Foo::Signals::Dummy::ArgumentType value)
+        {
+            received1 = value;
+        });
+
+        foo2signal->connect([bus, &received2](test::Service::Interfaces::Foo::Signals::Dummy::ArgumentType value)
+        {
+            received2 = value;
+            bus->stop();
+        });
+
+        // signals connected
+        client_has_setup_signals_and_connections.try_signal_ready_for(std::chrono::milliseconds{500});
+
+        if (t.joinable())
+            t.join();
+
+        EXPECT_EQ(received1, 1);
+        EXPECT_EQ(received2, 1);
+
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
+    };
+
+    EXPECT_EQ(core::testing::ForkAndRunResult::empty, core::testing::fork_and_run(service, client));
+}

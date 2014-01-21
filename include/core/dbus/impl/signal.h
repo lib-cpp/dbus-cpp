@@ -62,12 +62,41 @@ Signal<SignalDescription, Argument>::make_signal(
     const std::string& interface,
     const std::string& name)
 {
-    auto sp =
-            std::shared_ptr<Signal<SignalDescription, void>>(
-                new Signal<SignalDescription, void>(
-                    parent,
-                    interface,
-                    name));
+    typedef std::shared_ptr<Signal<SignalDescription, void>> SharedSignalPtr;
+    typedef std::weak_ptr<Signal<SignalDescription, void>> WeakSignalPtr;
+
+    static std::mutex guard;
+    static std::map<std::tuple<types::ObjectPath, std::string, std::string>, WeakSignalPtr> cache;
+
+    std::lock_guard<std::mutex> lg(guard);
+
+    auto key = std::make_tuple(parent->path(), interface, name);
+    auto it = cache.find(key);
+
+    if (it == cache.end())
+    {
+        auto sp =
+                SharedSignalPtr(
+                    new Signal<SignalDescription, void>(
+                        parent,
+                        interface,
+                        name));
+
+        cache[key] = sp;
+        return sp;
+    }
+
+    auto sp = it->second.lock();
+
+    if (!sp)
+    {
+        it->second = sp = SharedSignalPtr(
+            new Signal<SignalDescription, void>(
+                parent,
+                interface,
+                name));
+    }
+
     return sp;
 }
 
@@ -169,12 +198,40 @@ Signal<
     const std::string& interface,
     const std::string& name)
 {
-    auto sp =
-            std::shared_ptr<Signal<SignalDescription, typename SignalDescription::ArgumentType>>(
-                new Signal<SignalDescription, typename SignalDescription::ArgumentType>(
-                    parent,
-                    interface,
-                    name));
+    typedef std::shared_ptr<Signal<SignalDescription, typename SignalDescription::ArgumentType>> SharedSignalPtr;
+    typedef std::weak_ptr<Signal<SignalDescription, typename SignalDescription::ArgumentType>> WeakSignalPtr;
+
+    static std::mutex guard;
+    static std::map<std::tuple<types::ObjectPath, std::string, std::string>, WeakSignalPtr> cache;
+
+    std::lock_guard<std::mutex> lg(guard);
+    auto key = std::make_tuple(parent->path(), interface, name);
+    auto it = cache.find(key);
+
+    if (it == cache.end())
+    {
+        auto sp =
+                SharedSignalPtr(
+                    new Signal<SignalDescription, typename SignalDescription::ArgumentType>(
+                        parent,
+                        interface,
+                        name));
+
+        cache[key] = sp;
+        return sp;
+    }
+
+    auto sp = it->second.lock();
+
+    if (!sp)
+    {
+        it->second = sp = SharedSignalPtr(
+            new Signal<SignalDescription, typename SignalDescription::ArgumentType>(
+                parent,
+                interface,
+                name));
+    }
+
     return sp;
 }
 
