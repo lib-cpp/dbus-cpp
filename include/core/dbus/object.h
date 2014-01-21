@@ -140,7 +140,7 @@ class Object : public std::enable_shared_from_this<Object>
      */
     template<typename SignalDescription>
     const std::shared_ptr<Signal<SignalDescription, typename SignalDescription::ArgumentType>>
-    inline get_signal();
+    inline get_signal(const MatchRule::MatchArgs& args = MatchRule::MatchArgs());
 
     /**
      * @brief Adds an object as a child of this object.

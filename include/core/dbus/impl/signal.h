@@ -19,6 +19,7 @@
 #define CORE_DBUS_IMPL_SIGNAL_H_
 
 #include <core/dbus/message_streaming_operators.h>
+#include <core/dbus/object.h>
 
 namespace core
 {
@@ -60,14 +61,16 @@ inline std::shared_ptr<Signal<SignalDescription, void>>
 Signal<SignalDescription, Argument>::make_signal(
     const std::shared_ptr<Object>& parent,
     const std::string& interface,
-    const std::string& name)
+    const std::string& name,
+    const MatchRule::MatchArgs& match_args)
 {
     auto sp =
             std::shared_ptr<Signal<SignalDescription, void>>(
                 new Signal<SignalDescription, void>(
                     parent,
                     interface,
-                    name));
+                    name,
+                    match_args));
     return sp;
 }
 
@@ -75,7 +78,9 @@ template<typename SignalDescription, typename Argument>
 inline Signal<SignalDescription, Argument>::Signal(
     const std::shared_ptr<Object>& parent,
     const std::string& interface,
-    const std::string& name) : parent(parent),
+    const std::string& name,
+    const MatchRule::MatchArgs& match_args) :
+                               parent(parent),
                                interface(interface),
                                name(name)
 {
@@ -86,7 +91,7 @@ inline Signal<SignalDescription, Argument>::Signal(
             this,
             std::placeholders::_1));
     parent->add_match(
-        rule.type(Message::Type::signal).interface(interface).member(name));
+        rule.type(Message::Type::signal).interface(interface).member(name).args(match_args));
 }
 
 template<typename SignalDescription, typename Argument>
@@ -167,14 +172,16 @@ Signal<
     >::make_signal(
     const std::shared_ptr<Object>& parent,
     const std::string& interface,
-    const std::string& name)
+    const std::string& name,
+    const MatchRule::MatchArgs& match_args)
 {
     auto sp =
             std::shared_ptr<Signal<SignalDescription, typename SignalDescription::ArgumentType>>(
                 new Signal<SignalDescription, typename SignalDescription::ArgumentType>(
                     parent,
                     interface,
-                    name));
+                    name,
+                    match_args));
     return sp;
 }
 
@@ -186,7 +193,8 @@ inline Signal<
         typename SignalDescription::ArgumentType>::type
     >::Signal(const std::shared_ptr<Object>& parent,
               const std::string& interface,
-              const std::string& name)
+              const std::string& name,
+              const MatchRule::MatchArgs& match_args)
         : d{new Shared{parent, interface, name}}
 {
     d->parent->signal_router.install_route(
@@ -195,7 +203,7 @@ inline Signal<
             &Signal<SignalDescription, typename SignalDescription::ArgumentType>::operator(),
             this,
             std::placeholders::_1));
-    d->parent->add_match(d->rule.type(Message::Type::signal).interface(interface).member(name));
+    d->parent->add_match(d->rule.type(Message::Type::signal).interface(interface).member(name).args(match_args));
 }
 
 template<typename SignalDescription>

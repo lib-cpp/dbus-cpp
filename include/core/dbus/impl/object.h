@@ -186,13 +186,13 @@ Object::get_all_properties()
 
 template<typename SignalDescription>
 inline const std::shared_ptr<Signal<SignalDescription, typename SignalDescription::ArgumentType>>
-Object::get_signal()
+Object::get_signal(const MatchRule::MatchArgs& match_args)
 {
     typedef Signal<SignalDescription, typename SignalDescription::ArgumentType> SignalType;
     auto signal =
             SignalType::make_signal(shared_from_this(),
                                     traits::Service<typename SignalDescription::Interface>::interface_name(),
-                                    SignalDescription::name());
+                                    SignalDescription::name(), match_args);
     return signal;
 }
 
@@ -247,6 +247,7 @@ inline Object::Object(
           {
               [](const Message::Ptr& msg)
               {
+                  // what do do here??
                   return SignalKey {msg->interface(), msg->member()};
               }
           },

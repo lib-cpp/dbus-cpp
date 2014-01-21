@@ -18,17 +18,22 @@
 #ifndef CORE_DBUS_SIGNAL_H_
 #define CORE_DBUS_SIGNAL_H_
 
+#include <core/dbus/match_rule.h>
 #include <core/dbus/message.h>
 #include <core/dbus/visibility.h>
 
 #include <functional>
 #include <memory>
+#include <mutex>
 #include <string>
+#include <list>
 
 namespace core
 {
 namespace dbus
 {
+class Object;
+
 template<typename T>
 struct is_not_void
 {
@@ -89,12 +94,14 @@ protected:
     make_signal(
        const std::shared_ptr<Object>& parent,
        const std::string& interface,
-       const std::string& name);
+       const std::string& name,
+       const MatchRule::MatchArgs& match_args = MatchRule::MatchArgs());
 
 private:
     inline Signal(const std::shared_ptr<Object>& parent,
                   const std::string& interface,
-                  const std::string& name);
+                  const std::string& name,
+                  const MatchRule::MatchArgs& match_args = MatchRule::MatchArgs());
 
     void operator()(const Message::Ptr&);
 
@@ -160,13 +167,15 @@ protected:
     make_signal(
         const std::shared_ptr<Object>& parent,
         const std::string& interface,
-        const std::string& name);
+        const std::string& name,
+        const MatchRule::MatchArgs& match_args = MatchRule::MatchArgs());
 
 private:
     inline Signal(
         const std::shared_ptr<Object>& parent,
         const std::string& interface,
-        const std::string& name);
+        const std::string& name,
+        const MatchRule::MatchArgs& match_args = MatchRule::MatchArgs());
 
     inline void operator()(const Message::Ptr&) noexcept;
 
