@@ -58,7 +58,7 @@ struct DBusTypeMapper<ArgumentType::boolean>
 template<>
 struct DBusTypeMapper<ArgumentType::byte>
 {
-    typedef int8_t Type;
+    typedef uint8_t Type;
 };
 
 template<>
