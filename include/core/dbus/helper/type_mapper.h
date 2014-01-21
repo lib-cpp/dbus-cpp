@@ -20,10 +20,10 @@
 
 #include <core/dbus/argument_type.h>
 
+#include <core/dbus/types/any.h>
 #include <core/dbus/types/object_path.h>
 #include <core/dbus/types/signature.h>
 #include <core/dbus/types/unix_fd.h>
-#include <core/dbus/types/variant.h>
 
 #include <cstdint>
 
@@ -37,6 +37,10 @@ namespace core
 {
 namespace dbus
 {
+namespace types
+{
+class Variant;
+}
 namespace helper
 {
 
@@ -395,8 +399,8 @@ struct TypeMapper<types::UnixFd>
     }
 };
 
-template<typename T>
-struct TypeMapper<types::Variant<T>>
+template<>
+struct TypeMapper<types::Variant>
 {
     constexpr inline static ArgumentType type_value()
     {
@@ -413,7 +417,7 @@ struct TypeMapper<types::Variant<T>>
 
     inline static std::string signature()
     {
-        return DBUS_TYPE_VARIANT_AS_STRING + TypeMapper<T>::signature();
+        return DBUS_TYPE_VARIANT_AS_STRING;
     }
 };
 }

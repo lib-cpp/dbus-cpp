@@ -477,7 +477,7 @@ Message::Writer Message::Writer::open_dict_entry()
     Writer w(d->msg);
     if (!dbus_message_iter_open_container(
                 std::addressof(d->iter),
-                static_cast<int>(ArgumentType::structure),
+                static_cast<int>(ArgumentType::dictionary_entry),
                 nullptr,
                 std::addressof(w.d->iter)))
         throw std::runtime_error("Problem opening container");

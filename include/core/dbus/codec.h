@@ -292,30 +292,6 @@ struct Codec<types::UnixFd>
 };
 
 /**
- * @brief Template specialization for variant argument types.
- */
-template<typename T>
-struct Codec<types::Variant<T>>
-{
-    inline static void encode_argument(Message::Writer& out, const types::Variant<T>& value)
-    {
-        auto vw = out.open_variant(
-                    types::Signature(helper::TypeMapper<T>::signature()));
-        {
-            Codec<T>::encode_argument(vw, value.get());
-        }
-        out.close_variant(std::move(vw));
-    }
-
-    inline static void decode_argument(Message::Reader& in, types::Variant<T>& value)
-    {
-        auto vr = in.pop_variant(); T inner_value;
-        Codec<T>::decode_argument(vr, inner_value);
-        value.set(inner_value);
-    }
-};
-
-/**
  * @brief Template specialization for any argument types.
  */
 template<>

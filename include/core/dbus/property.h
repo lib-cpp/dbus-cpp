@@ -76,7 +76,7 @@ private:
 
     inline void handle_get(const Message::Ptr& msg);
     inline void handle_set(const Message::Ptr& msg);
-    inline void handle_changed(const types::Variant<types::Any>& msg);
+    inline void handle_changed(const types::Variant& msg);
 
     std::shared_ptr<Object> parent;
     std::string interface;

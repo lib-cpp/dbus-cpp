@@ -80,8 +80,7 @@ inline Result<ResultType> Object::invoke_method_synchronously(const Args& ... ar
                 msg,
                 Method::default_timeout());
     
-    Result<ResultType> result = Result<ResultType>::from_message(reply);
-    return result;
+    return std::move(Result<ResultType>::from_message(reply));
 }
 
 template<typename Method, typename ResultType, typename... Args>
@@ -175,13 +174,15 @@ Object::get_property()
 }
 
 template<typename Interface>
-inline std::map<std::string, types::Variant<types::Any>>
+inline std::map<std::string, types::Variant>
 Object::get_all_properties()
 {
-    return invoke_method_synchronously<
-        interfaces::Properties::GetAll,
-        std::map<std::string, types::Variant<types::Any>>
-        >(traits::Service<Interface>::interface_name()).value();
+    return
+        std::move(
+                invoke_method_synchronously<
+                    interfaces::Properties::GetAll,
+                    std::map<std::string, types::Variant>
+                >(traits::Service<Interface>::interface_name()).value());
 }
 
 template<typename SignalDescription>
@@ -311,10 +312,10 @@ inline void Object::remove_match(const MatchRule& rule)
 inline void Object::on_properties_changed(
         const interfaces::Properties::Signals::PropertiesChanged::ArgumentType& arg)
 {
-    auto interface = std::get<0>(arg);
-    auto changed_values = std::get<1>(arg);
+    const auto& interface = std::get<0>(arg);
+    const auto& changed_values = std::get<1>(arg);
 
-    for (auto value : changed_values)
+    for (const auto& value : changed_values)
     {
         auto it = property_changed_vtable.find(std::make_tuple(interface, value.first));
         if (it != property_changed_vtable.end())
