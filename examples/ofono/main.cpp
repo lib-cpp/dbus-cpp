@@ -16,9 +16,11 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
+#include <core/dbus/dbus.h>
 #include <core/dbus/bus.h>
 #include <core/dbus/object.h>
 #include <core/dbus/service.h>
+#include <core/dbus/service_watcher.h>
 #include <core/dbus/signal.h>
 
 #include <core/dbus/asio/executor.h>
@@ -98,6 +100,34 @@ int main(int, char**)
 
     auto ofono = dbus::Service::use_service(bus, "org.ofono");
     auto obj = ofono->object_for_path(dbus::types::ObjectPath("/org/ofono"));
+
+    dbus::DBus daemon(bus);
+    dbus::ServiceWatcher::Ptr watcher_one(
+        daemon.make_service_watcher("com.canonical.Unity.WindowStack",
+                dbus::DBus::WatchMode::registration));
+    watcher_one->owner_changed.connect(
+        [](const std::string& old_owner, const std::string& new_owner)
+        {
+            std::cout << "first name_owner_changed  |" << old_owner << "|"
+                    << new_owner << "|" << std::endl;
+        });
+    watcher_one->service_registered.connect([]()
+        {
+            std::cout << "first service registered" << std::endl;
+        });
+    watcher_one->service_unregistered.connect([]()
+        {
+            std::cout << "first service unregistered" << std::endl;
+        });
+    dbus::ServiceWatcher::Ptr watcher_two(
+        daemon.make_service_watcher("com.canonical.Unity.WindowStack",
+                dbus::DBus::WatchMode::unregistration));
+    watcher_two->owner_changed.connect(
+        [](const std::string& old_owner, const std::string& new_owner)
+        {
+            std::cout << "second name_owner_changed  |" << old_owner << "|"
+            << new_owner << "|" << std::endl;
+        });
     
     /*auto incoming_message_signal = obj->get_signal<org::ofono::MessageManager::Signals::IncomingMessage>();
     incoming_message_signal->connect([](const std::tuple<std::string, std::map<std::string, dbus::types::Variant<dbus::types::Any>>>& arg)

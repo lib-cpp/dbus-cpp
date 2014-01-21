@@ -41,6 +41,7 @@ add_library(
   match_rule.cpp
   message.cpp
   service.cpp
+  service_watcher.cpp
 
   asio/executor.cpp
 
