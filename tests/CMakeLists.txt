@@ -46,6 +46,11 @@ add_executable(
   )
 
 add_executable(
+  cache_test
+  cache_test.cpp
+  )
+
+add_executable(
   dbus_test
   dbus_test.cpp
   )
@@ -105,6 +110,18 @@ target_link_libraries(
 
   dbus-cpp
   dbus-cppc-helper
+
+  ${CMAKE_THREAD_LIBS_INIT}
+  ${Boost_LIBRARIES}
+  ${DBUS_LIBRARIES}
+  ${GTEST_BOTH_LIBRARIES}
+  ${PROCESS_CPP_LIBRARIES}
+)
+
+target_link_libraries(
+  cache_test
+
+  dbus-cpp
 
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
@@ -246,6 +263,7 @@ target_link_libraries(
   )
 
 add_test(bus_test ${CMAKE_CURRENT_BINARY_DIR}/bus_test)
+add_test(cache_test ${CMAKE_CURRENT_BINARY_DIR}/cache_test)
 add_test(dbus_test ${CMAKE_CURRENT_BINARY_DIR}/dbus_test)
 add_test(executor_test ${CMAKE_CURRENT_BINARY_DIR}/executor_test)
 add_test(codec_test ${CMAKE_CURRENT_BINARY_DIR}/codec_test)

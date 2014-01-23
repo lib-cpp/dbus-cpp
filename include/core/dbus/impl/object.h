@@ -19,6 +19,7 @@
 #define CORE_DBUS_IMPL_OBJECT_H_
 
 #include <core/dbus/bus.h>
+#include <core/dbus/lifetime_constrained_cache.h>
 #include <core/dbus/match_rule.h>
 #include <core/dbus/message_router.h>
 #include <core/dbus/message_streaming_operators.h>
