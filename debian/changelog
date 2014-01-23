@@ -1,4 +1,4 @@
-dbus-cpp (1.0.0) UNRELEASED; urgency=low
+dbus-cpp (1.0.0+14.04.20140123-0ubuntu1) trusty; urgency=low
 
   [ Thomas Voß ]
   * Manual version bump.
@@ -6,7 +6,44 @@ dbus-cpp (1.0.0) UNRELEASED; urgency=low
   [ Ubuntu daily release ]
   * debian/*symbols: auto-update new symbols to released version
 
- -- Thomas Voß <thomas.voss@canonical.com>  Mon, 09 Dec 2013 20:24:30 +0100
+  [ thomas-voss ]
+  * Update fork_and_run method ensuring that the test process does not
+    get corrupted. Fix emission of signals carrying values. Remove
+    duplicate setup of message handler for get and set on property.
+  * Fix property handling. Fix pkgconfig setup to make sure that clients
+    of the library correctly link to it.
+  * Add fixture for testing purposes.
+  * Fix map decoding.
+  * Make sure that the map is cleared initially.
+  * Make sure that expectations not being met fails cross-process test
+    cases. Add a class SigTermCatcher to ease cross-process testing.
+  * Add operator!= for types::ObjectPath.
+  * Fix signal creation to always return unique instances. Add test case
+    to prevent from regressions.
+  * Clean up patch and augment test case. Refactor Variant to rely on an
+    encoder and decoder functor.
+  * Switch type for ArgumentType::byte to std::uint8_t as per DBus spec.
+    (LP: #1270843)
+  * Add test-cases for same object, same interface, different & same
+    member signals.
+  * Add sender to match rule for event filtering.
+  * Add a thread-safe lifetime constrained object cache & accompanying
+    tests.
+  * Fix paths to default system and session bus config files.
+
+  [ Antti Kaijanmäki ]
+  * Add Object::path() to get the ObjectPath for an Object.
+  * Fix signal creation to always return unique instances. Add test case
+    to prevent from regressions.
+
+  [ Łukasz 'sil2100' Zemczak ]
+  * Merge all symbols file into one file with arch-conditional symbols
+    in it. It should be good this way.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 31
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 23 Jan 2014 15:53:27 +0000
 
 dbus-cpp (0.0.1+13.10.20130904-0ubuntu2) trusty; urgency=low
 
