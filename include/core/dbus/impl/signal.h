@@ -28,6 +28,8 @@ namespace dbus
 template<typename SignalDescription, typename Argument>
 inline Signal<SignalDescription, Argument>::~Signal() noexcept
 {
+    signal_about_to_be_destroyed();
+
     parent->signal_router.uninstall_route(Object::SignalKey{interface, name});
     parent->remove_match(rule);
 }
@@ -130,6 +132,8 @@ inline Signal<
         typename SignalDescription::ArgumentType>::type
     >::~Signal() noexcept
 {
+    d->signal_about_to_be_destroyed();
+
     d->parent->signal_router.uninstall_route(
         Object::SignalKey{d->interface, d->name});
     d->parent->remove_match(d->rule);
