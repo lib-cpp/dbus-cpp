@@ -195,7 +195,7 @@ class Object : public std::enable_shared_from_this<Object>
             const interfaces::Properties::Signals::PropertiesChanged::ArgumentType&);
 
     std::shared_ptr<Service> parent;
-    types::ObjectPath object_path;    
+    types::ObjectPath object_path;
     MessageRouter<SignalKey> signal_router;
     MessageRouter<MethodKey> method_router;
     MessageRouter<PropertyKey> get_property_router;

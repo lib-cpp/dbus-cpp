@@ -22,7 +22,7 @@
 
 #include <memory>
 #include <tuple>
-#include <unordered_map>
+#include <map>
 
 namespace core
 {
@@ -109,7 +109,7 @@ public:
 
 private:
     mutable std::mutex guard;
-    std::unordered_map<Key, std::tuple<std::weak_ptr<Value>, core::Connection>> cache;
+    std::map<Key, std::tuple<std::weak_ptr<Value>, core::Connection>> cache;
 };
 }
 }
