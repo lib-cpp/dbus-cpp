@@ -1,1 +1,2 @@
 usr/lib/*/libdbus-cpp.so.*
+usr/share/dbus-cpp/*
