@@ -1,3 +1,4 @@
 usr/include/*
 usr/lib/*/libdbus-cpp.so
 usr/lib/*/pkgconfig/dbus-cpp.pc
+usr/share/dbus-cpp/*
