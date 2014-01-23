@@ -1,6 +1,10 @@
 dbus-cpp (1.0.0) UNRELEASED; urgency=low
 
+  [ Thomas Voß ]
   * Manual version bump.
+
+  [ Ubuntu daily release ]
+  * debian/*symbols: auto-update new symbols to released version
 
  -- Thomas Voß <thomas.voss@canonical.com>  Mon, 09 Dec 2013 20:24:30 +0100
 
