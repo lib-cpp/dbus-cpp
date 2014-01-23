@@ -23,9 +23,11 @@ install(
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
 )
 
+message(STATUS "Installing session and system bus config files to ${CMAKE_INSTALL_DATAROOTDIR}/dbus-cpp")
+
 install(
   FILES ${CMAKE_CURRENT_SOURCE_DIR}/session.conf ${CMAKE_CURRENT_SOURCE_DIR}/system.conf
   DESTINATION
-  "${CMAKE_INSTALL_DATADIR}/dbus-cpp/"
+  "${CMAKE_INSTALL_DATAROOTDIR}/dbus-cpp/"
 )
 

@@ -100,13 +100,13 @@ struct core::dbus::Fixture::Private
 
 const std::string& core::dbus::Fixture::default_session_bus_config_file()
 {
-    static const std::string s{"@CMAKE_INSTALL_DATADIR@/dbus-cpp/session.conf"};
+    static const std::string s{"@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATAROOTDIR@/dbus-cpp/session.conf"};
     return s;
 }
 
 const std::string& core::dbus::Fixture::default_system_bus_config_file()
 {
-    static const std::string s{"@CMAKE_INSTALL_DATADIR@/dbus-cpp/system.conf"};
+    static const std::string s{"@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATAROOTDIR@/dbus-cpp/system.conf"};
     return s;
 }
 
