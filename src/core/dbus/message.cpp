@@ -36,8 +36,6 @@
 #include <stack>
 #include <stdexcept>
 
-#include <iostream>
-
 namespace core
 {
 namespace dbus
