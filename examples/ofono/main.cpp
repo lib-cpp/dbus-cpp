@@ -105,24 +105,24 @@ int main(int, char**)
     dbus::ServiceWatcher::Ptr watcher_one(
         daemon.make_service_watcher("com.canonical.Unity.WindowStack",
                 dbus::DBus::WatchMode::registration));
-    watcher_one->owner_changed.connect(
+    watcher_one->owner_changed().connect(
         [](const std::string& old_owner, const std::string& new_owner)
         {
             std::cout << "first name_owner_changed  |" << old_owner << "|"
                     << new_owner << "|" << std::endl;
         });
-    watcher_one->service_registered.connect([]()
+    watcher_one->service_registered().connect([]()
         {
             std::cout << "first service registered" << std::endl;
         });
-    watcher_one->service_unregistered.connect([]()
+    watcher_one->service_unregistered().connect([]()
         {
             std::cout << "first service unregistered" << std::endl;
         });
     dbus::ServiceWatcher::Ptr watcher_two(
         daemon.make_service_watcher("com.canonical.Unity.WindowStack",
                 dbus::DBus::WatchMode::unregistration));
-    watcher_two->owner_changed.connect(
+    watcher_two->owner_changed().connect(
         [](const std::string& old_owner, const std::string& new_owner)
         {
             std::cout << "second name_owner_changed  |" << old_owner << "|"

@@ -46,24 +46,21 @@ struct dbus::ServiceWatcher::Private
         const std::string& old_owner(std::get<1>(args));
         const std::string& new_owner(std::get<2>(args));
 
-        parent.owner_changed(old_owner, new_owner);
+        owner_changed(old_owner, new_owner);
 
         if (new_owner.empty())
         {
-            parent.service_unregistered();
+            service_unregistered();
         }
         else
         {
-            parent.service_registered();
+            service_registered();
         }
     }
 
-    Private(ServiceWatcher& parent) :
-            parent(parent)
-    {
-    }
-
-    ServiceWatcher& parent;
+    core::Signal<std::string, std::string> owner_changed;
+    core::Signal<void> service_registered;
+    core::Signal<void> service_unregistered;
     std::shared_ptr<Object> object;
     std::shared_ptr<
             core::dbus::Signal<NameOwnerChanged, NameOwnerChanged::ArgumentType>> signal;
@@ -71,7 +68,7 @@ struct dbus::ServiceWatcher::Private
 
 dbus::ServiceWatcher::ServiceWatcher(std::shared_ptr<Object> object,
         const std::string& name, DBus::WatchMode watch_mode) :
-        d(new Private(*this))
+        d(new Private())
 {
     d->object = object;
 
@@ -93,6 +90,21 @@ dbus::ServiceWatcher::ServiceWatcher(std::shared_ptr<Object> object,
 
     d->signal->connect_with_match_args(
             std::bind(&Private::signal_handler, d, std::placeholders::_1), match_args);
+}
+
+const core::Signal<std::string, std::string>& dbus::ServiceWatcher::owner_changed() const
+{
+    return d->owner_changed;
+}
+
+const core::Signal<void>& dbus::ServiceWatcher::service_registered() const
+{
+    return d->service_registered;
+}
+
+const core::Signal<void>& dbus::ServiceWatcher::service_unregistered() const
+{
+    return d->service_unregistered;
 }
 
 }

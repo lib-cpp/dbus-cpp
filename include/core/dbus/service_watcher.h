@@ -44,11 +44,11 @@ public:
     ServiceWatcher& operator=(const ServiceWatcher& rhs) = delete;
     bool operator==(const ServiceWatcher&) const = delete;
 
-    core::Signal<std::string, std::string> owner_changed;
+    const core::Signal<std::string, std::string>& owner_changed() const;
 
-    core::Signal<void> service_registered;
+    const core::Signal<void>& service_registered() const;
 
-    core::Signal<void> service_unregistered;
+    const core::Signal<void>& service_unregistered() const;
 
 private:
     ServiceWatcher(std::shared_ptr<Object> object, const std::string& name,
