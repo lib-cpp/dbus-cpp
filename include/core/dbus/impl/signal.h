@@ -43,6 +43,13 @@ template<typename SignalDescription, typename Argument>
 inline typename Signal<SignalDescription, Argument>::SubscriptionToken
 Signal<SignalDescription, Argument>::connect(const Handler& h)
 {
+    return connect_with_match_args(h, MatchRule::MatchArgs());
+}
+
+template<typename SignalDescription, typename Argument>
+inline typename Signal<SignalDescription, Argument>::SubscriptionToken
+Signal<SignalDescription, Argument>::connect_with_match_args(const Handler& h, const MatchRule::MatchArgs&)
+{
     std::lock_guard<std::mutex> lg(handlers_guard);
     return handlers.insert(handlers.end(), h);
 }
@@ -61,16 +68,14 @@ inline std::shared_ptr<Signal<SignalDescription, void>>
 Signal<SignalDescription, Argument>::make_signal(
     const std::shared_ptr<Object>& parent,
     const std::string& interface,
-    const std::string& name,
-    const MatchRule::MatchArgs& match_args)
+    const std::string& name)
 {
     auto sp =
             std::shared_ptr<Signal<SignalDescription, void>>(
                 new Signal<SignalDescription, void>(
                     parent,
                     interface,
-                    name,
-                    match_args));
+                    name));
     return sp;
 }
 
@@ -78,8 +83,7 @@ template<typename SignalDescription, typename Argument>
 inline Signal<SignalDescription, Argument>::Signal(
     const std::shared_ptr<Object>& parent,
     const std::string& interface,
-    const std::string& name,
-    const MatchRule::MatchArgs& match_args) :
+    const std::string& name) :
                                parent(parent),
                                interface(interface),
                                name(name)
@@ -91,7 +95,7 @@ inline Signal<SignalDescription, Argument>::Signal(
             this,
             std::placeholders::_1));
     parent->add_match(
-        rule.type(Message::Type::signal).interface(interface).member(name).args(match_args));
+        rule.type(Message::Type::signal).interface(interface).member(name));
 }
 
 template<typename SignalDescription, typename Argument>
@@ -144,6 +148,25 @@ Signal<
     >::type
 >::connect(const Handler& h)
 {
+    return connect_with_match_args(h, MatchRule::MatchArgs());
+}
+
+template<typename SignalDescription>
+inline typename Signal<
+SignalDescription,
+typename std::enable_if<
+    is_not_void<typename SignalDescription::ArgumentType>::value,
+    typename SignalDescription::ArgumentType
+>::type
+>::SubscriptionToken
+Signal<
+    SignalDescription,
+    typename std::enable_if<
+        is_not_void<typename SignalDescription::ArgumentType>::value,
+        typename SignalDescription::ArgumentType
+    >::type
+>::connect_with_match_args(const Handler& h, const MatchRule::MatchArgs &)
+{
     std::lock_guard<std::mutex> lg(d->handlers_guard);
     return d->handlers.insert(d->handlers.end(), h);
 }
@@ -172,16 +195,14 @@ Signal<
     >::make_signal(
     const std::shared_ptr<Object>& parent,
     const std::string& interface,
-    const std::string& name,
-    const MatchRule::MatchArgs& match_args)
+    const std::string& name)
 {
     auto sp =
             std::shared_ptr<Signal<SignalDescription, typename SignalDescription::ArgumentType>>(
                 new Signal<SignalDescription, typename SignalDescription::ArgumentType>(
                     parent,
                     interface,
-                    name,
-                    match_args));
+                    name));
     return sp;
 }
 
@@ -193,8 +214,7 @@ inline Signal<
         typename SignalDescription::ArgumentType>::type
     >::Signal(const std::shared_ptr<Object>& parent,
               const std::string& interface,
-              const std::string& name,
-              const MatchRule::MatchArgs& match_args)
+              const std::string& name)
         : d{new Shared{parent, interface, name}}
 {
     d->parent->signal_router.install_route(
@@ -203,7 +223,7 @@ inline Signal<
             &Signal<SignalDescription, typename SignalDescription::ArgumentType>::operator(),
             this,
             std::placeholders::_1));
-    d->parent->add_match(d->rule.type(Message::Type::signal).interface(interface).member(name).args(match_args));
+    d->parent->add_match(d->rule.type(Message::Type::signal).interface(interface).member(name));
 }
 
 template<typename SignalDescription>

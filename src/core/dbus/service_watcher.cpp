@@ -89,10 +89,10 @@ dbus::ServiceWatcher::ServiceWatcher(std::shared_ptr<Object> object,
         break;
     }
 
-    d->signal = d->object->get_signal<NameOwnerChanged>(match_args);
+    d->signal = d->object->get_signal<NameOwnerChanged>();
 
-    d->signal->connect(
-            std::bind(&Private::signal_handler, d, std::placeholders::_1));
+    d->signal->connect_with_match_args(
+            std::bind(&Private::signal_handler, d, std::placeholders::_1), match_args);
 }
 
 }

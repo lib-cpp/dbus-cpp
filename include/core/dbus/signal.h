@@ -81,6 +81,8 @@ public:
      */
     inline SubscriptionToken connect(const Handler& h);
 
+    inline SubscriptionToken connect_with_match_args(const Handler& h, const MatchRule::MatchArgs& match_args);
+
     /**
      * @brief disconnect releases a signal-slot connection
      * @param token Refers to the signal-slot connection that should be released.
@@ -94,14 +96,12 @@ protected:
     make_signal(
        const std::shared_ptr<Object>& parent,
        const std::string& interface,
-       const std::string& name,
-       const MatchRule::MatchArgs& match_args = MatchRule::MatchArgs());
+       const std::string& name);
 
 private:
     inline Signal(const std::shared_ptr<Object>& parent,
                   const std::string& interface,
-                  const std::string& name,
-                  const MatchRule::MatchArgs& match_args = MatchRule::MatchArgs());
+                  const std::string& name);
 
     void operator()(const Message::Ptr&);
 
@@ -154,6 +154,8 @@ public:
      */
     inline SubscriptionToken connect(const Handler& h);
 
+    inline SubscriptionToken connect_with_match_args(const Handler& h, const MatchRule::MatchArgs& match_args);
+
     /**
      * @brief disconnect releases a signal-slot connection
      * @param token Refers to the signal-slot connection that should be released.
@@ -167,15 +169,13 @@ protected:
     make_signal(
         const std::shared_ptr<Object>& parent,
         const std::string& interface,
-        const std::string& name,
-        const MatchRule::MatchArgs& match_args = MatchRule::MatchArgs());
+        const std::string& name);
 
 private:
     inline Signal(
         const std::shared_ptr<Object>& parent,
         const std::string& interface,
-        const std::string& name,
-        const MatchRule::MatchArgs& match_args = MatchRule::MatchArgs());
+        const std::string& name);
 
     inline void operator()(const Message::Ptr&) noexcept;
 
