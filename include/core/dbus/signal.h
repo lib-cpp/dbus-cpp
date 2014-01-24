@@ -21,6 +21,7 @@
 #include <core/dbus/message.h>
 #include <core/dbus/visibility.h>
 
+
 #include <functional>
 #include <memory>
 #include <string>
@@ -82,6 +83,8 @@ public:
      */
     inline void disconnect(const SubscriptionToken& token);
 
+    inline const core::Signal<void>& about_to_be_destroyed() const;
+
 protected:
     friend class Object;
 
@@ -104,6 +107,7 @@ private:
     MatchRule rule;
     std::mutex handlers_guard;
     std::list<Handler> handlers;
+    core::Signal<void> signal_about_to_be_destroyed;
 };
 
 /**
@@ -153,6 +157,7 @@ public:
      */
     inline void disconnect(const SubscriptionToken& token);
 
+    inline const core::Signal<void>& about_to_be_destroyed() const;
 protected:
     friend class Object;
 
@@ -184,6 +189,7 @@ private:
         MatchRule rule;
         std::mutex handlers_guard;
         std::list<Handler> handlers;
+        core::Signal<void> signal_about_to_be_destroyed;
     };
     std::shared_ptr<Shared> d;
 };

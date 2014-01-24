@@ -19,6 +19,7 @@
 #define CORE_DBUS_IMPL_SIGNAL_H_
 
 #include <core/dbus/message_streaming_operators.h>
+#include <core/dbus/lifetime_constrained_cache.h>
 
 namespace core
 {
@@ -27,6 +28,8 @@ namespace dbus
 template<typename SignalDescription, typename Argument>
 inline Signal<SignalDescription, Argument>::~Signal() noexcept
 {
+    signal_about_to_be_destroyed();
+
     parent->signal_router.uninstall_route(Object::SignalKey{interface, name});
     parent->remove_match(rule);
 }
@@ -56,6 +59,13 @@ Signal<SignalDescription, Argument>::disconnect(
 }
 
 template<typename SignalDescription, typename Argument>
+inline const core::Signal<void>&
+Signal<SignalDescription, Argument>::about_to_be_destroyed() const
+{
+    return signal_about_to_be_destroyed;
+}
+
+template<typename SignalDescription, typename Argument>
 inline std::shared_ptr<Signal<SignalDescription, void>>
 Signal<SignalDescription, Argument>::make_signal(
     const std::shared_ptr<Object>& parent,
@@ -63,41 +73,28 @@ Signal<SignalDescription, Argument>::make_signal(
     const std::string& name)
 {
     typedef std::shared_ptr<Signal<SignalDescription, void>> SharedSignalPtr;
-    typedef std::weak_ptr<Signal<SignalDescription, void>> WeakSignalPtr;
 
-    static std::mutex guard;
-    static std::map<std::tuple<types::ObjectPath, std::string, std::string>, WeakSignalPtr> cache;
+    typedef std::tuple<types::ObjectPath, std::string, std::string> SignalCacheKey;
+    typedef Signal<SignalDescription, void> SignalCacheValue;
+    typedef ThreadSafeLifetimeConstrainedCache<SignalCacheKey, SignalCacheValue> SignalCache;
 
-    std::lock_guard<std::mutex> lg(guard);
+    static SignalCache signal_cache;
 
     auto key = std::make_tuple(parent->path(), interface, name);
-    auto it = cache.find(key);
+    auto signal = signal_cache.retrieve_value_for_key(key);
 
-    if (it == cache.end())
-    {
-        auto sp =
-                SharedSignalPtr(
-                    new Signal<SignalDescription, void>(
-                        parent,
-                        interface,
-                        name));
+    if (signal)
+        return signal;
 
-        cache[key] = sp;
-        return sp;
-    }
+    signal = SharedSignalPtr(
+                new Signal<SignalDescription, void>(
+                    parent,
+                    interface,
+                    name));
 
-    auto sp = it->second.lock();
+    signal_cache.insert_value_for_key(key, signal);
 
-    if (!sp)
-    {
-        it->second = sp = SharedSignalPtr(
-            new Signal<SignalDescription, void>(
-                parent,
-                interface,
-                name));
-    }
-
-    return sp;
+    return signal;
 }
 
 template<typename SignalDescription, typename Argument>
@@ -135,6 +132,8 @@ inline Signal<
         typename SignalDescription::ArgumentType>::type
     >::~Signal() noexcept
 {
+    d->signal_about_to_be_destroyed();
+
     d->parent->signal_router.uninstall_route(
         Object::SignalKey{d->interface, d->name});
     d->parent->remove_match(d->rule);
@@ -182,8 +181,20 @@ Signal<
     >::type
 >::disconnect(const SubscriptionToken& token)
 {
-    std::lock_guard<std::mutex> lg(d.handlers_guard);
-    return d.handlers.erase(token);
+    std::lock_guard<std::mutex> lg(d->handlers_guard);
+    return d->handlers.erase(token);
+}
+template<typename SignalDescription>
+inline const core::Signal<void>&
+Signal<
+    SignalDescription,
+    typename std::enable_if<
+        is_not_void<typename SignalDescription::ArgumentType>::value,
+        typename SignalDescription::ArgumentType
+    >::type
+>::about_to_be_destroyed() const
+{
+    return d->signal_about_to_be_destroyed;
 }
 
 template<typename SignalDescription>
@@ -199,40 +210,28 @@ Signal<
     const std::string& name)
 {
     typedef std::shared_ptr<Signal<SignalDescription, typename SignalDescription::ArgumentType>> SharedSignalPtr;
-    typedef std::weak_ptr<Signal<SignalDescription, typename SignalDescription::ArgumentType>> WeakSignalPtr;
 
-    static std::mutex guard;
-    static std::map<std::tuple<types::ObjectPath, std::string, std::string>, WeakSignalPtr> cache;
+    typedef std::tuple<types::ObjectPath, std::string, std::string> SignalCacheKey;
+    typedef Signal<SignalDescription, typename SignalDescription::ArgumentType> SignalCacheValue;
+    typedef ThreadSafeLifetimeConstrainedCache<SignalCacheKey, SignalCacheValue> SignalCache;
 
-    std::lock_guard<std::mutex> lg(guard);
+    static SignalCache signal_cache;
+
     auto key = std::make_tuple(parent->path(), interface, name);
-    auto it = cache.find(key);
+    auto signal = signal_cache.retrieve_value_for_key(key);
 
-    if (it == cache.end())
-    {
-        auto sp =
-                SharedSignalPtr(
-                    new Signal<SignalDescription, typename SignalDescription::ArgumentType>(
-                        parent,
-                        interface,
-                        name));
+    if (signal)
+        return signal;
 
-        cache[key] = sp;
-        return sp;
-    }
+    signal = SharedSignalPtr(
+                new Signal<SignalDescription, typename SignalDescription::ArgumentType>(
+                    parent,
+                    interface,
+                    name));
 
-    auto sp = it->second.lock();
+    signal_cache.insert_value_for_key(key, signal);
 
-    if (!sp)
-    {
-        it->second = sp = SharedSignalPtr(
-            new Signal<SignalDescription, typename SignalDescription::ArgumentType>(
-                parent,
-                interface,
-                name));
-    }
-
-    return sp;
+    return signal;
 }
 
 template<typename SignalDescription>
