@@ -190,13 +190,11 @@ Signal<
 
     bool new_entry = (d->handlers.find(match_args) == d->handlers.cend());
 
-    // insert at end of list needed?
     SubscriptionToken token = d->handlers.insert(std::make_pair(match_args, h));
 
     if(new_entry)
         d->parent->add_match(MatchRule(d->rule).args(match_args));
 
-    std::cout << "registering signal " << new_entry << ", " << d->handlers.size() << std::endl;
     return token;
 }
 
@@ -304,7 +302,25 @@ Signal<
         std::lock_guard<std::mutex> lg(d->handlers_guard);
         for (auto it : d->handlers)
         {
+            const MatchRule::MatchArgs& match_args(it.first);
             const Handler &handler(it.second);
+
+            if (!match_args.empty())
+            {
+                bool matched = true;
+                for(const MatchRule::MatchArg& arg: match_args)
+                {
+                    std::size_t index = arg.first;
+                    const std::string& value = arg.second;
+                    std::cout << "would like to check if arg(" << index << ")='"
+                            << value << "'" << std::endl;
+                    // matched = ??
+                }
+
+                if (!matched)
+                    continue;
+            }
+
             handler(d->value);
         }
     }
