@@ -249,7 +249,6 @@ inline Object::Object(
           {
               [](const Message::Ptr& msg)
               {
-                  // what do do here??
                   return SignalKey {msg->interface(), msg->member()};
               }
           },
