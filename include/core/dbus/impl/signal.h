@@ -43,13 +43,6 @@ template<typename SignalDescription, typename Argument>
 inline typename Signal<SignalDescription, Argument>::SubscriptionToken
 Signal<SignalDescription, Argument>::connect(const Handler& h)
 {
-    return connect_with_match_args(h, MatchRule::MatchArgs());
-}
-
-template<typename SignalDescription, typename Argument>
-inline typename Signal<SignalDescription, Argument>::SubscriptionToken
-Signal<SignalDescription, Argument>::connect_with_match_args(const Handler& h, const MatchRule::MatchArgs&)
-{
     std::lock_guard<std::mutex> lg(handlers_guard);
     return handlers.insert(handlers.end(), h);
 }
@@ -117,7 +110,6 @@ inline Signal<
 {
     d->parent->signal_router.uninstall_route(
         Object::SignalKey{d->interface, d->name});
-    d->parent->remove_match(d->rule);
 }
 
 template<typename SignalDescription>
@@ -165,10 +157,20 @@ Signal<
         is_not_void<typename SignalDescription::ArgumentType>::value,
         typename SignalDescription::ArgumentType
     >::type
->::connect_with_match_args(const Handler& h, const MatchRule::MatchArgs &)
+>::connect_with_match_args(const Handler& h, const MatchRule::MatchArgs& match_args)
 {
     std::lock_guard<std::mutex> lg(d->handlers_guard);
-    return d->handlers.insert(d->handlers.end(), h);
+
+    bool new_entry = (d->handlers.find(match_args) == d->handlers.cend());
+
+    // insert at end of list needed?
+    SubscriptionToken token = d->handlers.insert(std::make_pair(match_args, h));
+
+    if(new_entry)
+        d->parent->add_match(MatchRule(d->rule).args(match_args));
+
+    std::cout << "registering signal " << new_entry << ", " << d->handlers.size() << std::endl;
+    return token;
 }
 
 template<typename SignalDescription>
@@ -182,7 +184,13 @@ Signal<
 >::disconnect(const SubscriptionToken& token)
 {
     std::lock_guard<std::mutex> lg(d.handlers_guard);
-    return d.handlers.erase(token);
+
+    MatchRule::MatchArgs match_args(token->first);
+    d.handlers.erase(token);
+    if(d.handlers.count(match_args) == 0)
+    {
+        d->parent->remove_match(MatchRule(d->rule).args(match_args));
+    }
 }
 
 template<typename SignalDescription>
@@ -223,7 +231,6 @@ inline Signal<
             &Signal<SignalDescription, typename SignalDescription::ArgumentType>::operator(),
             this,
             std::placeholders::_1));
-    d->parent->add_match(d->rule.type(Message::Type::signal).interface(interface).member(name));
 }
 
 template<typename SignalDescription>
@@ -239,8 +246,11 @@ Signal<
     {
         msg->reader() >> d->value;
         std::lock_guard<std::mutex> lg(d->handlers_guard);
-        for (auto handler : d->handlers)
+        for (auto it : d->handlers)
+        {
+            const Handler &handler(it.second);
             handler(d->value);
+        }
     }
     catch (const std::runtime_error& e)
     {
