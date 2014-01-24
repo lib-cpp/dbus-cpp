@@ -320,9 +320,20 @@ Signal<
                 {
                     std::size_t index = arg.first;
                     const std::string& value = arg.second;
-                    std::cout << "would like to check if arg(" << index << ")='"
-                            << value << "'" << std::endl;
-                    // matched = ??
+
+                    // FIXME This code is probably bad, it starts reading the arguments
+                    // from the beginning each time
+                    auto reader = msg->reader();
+
+                    // Wind the reader forward until we get to the desired point
+                    for (std::size_t i(0); i < index && reader.type() != dbus::ArgumentType::invalid; ++i)
+                        reader.pop();
+
+                    if(value != reader.pop_string())
+                    {
+                        matched = false;
+                        continue;
+                    }
                 }
 
                 if (!matched)
