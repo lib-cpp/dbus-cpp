@@ -18,6 +18,7 @@
 
 #include <core/dbus/codec.h>
 #include <core/dbus/dbus.h>
+#include <core/dbus/message_streaming_operators.h>
 #include <core/dbus/helper/signature.h>
 
 #include <core/dbus/types/any.h>
@@ -43,7 +44,7 @@ namespace dbus = core::dbus;
 TEST(Codec, BasicTypesMatchSizeAndAlignOfDBusTypes)
 {
     ::testing::StaticAssertTypeEq<dbus_bool_t, typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::boolean>::Type>();
-    ::testing::StaticAssertTypeEq<int8_t, typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::byte>::Type>();
+    ::testing::StaticAssertTypeEq<uint8_t, typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::byte>::Type>();
     ::testing::StaticAssertTypeEq<int16_t, typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::int16>::Type>();
     ::testing::StaticAssertTypeEq<uint16_t, typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::uint16>::Type>();
     ::testing::StaticAssertTypeEq<int32_t, typename core::dbus::helper::DBusTypeMapper<core::dbus::ArgumentType::int32>::Type>();
@@ -300,10 +301,10 @@ TEST(UnixFd, EncodingAndDecodingWorksCorrectly)
 TEST(Variant, TypeMapperSpecializationReturnsCorrectValues)
 {
     namespace dbus = core::dbus;
-    ASSERT_EQ(dbus::ArgumentType::variant, dbus::helper::TypeMapper<dbus::types::Variant<double>>::type_value());
+    ASSERT_EQ(dbus::ArgumentType::variant, dbus::helper::TypeMapper<dbus::types::Variant>::type_value());
     ASSERT_TRUE(dbus::helper::TypeMapper<dbus::types::ObjectPath>::is_basic_type());
     ASSERT_TRUE(dbus::helper::TypeMapper<dbus::types::ObjectPath>::requires_signature());
-    ASSERT_STREQ(DBUS_TYPE_VARIANT_AS_STRING DBUS_TYPE_DOUBLE_AS_STRING, dbus::helper::TypeMapper<dbus::types::Variant<double>>::signature().c_str());
+    ASSERT_STREQ(DBUS_TYPE_VARIANT_AS_STRING, dbus::helper::TypeMapper<dbus::types::Variant>::signature().c_str());
 }
 
 TEST(Variant, EncodingAndDecodingWorksCorrectly)
@@ -311,16 +312,20 @@ TEST(Variant, EncodingAndDecodingWorksCorrectly)
     namespace dbus = core::dbus;
 
     typedef dbus::types::Struct<std::tuple<double, double, std::int32_t>> Struct;
-    Struct my_struct = Struct{std::make_tuple(42., 42., 56)};
 
-    const dbus::types::Variant<Struct> expected_value {my_struct};
+    const Struct expected_value = Struct{std::make_tuple(42., 42., 56)};
     auto msg = a_method_call();
-    auto writer = msg->writer();
-
-    ASSERT_NO_THROW(dbus::encode_argument(writer, expected_value););
-
+    {
+        auto writer = msg->writer();
+        ASSERT_NO_THROW(dbus::encode_argument(writer, dbus::types::Variant::encode(expected_value)););
+    }
     auto reader = msg->reader();
-    ASSERT_EQ(expected_value, dbus::decode_argument<dbus::types::Variant<Struct>>(reader));
+    Struct my_struct;
+    auto variant = std::move(dbus::types::Variant::decode(my_struct));
+    dbus::decode_argument<dbus::types::Variant>(
+        reader,
+        variant);
+    ASSERT_EQ(expected_value, my_struct);
 }
 
 TEST(Signature, TypeMapperSpecializationReturnsCorrectValues)
@@ -359,7 +364,7 @@ TEST(Properties, DictionaryMappingToVariantsIsEncodedCorrectly)
 
     {
         auto writer = msg->writer();
-        auto array = writer.open_array(dbus::types::Signature{"(sv)"});
+        auto array = writer.open_array(dbus::types::Signature{"{sv}"});
         for(unsigned int i = 0; i < 5; i++)
         {
             auto entry = array.open_dict_entry();
@@ -392,4 +397,34 @@ TEST(Properties, DictionaryMappingToVariantsIsEncodedCorrectly)
     }
 
     EXPECT_EQ(5, counter);
+}
+
+TEST(Properties, DictionaryMappingToVariantsIsEncodedCorrectlyWithMap)
+{
+    namespace dbus = core::dbus;
+
+    auto msg = a_method_call();
+
+    {
+        std::map<std::string, dbus::types::Variant> map;
+
+        map["key1"] = dbus::types::Variant::encode<std::uint32_t>(1);
+        map["key2"] = dbus::types::Variant::encode<std::uint32_t>(2);
+        map["key3"] = dbus::types::Variant::encode<std::uint32_t>(3);
+        map["key4"] = dbus::types::Variant::encode<std::uint32_t>(4);
+        map["key5"] = dbus::types::Variant::encode<std::uint32_t>(5);
+
+        msg->writer() << map;
+    }
+
+    auto reader = msg->reader();
+    std::map<std::string, dbus::types::Variant> map;
+    reader >> map;
+
+    EXPECT_EQ(5, map.size());
+    EXPECT_EQ(1, map.at("key1").as<std::uint32_t>());
+    EXPECT_EQ(2, map.at("key2").as<std::uint32_t>());
+    EXPECT_EQ(3, map.at("key3").as<std::uint32_t>());
+    EXPECT_EQ(4, map.at("key4").as<std::uint32_t>());
+    EXPECT_EQ(5, map.at("key5").as<std::uint32_t>());
 }

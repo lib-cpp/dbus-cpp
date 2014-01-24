@@ -57,7 +57,7 @@ struct MessageManager
                 return "IncomingMessage";
             };
             typedef MessageManager Interface;
-            typedef std::tuple<std::string, std::map<std::string, dbus::types::Variant<dbus::types::Any>>> ArgumentType;
+            typedef std::tuple<std::string, std::map<std::string, dbus::types::Variant>> ArgumentType;
         };
     };
 };
@@ -72,7 +72,7 @@ struct VoiceCallManager
                 return "CallAdded";
             };
             typedef VoiceCallManager Interface;
-            typedef std::tuple<dbus::types::ObjectPath, std::map<std::string, dbus::types::Variant<dbus::types::Any>>> ArgumentType;
+            typedef std::tuple<dbus::types::ObjectPath, std::map<std::string, dbus::types::Variant>> ArgumentType;
         };
     };
 };

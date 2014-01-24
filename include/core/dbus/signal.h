@@ -18,6 +18,8 @@
 #ifndef CORE_DBUS_SIGNAL_H_
 #define CORE_DBUS_SIGNAL_H_
 
+#include <core/signal.h>
+
 #include <core/dbus/match_rule.h>
 #include <core/dbus/message.h>
 #include <core/dbus/visibility.h>
@@ -87,6 +89,8 @@ public:
      */
     inline void disconnect(const SubscriptionToken& token);
 
+    inline const core::Signal<void>& about_to_be_destroyed() const;
+
 protected:
     friend class Object;
 
@@ -109,6 +113,7 @@ private:
     MatchRule rule;
     std::mutex handlers_guard;
     std::list<Handler> handlers;
+    core::Signal<void> signal_about_to_be_destroyed;
 };
 
 /**
@@ -160,6 +165,7 @@ public:
      */
     inline void disconnect(const SubscriptionToken& token);
 
+    inline const core::Signal<void>& about_to_be_destroyed() const;
 protected:
     friend class Object;
 
@@ -191,6 +197,7 @@ private:
         MatchRule rule;
         std::mutex handlers_guard;
         std::multimap<MatchRule::MatchArgs, Handler> handlers;
+        core::Signal<void> signal_about_to_be_destroyed;
     };
     std::shared_ptr<Shared> d;
 };

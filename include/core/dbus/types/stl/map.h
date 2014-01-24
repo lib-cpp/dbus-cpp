@@ -76,9 +76,25 @@ struct TypeMapper<std::map<T, U>>
 };
 }
 template<typename T, typename U>
+struct Codec<std::pair<const T, U>>
+{
+    static void encode_argument(Message::Writer& out, const std::pair<const T, U>& arg)
+    {
+        Codec<typename std::decay<T>::type>::encode_argument(out, arg.first);
+        Codec<typename std::decay<U>::type>::encode_argument(out, arg.second);
+    }
+
+    static void decode_argument(Message::Reader& in, std::pair<T, U>& arg)
+    {
+        Codec<T>::decode_argument(in, arg.first);
+        Codec<U>::decode_argument(in, arg.second);
+    }
+};
+
+template<typename T, typename U>
 struct Codec<std::pair<T, U>>
 {
-    static void encode_argument(Message::Writer& out, const std::pair<T, U>& arg)
+    static void encode_argument(Message::Writer& out, const std::pair<const T, U>& arg)
     {
         Codec<typename std::decay<T>::type>::encode_argument(out, arg.first);
         Codec<typename std::decay<U>::type>::encode_argument(out, arg.second);
@@ -100,7 +116,7 @@ struct Codec<std::map<T, U>>
                     types::Signature(
                         helper::TypeMapper<typename std::map<T, U>::value_type>::signature()));
         {
-            for (auto element : arg)
+            for (const auto& element : arg)
             {
                 auto de = aw.open_dict_entry();
                 {
@@ -128,12 +144,12 @@ struct Codec<std::map<T, U>>
             if (it == out.end())
             {
                 bool inserted = false;
-                std::tie(std::ignore, inserted) = out.insert(v);
+                std::tie(std::ignore, inserted) = out.insert(std::move(v));
                 if (!inserted)
                     throw std::runtime_error("Could not insert decoded element into map");
             } else
             {
-                it->second = v.second;
+                it->second = std::move(v.second);
             }
         }
     }

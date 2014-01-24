@@ -91,6 +91,16 @@ struct Service
                     typedef Foo Interface;
                     typedef int64_t ArgumentType;
                 };
+
+                struct Bar
+                {
+                    inline static std::string name()
+                    {
+                        return "Bar";
+                    }
+                    typedef Foo Interface;
+                    typedef int64_t ArgumentType;
+                };
             };
         };
     };

@@ -74,7 +74,7 @@ const Bus::Ptr& Service::get_connection() const
 
 void Service::add_match(const MatchRule& rule)
 {
-    connection->add_match(rule);
+    connection->add_match(rule.sender(name));
 }
 
 void Service::remove_match(const MatchRule& rule)

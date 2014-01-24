@@ -58,7 +58,7 @@ bus->install_executor(core::dbus::asio::make_executor(bus));
     auto upower_object = upower->object_for_path(dbus::types::ObjectPath("/core/UPower"));
 
     auto all_properties = upower_object->get_all_properties<core::UPower>();
-    std::for_each(all_properties.begin(), all_properties.end(), [](const std::pair<const std::string, dbus::types::Variant<dbus::types::Any>>& pair)
+    std::for_each(all_properties.begin(), all_properties.end(), [](const std::pair<const std::string, dbus::types::Variant>& pair)
     {
         std::cout << pair.first << std::endl;
     });
@@ -181,7 +181,7 @@ bus->install_executor(core::dbus::asio::make_executor(bus));
         std::cout << "\tRecallUrl: " << device->get_property<core::UPower::Device::Properties::RecallUrl>()->get() << std::endl;
         std::cout << "-----------------------------------------------------------------------------------" << std::endl;
         auto properties = device->get_all_properties<core::UPower::Device>();
-        std::for_each(properties.begin(), properties.end(), [](const std::pair<const std::string, dbus::types::Variant<dbus::types::Any>>& pair)
+        std::for_each(properties.begin(), properties.end(), [](const std::pair<const std::string, dbus::types::Variant>& pair)
         {
             std::cout << "\t" << pair.first << std::endl;
         });

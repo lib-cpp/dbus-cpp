@@ -29,8 +29,8 @@ Property<PropertyType>::get() const
     if (parent->is_stub())
     {
         Super::mutable_get() = parent->invoke_method_synchronously<
-                interfaces::Properties::Get,
-                types::Variant<typename PropertyType::ValueType>
+                    interfaces::Properties::Get,
+                    types::TypedVariant<typename Property<PropertyType>::ValueType>
                 >(interface, name).value().get();
     }
     return Super::get();
@@ -48,9 +48,9 @@ Property<PropertyType>::set(const typename Property<PropertyType>::ValueType& ne
         }
 
         parent->invoke_method_synchronously<
-                interfaces::Properties::Set,
-                void
-                >(interface, name, types::Variant<ValueType>(new_value));
+                    interfaces::Properties::Set,
+                    void
+                >(interface, name, types::TypedVariant<ValueType>(new_value));
     }
 
     Super::set(new_value);
@@ -113,7 +113,7 @@ void
 Property<PropertyType>::handle_get(const Message::Ptr& msg)
 {
     auto reply = Message::make_method_return(msg);
-    reply->writer() << types::Variant<ValueType>(Super::get());
+    reply->writer() << types::TypedVariant<ValueType>(Super::get());
 
     parent->parent->get_connection()->send(reply);
 }
@@ -133,7 +133,7 @@ Property<PropertyType>::handle_set(const Message::Ptr& msg)
         return;
     }
 
-    std::string s; types::Variant<ValueType> value;
+    std::string s; types::TypedVariant<ValueType> value;
     try
     {
         msg->reader() >> s >> s >> value;
@@ -156,12 +156,11 @@ Property<PropertyType>::handle_set(const Message::Ptr& msg)
 
 template<typename PropertyType>
 void
-Property<PropertyType>::handle_changed(const types::Variant<types::Any>& arg)
+Property<PropertyType>::handle_changed(const types::Variant& arg)
 {
     try
     {
-        typename PropertyType::ValueType value;
-        arg.get().reader() >> value;
+        auto value = arg.as<typename PropertyType::ValueType>();
         set(value);
     }
     catch (...)

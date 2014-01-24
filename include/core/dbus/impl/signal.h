@@ -20,6 +20,7 @@
 
 #include <core/dbus/message_streaming_operators.h>
 #include <core/dbus/object.h>
+#include <core/dbus/lifetime_constrained_cache.h>
 
 namespace core
 {
@@ -28,6 +29,8 @@ namespace dbus
 template<typename SignalDescription, typename Argument>
 inline Signal<SignalDescription, Argument>::~Signal() noexcept
 {
+    signal_about_to_be_destroyed();
+
     parent->signal_router.uninstall_route(Object::SignalKey{interface, name});
     parent->remove_match(rule);
 }
@@ -57,19 +60,42 @@ Signal<SignalDescription, Argument>::disconnect(
 }
 
 template<typename SignalDescription, typename Argument>
+inline const core::Signal<void>&
+Signal<SignalDescription, Argument>::about_to_be_destroyed() const
+{
+    return signal_about_to_be_destroyed;
+}
+
+template<typename SignalDescription, typename Argument>
 inline std::shared_ptr<Signal<SignalDescription, void>>
 Signal<SignalDescription, Argument>::make_signal(
     const std::shared_ptr<Object>& parent,
     const std::string& interface,
     const std::string& name)
 {
-    auto sp =
-            std::shared_ptr<Signal<SignalDescription, void>>(
+    typedef std::shared_ptr<Signal<SignalDescription, void>> SharedSignalPtr;
+
+    typedef std::tuple<types::ObjectPath, std::string, std::string> SignalCacheKey;
+    typedef Signal<SignalDescription, void> SignalCacheValue;
+    typedef ThreadSafeLifetimeConstrainedCache<SignalCacheKey, SignalCacheValue> SignalCache;
+
+    static SignalCache signal_cache;
+
+    auto key = std::make_tuple(parent->path(), interface, name);
+    auto signal = signal_cache.retrieve_value_for_key(key);
+
+    if (signal)
+        return signal;
+
+    signal = SharedSignalPtr(
                 new Signal<SignalDescription, void>(
                     parent,
                     interface,
                     name));
-    return sp;
+
+    signal_cache.insert_value_for_key(key, signal);
+
+    return signal;
 }
 
 template<typename SignalDescription, typename Argument>
@@ -108,6 +134,8 @@ inline Signal<
         typename SignalDescription::ArgumentType>::type
     >::~Signal() noexcept
 {
+    d->signal_about_to_be_destroyed();
+
     d->parent->signal_router.uninstall_route(
         Object::SignalKey{d->interface, d->name});
 }
@@ -183,14 +211,27 @@ Signal<
     >::type
 >::disconnect(const SubscriptionToken& token)
 {
-    std::lock_guard<std::mutex> lg(d.handlers_guard);
+    std::lock_guard<std::mutex> lg(d->handlers_guard);
 
     MatchRule::MatchArgs match_args(token->first);
-    d.handlers.erase(token);
-    if(d.handlers.count(match_args) == 0)
+    d->handlers.erase(token);
+    if(d->handlers.count(match_args) == 0)
     {
         d->parent->remove_match(MatchRule(d->rule).args(match_args));
     }
+}
+
+template<typename SignalDescription>
+inline const core::Signal<void>&
+Signal<
+    SignalDescription,
+    typename std::enable_if<
+        is_not_void<typename SignalDescription::ArgumentType>::value,
+        typename SignalDescription::ArgumentType
+    >::type
+>::about_to_be_destroyed() const
+{
+    return d->signal_about_to_be_destroyed;
 }
 
 template<typename SignalDescription>
@@ -205,13 +246,29 @@ Signal<
     const std::string& interface,
     const std::string& name)
 {
-    auto sp =
-            std::shared_ptr<Signal<SignalDescription, typename SignalDescription::ArgumentType>>(
+    typedef std::shared_ptr<Signal<SignalDescription, typename SignalDescription::ArgumentType>> SharedSignalPtr;
+
+    typedef std::tuple<types::ObjectPath, std::string, std::string> SignalCacheKey;
+    typedef Signal<SignalDescription, typename SignalDescription::ArgumentType> SignalCacheValue;
+    typedef ThreadSafeLifetimeConstrainedCache<SignalCacheKey, SignalCacheValue> SignalCache;
+
+    static SignalCache signal_cache;
+
+    auto key = std::make_tuple(parent->path(), interface, name);
+    auto signal = signal_cache.retrieve_value_for_key(key);
+
+    if (signal)
+        return signal;
+
+    signal = SharedSignalPtr(
                 new Signal<SignalDescription, typename SignalDescription::ArgumentType>(
                     parent,
                     interface,
                     name));
-    return sp;
+
+    signal_cache.insert_value_for_key(key, signal);
+
+    return signal;
 }
 
 template<typename SignalDescription>
@@ -274,5 +331,4 @@ inline Signal<
 }
 
 #endif // CORE_DBUS_IMPL_SIGNAL_H_
-
 

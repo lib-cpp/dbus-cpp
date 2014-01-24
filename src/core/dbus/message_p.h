@@ -20,6 +20,7 @@
 
 #include <core/dbus/message.h>
 
+#include <cstring>
 #include <sstream>
 
 namespace core
