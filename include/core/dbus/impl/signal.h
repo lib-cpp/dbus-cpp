@@ -143,7 +143,7 @@ inline Signal<
             it = d->handlers.upper_bound(it->first))
     {
         const MatchRule::MatchArgs& match_args(it->first);
-        d->parent->remove_match(MatchRule(d->rule).args(match_args));
+        d->parent->remove_match(d->rule.args(match_args));
     }
 }
 
@@ -201,7 +201,7 @@ Signal<
     SubscriptionToken token = d->handlers.insert(std::make_pair(match_args, h));
 
     if(new_entry)
-        d->parent->add_match(MatchRule(d->rule).args(match_args));
+        d->parent->add_match(d->rule.args(match_args));
 
     return token;
 }
@@ -222,7 +222,7 @@ Signal<
     d->handlers.erase(token);
     if(d->handlers.count(match_args) == 0)
     {
-        d->parent->remove_match(MatchRule(d->rule).args(match_args));
+        d->parent->remove_match(d->rule.args(match_args));
     }
 }
 
