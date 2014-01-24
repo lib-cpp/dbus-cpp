@@ -96,12 +96,12 @@ bool Message::Reader::pop_boolean()
 {
     d->ensure_argument_type_or_throw(ArgumentType::boolean);
 
-    std::uint32_t result;
+    dbus_bool_t result;
     dbus_message_iter_get_basic(
                 std::addressof(d->iter),
                 std::addressof(result));
     dbus_message_iter_next(std::addressof(d->iter));
-    return result != 0;
+    return !!result;
 }
 
 std::int16_t Message::Reader::pop_int16()
