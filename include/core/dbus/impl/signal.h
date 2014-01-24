@@ -102,8 +102,7 @@ template<typename SignalDescription, typename Argument>
 inline Signal<SignalDescription, Argument>::Signal(
     const std::shared_ptr<Object>& parent,
     const std::string& interface,
-    const std::string& name) :
-                               parent(parent),
+    const std::string& name) : parent(parent),
                                interface(interface),
                                name(name)
 {
