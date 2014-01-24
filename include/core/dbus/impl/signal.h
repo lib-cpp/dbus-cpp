@@ -137,6 +137,14 @@ inline Signal<
 
     d->parent->signal_router.uninstall_route(
         Object::SignalKey{d->interface, d->name});
+
+    // Iterate through the unique keys in the map
+    for (auto it = d->handlers.begin(); it != d->handlers.end();
+            it = d->handlers.upper_bound(it->first))
+    {
+        const MatchRule::MatchArgs& match_args(it->first);
+        d->parent->remove_match(MatchRule(d->rule).args(match_args));
+    }
 }
 
 template<typename SignalDescription>
