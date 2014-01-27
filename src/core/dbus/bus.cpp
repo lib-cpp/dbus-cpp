@@ -158,6 +158,8 @@ Bus::Bus(const std::string& address)
 
     if (reply->type() == Message::Type::error)
         throw std::runtime_error(reply->error().print());
+
+    dbus_connection_set_exit_on_disconnect(d->connection.get(), FALSE);
 }
 
 Bus::Bus(WellKnownBus bus)
@@ -184,6 +186,8 @@ Bus::Bus(WellKnownBus bus)
                 static_handle_message,
                 this,
                 nullptr);
+
+    dbus_connection_set_exit_on_disconnect(d->connection.get(), FALSE);
 }
 
 Bus::~Bus() noexcept
