@@ -57,12 +57,11 @@ auto system_bus_config_file =
         core::testing::system_bus_configuration_file();
 }
 
-TEST_F(ServiceWatcher, BasicBehaviour)
+TEST_F(ServiceWatcher, Registration)
 {
-    core::testing::CrossProcessSync server_is_running;
     core::testing::CrossProcessSync client_is_listening_for_service_registration;
 
-    auto service = [this, &server_is_running, &client_is_listening_for_service_registration]()
+    auto service = [this, &client_is_listening_for_service_registration]()
     {
         core::testing::SigTermCatcher sc;
 
@@ -87,7 +86,7 @@ TEST_F(ServiceWatcher, BasicBehaviour)
         return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
 
-    auto client = [this, &server_is_running, &client_is_listening_for_service_registration]()
+    auto client = [this, &client_is_listening_for_service_registration]()
     {
         auto bus = session_bus();
         auto executor = core::dbus::asio::make_executor(bus);
@@ -95,27 +94,25 @@ TEST_F(ServiceWatcher, BasicBehaviour)
         std::thread t{[bus](){ bus->run(); }};
 
         dbus::DBus daemon(bus);
-        dbus::ServiceWatcher::Ptr watcher_one(
+        dbus::ServiceWatcher::Ptr service_watcher(
                 daemon.make_service_watcher(dbus::traits::Service<test::Service>::interface_name(),
                         dbus::DBus::WatchMode::registration));
 
-        std::string owner_changed_old_owner;
-        std::string owner_changed_new_owner;
+        std::vector<std::pair<std::string, std::string>> owner_changed;
         unsigned int service_registered = 0;
         unsigned int service_unregistered = 0;
 
-        watcher_one->owner_changed().connect(
-            [&owner_changed_new_owner, &owner_changed_old_owner](const std::string& old_owner, const std::string& new_owner)
+        service_watcher->owner_changed().connect(
+            [&owner_changed](const std::string& old_owner, const std::string& new_owner)
             {
-                owner_changed_new_owner = new_owner;
-                owner_changed_old_owner = old_owner;
+                owner_changed.push_back({ new_owner, old_owner });
             });
-        watcher_one->service_registered().connect([bus, &service_registered]()
+        service_watcher->service_registered().connect([bus, &service_registered]()
             {
                 ++service_registered;
                 bus->stop();
             });
-        watcher_one->service_unregistered().connect([&service_unregistered]()
+        service_watcher->service_unregistered().connect([&service_unregistered]()
             {
                 ++service_unregistered;
             });
@@ -125,10 +122,87 @@ TEST_F(ServiceWatcher, BasicBehaviour)
         if (t.joinable())
             t.join();
 
-        EXPECT_TRUE(owner_changed_old_owner.empty());
-        EXPECT_FALSE(owner_changed_new_owner.empty());
+        EXPECT_EQ(1, owner_changed.size());
+        EXPECT_FALSE(owner_changed.at(0).first.empty());
+        EXPECT_TRUE(owner_changed.at(0).second.empty());
         EXPECT_EQ(1, service_registered);
         EXPECT_EQ(0, service_unregistered);
+
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
+    };
+
+    EXPECT_EQ(core::testing::ForkAndRunResult::empty, core::testing::fork_and_run(service, client));
+}
+
+TEST_F(ServiceWatcher, Unregistration)
+{
+    core::testing::CrossProcessSync client_is_listening_for_service_unregistration;
+
+    auto service = [this, &client_is_listening_for_service_unregistration]()
+    {
+        auto bus = session_bus();
+        bus->install_executor(core::dbus::asio::make_executor(bus));
+
+        // Ensure that the client is listening for unregistration before we even
+        // start the service.
+        EXPECT_EQ(1,
+                client_is_listening_for_service_unregistration.wait_for_signal_ready_for(
+                              std::chrono::milliseconds{500}));
+
+        // We just let this be destroyed immediately
+        dbus::Service::add_service<test::ServiceTiny>(bus);
+
+        std::thread t{[bus](){ bus->run(); }};
+
+        bus->stop();
+
+        if (t.joinable())
+            t.join();
+
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
+    };
+
+    auto client = [this, &client_is_listening_for_service_unregistration]()
+    {
+        auto bus = session_bus();
+        auto executor = core::dbus::asio::make_executor(bus);
+        bus->install_executor(executor);
+        std::thread t{[bus](){ bus->run(); }};
+
+        dbus::DBus daemon(bus);
+        dbus::ServiceWatcher::Ptr service_watcher(
+                daemon.make_service_watcher(dbus::traits::Service<test::ServiceTiny>::interface_name(),
+                        dbus::DBus::WatchMode::unregistration));
+
+        std::vector<std::pair<std::string, std::string>> owner_changed;
+        unsigned int service_registered = 0;
+        unsigned int service_unregistered = 0;
+
+        service_watcher->owner_changed().connect(
+            [&owner_changed](const std::string& old_owner, const std::string& new_owner)
+            {
+                owner_changed.push_back({ new_owner, old_owner });
+            });
+        service_watcher->service_registered().connect([&service_registered]()
+            {
+                ++service_registered;
+            });
+        service_watcher->service_unregistered().connect([bus, &service_unregistered]()
+            {
+                ++service_unregistered;
+                bus->stop();
+            });
+
+        client_is_listening_for_service_unregistration.try_signal_ready_for(std::chrono::milliseconds{500});
+
+        if (t.joinable())
+            t.join();
+
+        EXPECT_EQ(1, owner_changed.size());
+        EXPECT_TRUE(owner_changed.at(0).first.empty());
+        EXPECT_FALSE(owner_changed.at(0).second.empty());
+        EXPECT_EQ(0, service_registered);
+        EXPECT_EQ(1, service_unregistered);
 
         return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
