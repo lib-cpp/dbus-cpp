@@ -149,10 +149,10 @@ std::string DBus::hello() const
     return object->invoke_method_synchronously<Hello, std::string>().value();
 }
 
-ServiceWatcher::Ptr DBus::make_service_watcher(const std::string& name,
+std::unique_ptr<ServiceWatcher> DBus::make_service_watcher(const std::string& name,
         WatchMode watch_mode)
 {
-    return ServiceWatcher::Ptr(new ServiceWatcher(object, name, watch_mode));
+    return std::unique_ptr<ServiceWatcher>(new ServiceWatcher(object, name, watch_mode));
 }
 
 }

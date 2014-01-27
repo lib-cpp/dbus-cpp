@@ -32,7 +32,7 @@ namespace dbus
 class Object;
 
 /**
- * @brief Wraps a DBus match rule.
+ * @brief Allows watching for bus name owner changes.
  */
 class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC ServiceWatcher
 {
@@ -44,10 +44,22 @@ public:
     ServiceWatcher& operator=(const ServiceWatcher& rhs) = delete;
     bool operator==(const ServiceWatcher&) const = delete;
 
+    /**
+     * @brief Emitted when DBus detects that an owner change has occurred for the specified name.
+     * @return Signal instance
+     */
     const core::Signal<std::string, std::string>& owner_changed() const;
 
+    /**
+     * @brief Emitted when DBus detects that an owner has been registered for the specified name.
+     * @return Signal instance
+     */
     const core::Signal<void>& service_registered() const;
 
+    /**
+     * @brief Emitted when DBus detects that an owner has been unregistered for the specified name.
+     * @return Signal instance
+     */
     const core::Signal<void>& service_unregistered() const;
 
 private:

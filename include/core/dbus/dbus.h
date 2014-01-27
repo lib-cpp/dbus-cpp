@@ -48,9 +48,9 @@ public:
      */
     enum class WatchMode
     {
-        owner_change, ///< Notify if the owner name changes at all.
-        registration, ///< Notify when a name is newly registered.
-        unregistration = 1 << 1, ///< Notify when a name is newly unregistered.
+        registration = 0x01, ///< Notify when a name is newly registered.
+        unregistration = 0x02, ///< Notify when a name is newly unregistered.
+        owner_change = 0x03, ///< Notify if the owner name changes at all.
     };
 
     /** @brief Query the well-known name of the DBus daemon. */
@@ -94,7 +94,11 @@ public:
       */
     std::vector<std::string> list_names() const;
 
-    std::shared_ptr<ServiceWatcher> make_service_watcher(
+    /**
+     * @brief Create a new service watcher for the specified name and watch mode
+     * @return Unique instance of ServiceWatcher with the specified parameters
+     */
+    std::unique_ptr<ServiceWatcher> make_service_watcher(
             const std::string& name, WatchMode watch_mode =
                     WatchMode::owner_change);
 
