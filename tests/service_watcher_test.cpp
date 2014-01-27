@@ -20,9 +20,8 @@
 #include <core/dbus/fixture.h>
 #include <core/dbus/object.h>
 #include <core/dbus/property.h>
-#include <core/dbus/service.h>
+#include <core/dbus/dbus.h>
 #include <core/dbus/service_watcher.h>
-#include <core/dbus/interfaces/properties.h>
 #include <core/dbus/types/stl/tuple.h>
 #include <core/dbus/types/stl/vector.h>
 
@@ -31,6 +30,7 @@
 #include "sig_term_catcher.h"
 #include "test_data.h"
 #include "test_service.h"
+#include "test_service_tiny.h"
 
 #include <core/testing/cross_process_sync.h>
 #include <core/testing/fork_and_run.h>
@@ -72,6 +72,7 @@ TEST_F(ServiceWatcher, BasicBehaviour)
 
         auto bus = session_bus();
         bus->install_executor(core::dbus::asio::make_executor(bus));
+        auto service_tiny = dbus::Service::add_service<test::ServiceTiny>(bus);
         auto service = dbus::Service::add_service<test::Service>(bus);
 
         std::thread t{[bus](){ bus->run(); }};
@@ -100,8 +101,8 @@ TEST_F(ServiceWatcher, BasicBehaviour)
 
         std::string owner_changed_old_owner;
         std::string owner_changed_new_owner;
-        bool service_registered = false;
-        bool service_unregistered = false;
+        unsigned int service_registered = 0;
+        unsigned int service_unregistered = 0;
 
         watcher_one->owner_changed().connect(
             [&owner_changed_new_owner, &owner_changed_old_owner](const std::string& old_owner, const std::string& new_owner)
@@ -111,12 +112,12 @@ TEST_F(ServiceWatcher, BasicBehaviour)
             });
         watcher_one->service_registered().connect([bus, &service_registered]()
             {
-                service_registered = true;
+                ++service_registered;
                 bus->stop();
             });
         watcher_one->service_unregistered().connect([&service_unregistered]()
             {
-                service_unregistered = true;
+                ++service_unregistered;
             });
 
         client_is_listening_for_service_registration.try_signal_ready_for(std::chrono::milliseconds{500});
@@ -126,8 +127,8 @@ TEST_F(ServiceWatcher, BasicBehaviour)
 
         EXPECT_TRUE(owner_changed_old_owner.empty());
         EXPECT_FALSE(owner_changed_new_owner.empty());
-        EXPECT_TRUE(service_registered);
-        EXPECT_FALSE(service_unregistered);
+        EXPECT_EQ(1, service_registered);
+        EXPECT_EQ(0, service_unregistered);
 
         return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
