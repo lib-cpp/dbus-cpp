@@ -146,9 +146,9 @@ Signal<
     typename std::enable_if<
         is_not_void<typename SignalDescription::ArgumentType>::value,
         typename SignalDescription::ArgumentType>::type
-    >::emit(const typename SignalDescription::ArgumentType&)
+    >::emit(const typename SignalDescription::ArgumentType& args)
 {
-    d->parent->template emit_signal<SignalDescription, typename SignalDescription::ArgumentType>();
+    d->parent->template emit_signal<SignalDescription, typename SignalDescription::ArgumentType>(args);
 }
 
 template<typename SignalDescription>
