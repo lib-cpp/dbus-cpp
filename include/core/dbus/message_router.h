@@ -90,8 +90,9 @@ public:
         auto it = router.find(mapper(msg));
         if (it != router.end()) {
             // release the lock so that Handler can modify the Router
+            Handler handler = it->second;
             ul.unlock();
-            it->second(msg);
+            handler(msg);
             return true;
         } else {
             return false;
