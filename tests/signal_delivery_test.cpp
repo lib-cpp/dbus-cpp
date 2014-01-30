@@ -179,11 +179,9 @@ TEST_F(Service, SignalDeliverySameObjectSameInterfaceDifferentSignal)
                 test::Service::Interfaces::Foo::Signals::Dummy::ArgumentType
                 > (1);
 
-        foo1->emit_signal<
-                test::Service::Interfaces::Foo::Signals::Bar,
-                test::Service::Interfaces::Foo::Signals::Bar::ArgumentType
-                > (2);
-
+        // test emitting through Signal object
+        auto bar = foo1->get_signal<test::Service::Interfaces::Foo::Signals::Bar>();
+        bar->emit(2);
 
         sc.wait_for_signal_for(std::chrono::seconds{10});
 
