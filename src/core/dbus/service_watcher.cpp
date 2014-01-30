@@ -27,7 +27,8 @@ namespace core
 namespace dbus
 {
 
-struct ServiceWatcher::NameOwnerChanged
+namespace {
+struct NameOwnerChanged
 {
     static const std::string& name()
     {
@@ -38,6 +39,7 @@ struct ServiceWatcher::NameOwnerChanged
     typedef DBus Interface;
     typedef std::tuple<std::string, std::string, std::string> ArgumentType;
 };
+}
 
 struct dbus::ServiceWatcher::Private
 {

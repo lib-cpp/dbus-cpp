@@ -200,7 +200,7 @@ Signal<
 
     SubscriptionToken token = d->handlers.insert(std::make_pair(match_args, h));
 
-    if(new_entry)
+    if (new_entry)
         d->parent->add_match(d->rule.args(match_args));
 
     return token;
@@ -220,7 +220,7 @@ Signal<
 
     MatchRule::MatchArgs match_args(token->first);
     d->handlers.erase(token);
-    if(d->handlers.count(match_args) == 0)
+    if (d->handlers.count(match_args) == 0)
     {
         d->parent->remove_match(d->rule.args(match_args));
     }
@@ -329,7 +329,7 @@ Signal<
                     for (std::size_t i(0); i < index && reader.type() != dbus::ArgumentType::invalid; ++i)
                         reader.pop();
 
-                    if(value != reader.pop_string())
+                    if (value != reader.pop_string())
                     {
                         matched = false;
                         continue;

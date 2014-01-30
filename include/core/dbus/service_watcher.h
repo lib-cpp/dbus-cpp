@@ -66,8 +66,6 @@ private:
     ServiceWatcher(std::shared_ptr<Object> object, const std::string& name,
                 DBus::WatchMode watch_mode = DBus::WatchMode::owner_change);
 
-    struct NameOwnerChanged;
-
     struct Private;
     std::shared_ptr<Private> d;
 };
