@@ -64,6 +64,9 @@ TEST(MessageRouterForType, HandlerDoesNotDeadlock)
     router.install_route(dbus::Message::Type::signal, [&](const dbus::Message::Ptr& msg)
     {
         if (msg->type() == dbus::Message::Type::signal) {
+            /* This will deadlock if the router has not released it's
+             * internal lock before calling this handler.
+             */
             router.uninstall_route(dbus::Message::Type::signal);
             invoked = true;
         }
