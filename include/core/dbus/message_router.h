@@ -88,10 +88,15 @@ public:
     {
         std::unique_lock<std::mutex> ul(guard);
         auto it = router.find(mapper(msg));
-        if (it != router.end())
-            it->second(msg);
-
-        return it != router.end();
+        if (it != router.end()) {
+            // release the lock so that Handler can modify the Router
+            Handler handler = it->second;
+            ul.unlock();
+            handler(msg);
+            return true;
+        } else {
+            return false;
+        }
     }
 
 private:

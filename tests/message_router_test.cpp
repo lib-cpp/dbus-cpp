@@ -52,3 +52,27 @@ TEST(MessageRouterForType, ARegisteredRouteIsInvokedForMessageOfMatchingType)
 
     EXPECT_TRUE(invoked);
 }
+
+TEST(MessageRouterForType, HandlerDoesNotDeadlock)
+{
+    bool invoked {false};
+
+    dbus::MessageRouter<dbus::Message::Type> router([](const dbus::Message::Ptr& msg)
+    {
+        return msg->type();
+    });
+    router.install_route(dbus::Message::Type::signal, [&](const dbus::Message::Ptr& msg)
+    {
+        if (msg->type() == dbus::Message::Type::signal) {
+            /* This will deadlock if the router has not released it's
+             * internal lock before calling this handler.
+             */
+            router.uninstall_route(dbus::Message::Type::signal);
+            invoked = true;
+        }
+    });
+    auto signal = a_signal_message("/core/DBus", "org.freedesktop.DBus", "LaLeLu");
+    router(signal);
+
+    EXPECT_TRUE(invoked);
+}
