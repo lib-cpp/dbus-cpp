@@ -19,6 +19,7 @@
 #define CORE_DBUS_IMPL_SIGNAL_H_
 
 #include <core/dbus/message_streaming_operators.h>
+#include <core/dbus/object.h>
 #include <core/dbus/lifetime_constrained_cache.h>
 
 namespace core
@@ -136,7 +137,14 @@ inline Signal<
 
     d->parent->signal_router.uninstall_route(
         Object::SignalKey{d->interface, d->name});
-    d->parent->remove_match(d->rule);
+
+    // Iterate through the unique keys in the map
+    for (auto it = d->handlers.begin(); it != d->handlers.end();
+            it = d->handlers.upper_bound(it->first))
+    {
+        const MatchRule::MatchArgs& match_args(it->first);
+        d->parent->remove_match(d->rule.args(match_args));
+    }
 }
 
 template<typename SignalDescription>
@@ -167,8 +175,35 @@ Signal<
     >::type
 >::connect(const Handler& h)
 {
+    return connect_with_match_args(h, MatchRule::MatchArgs());
+}
+
+template<typename SignalDescription>
+inline typename Signal<
+SignalDescription,
+typename std::enable_if<
+    is_not_void<typename SignalDescription::ArgumentType>::value,
+    typename SignalDescription::ArgumentType
+>::type
+>::SubscriptionToken
+Signal<
+    SignalDescription,
+    typename std::enable_if<
+        is_not_void<typename SignalDescription::ArgumentType>::value,
+        typename SignalDescription::ArgumentType
+    >::type
+>::connect_with_match_args(const Handler& h, const MatchRule::MatchArgs& match_args)
+{
     std::lock_guard<std::mutex> lg(d->handlers_guard);
-    return d->handlers.insert(d->handlers.end(), h);
+
+    bool new_entry = (d->handlers.find(match_args) == d->handlers.cend());
+
+    SubscriptionToken token = d->handlers.insert(std::make_pair(match_args, h));
+
+    if (new_entry)
+        d->parent->add_match(d->rule.args(match_args));
+
+    return token;
 }
 
 template<typename SignalDescription>
@@ -182,8 +217,15 @@ Signal<
 >::disconnect(const SubscriptionToken& token)
 {
     std::lock_guard<std::mutex> lg(d->handlers_guard);
-    return d->handlers.erase(token);
+
+    MatchRule::MatchArgs match_args(token->first);
+    d->handlers.erase(token);
+    if (d->handlers.count(match_args) == 0)
+    {
+        d->parent->remove_match(d->rule.args(match_args));
+    }
 }
+
 template<typename SignalDescription>
 inline const core::Signal<void>&
 Signal<
@@ -251,7 +293,6 @@ inline Signal<
             &Signal<SignalDescription, typename SignalDescription::ArgumentType>::operator(),
             this,
             std::placeholders::_1));
-    d->parent->add_match(d->rule.type(Message::Type::signal).interface(interface).member(name));
 }
 
 template<typename SignalDescription>
@@ -267,8 +308,40 @@ Signal<
     {
         msg->reader() >> d->value;
         std::lock_guard<std::mutex> lg(d->handlers_guard);
-        for (auto handler : d->handlers)
+        for (auto it : d->handlers)
+        {
+            const MatchRule::MatchArgs& match_args(it.first);
+            const Handler &handler(it.second);
+
+            if (!match_args.empty())
+            {
+                bool matched = true;
+                for(const MatchRule::MatchArg& arg: match_args)
+                {
+                    std::size_t index = arg.first;
+                    const std::string& value = arg.second;
+
+                    // FIXME This code is probably bad, it starts reading the arguments
+                    // from the beginning each time
+                    auto reader = msg->reader();
+
+                    // Wind the reader forward until we get to the desired point
+                    for (std::size_t i(0); i < index && reader.type() != dbus::ArgumentType::invalid; ++i)
+                        reader.pop();
+
+                    if (value != reader.pop_string())
+                    {
+                        matched = false;
+                        continue;
+                    }
+                }
+
+                if (!matched)
+                    continue;
+            }
+
             handler(d->value);
+        }
     }
     catch (const std::runtime_error& e)
     {

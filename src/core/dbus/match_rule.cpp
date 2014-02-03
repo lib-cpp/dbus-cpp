@@ -51,6 +51,7 @@ struct dbus::MatchRule::Private
     std::string interface;
     std::string member;
     types::ObjectPath path;
+    dbus::MatchRule::MatchArgs args;
 };
 
 dbus::MatchRule::MatchRule() : d(new Private())
@@ -136,6 +137,18 @@ dbus::MatchRule dbus::MatchRule::path(const dbus::types::ObjectPath& p) const
     return result.path(p);
 }
 
+dbus::MatchRule& dbus::MatchRule::args(const MatchArgs& p)
+{
+    d->args = p;
+    return *this;
+}
+
+dbus::MatchRule& dbus::MatchRule::args(const MatchArgs& p) const
+{
+    MatchRule result {*this};
+    return result.args(p);
+}
+
 std::string dbus::MatchRule::as_string() const
 {
     static const std::map<Message::Type, std::string> lut =
@@ -157,6 +170,9 @@ std::string dbus::MatchRule::as_string() const
         ss << comma << "member='" << d->member << "'" << comma;
     if (!d->path.empty())
         ss << comma << "path='" << d->path.as_string() << "'" << comma;
+    for(const MatchArg& arg: d->args) {
+        ss << comma << "arg" << arg.first << "='" << arg.second << "'" << comma;
+    }
 
     return ss.str();
 }

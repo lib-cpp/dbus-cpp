@@ -18,18 +18,24 @@
 #ifndef CORE_DBUS_SIGNAL_H_
 #define CORE_DBUS_SIGNAL_H_
 
+#include <core/signal.h>
+
+#include <core/dbus/match_rule.h>
 #include <core/dbus/message.h>
 #include <core/dbus/visibility.h>
 
-
 #include <functional>
 #include <memory>
+#include <mutex>
 #include <string>
+#include <list>
 
 namespace core
 {
 namespace dbus
 {
+class Object;
+
 template<typename T>
 struct is_not_void
 {
@@ -134,7 +140,7 @@ public:
     /**
      * @brief SubscriptionToken is a type that refers to a signal-slot connection.
      */
-    typedef typename std::list<Handler>::iterator SubscriptionToken;
+    typedef typename std::multimap<MatchRule::MatchArgs, Handler>::iterator SubscriptionToken;
 
     inline ~Signal() noexcept;
 
@@ -150,6 +156,8 @@ public:
      * @return A token that corresponds to the signal-slot connection.
      */
     inline SubscriptionToken connect(const Handler& h);
+
+    inline SubscriptionToken connect_with_match_args(const Handler& h, const MatchRule::MatchArgs& match_args);
 
     /**
      * @brief disconnect releases a signal-slot connection
@@ -188,7 +196,7 @@ private:
         std::string name;
         MatchRule rule;
         std::mutex handlers_guard;
-        std::list<Handler> handlers;
+        std::multimap<MatchRule::MatchArgs, Handler> handlers;
         core::Signal<void> signal_about_to_be_destroyed;
     };
     std::shared_ptr<Shared> d;

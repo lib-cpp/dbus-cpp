@@ -19,6 +19,7 @@
 #define CORE_DBUS_DBUS_H_
 
 #include <core/dbus/visibility.h>
+#include <core/dbus/signal.h>
 
 #include <memory>
 #include <string>
@@ -31,6 +32,7 @@ namespace dbus
 class Bus;
 class Object;
 class Service;
+class ServiceWatcher;
 namespace types
 {
 class ObjectPath;
@@ -41,6 +43,16 @@ class ObjectPath;
 class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC DBus
 {
 public:
+    /**
+     * @brief The WatchMode enum lists the different watch modes for service registration.
+     */
+    enum class WatchMode
+    {
+        registration = 0x01, ///< Notify when a name is newly registered.
+        unregistration = 0x02, ///< Notify when a name is newly unregistered.
+        owner_change = 0x03, ///< Notify if the owner name changes at all.
+    };
+
     /** @brief Query the well-known name of the DBus daemon. */
     static const std::string& name();
 
@@ -81,6 +93,14 @@ public:
       * @return A vector of all known participants on the bus.
       */
     std::vector<std::string> list_names() const;
+
+    /**
+     * @brief Create a new service watcher for the specified name and watch mode
+     * @return Unique instance of ServiceWatcher with the specified parameters
+     */
+    std::unique_ptr<ServiceWatcher> make_service_watcher(
+            const std::string& name, WatchMode watch_mode =
+                    WatchMode::owner_change);
 
 private:
     struct ListNames;

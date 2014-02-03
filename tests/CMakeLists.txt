@@ -96,6 +96,11 @@ add_executable(
   )
 
 add_executable(
+  service_watcher_test
+  service_watcher_test.cpp
+  )
+
+add_executable(
   types_test
   types_test.cpp
   )
@@ -241,6 +246,18 @@ target_link_libraries(
   )
 
 target_link_libraries(
+  service_watcher_test
+
+  dbus-cpp
+  dbus-cppc-helper
+
+  ${CMAKE_THREAD_LIBS_INIT}
+  ${Boost_LIBRARIES}
+  ${DBUS_LIBRARIES}
+  ${GTEST_BOTH_LIBRARIES}
+  )
+
+target_link_libraries(
   types_test
 
   dbus-cpp
@@ -274,4 +291,5 @@ add_test(message_test ${CMAKE_CURRENT_BINARY_DIR}/message_test)
 add_test(match_rule_test ${CMAKE_CURRENT_BINARY_DIR}/match_rule_test)
 add_test(message_router_test ${CMAKE_CURRENT_BINARY_DIR}/message_router_test)
 add_test(service_test ${CMAKE_CURRENT_BINARY_DIR}/service_test)
+add_test(service_watcher_test ${CMAKE_CURRENT_BINARY_DIR}/service_watcher_test)
 add_test(signal_delivery_test ${CMAKE_CURRENT_BINARY_DIR}/signal_delivery_test)

@@ -17,9 +17,9 @@
  */
 
 #include <core/dbus/dbus.h>
-
 #include <core/dbus/object.h>
 #include <core/dbus/service.h>
+#include <core/dbus/service_watcher.h>
 
 #include <core/dbus/types/stl/string.h>
 #include <core/dbus/types/stl/vector.h>
@@ -148,5 +148,12 @@ std::string DBus::hello() const
 {
     return object->invoke_method_synchronously<Hello, std::string>().value();
 }
+
+std::unique_ptr<ServiceWatcher> DBus::make_service_watcher(const std::string& name,
+        WatchMode watch_mode)
+{
+    return std::unique_ptr<ServiceWatcher>(new ServiceWatcher(object, name, watch_mode));
+}
+
 }
 }

@@ -25,6 +25,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace core
 {
@@ -36,6 +37,10 @@ namespace dbus
 class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC MatchRule
 {
 public:
+    typedef std::pair<std::size_t, std::string> MatchArg;
+
+    typedef std::vector<MatchArg> MatchArgs;
+
     /**
      * @brief Constructs a valid match rule.
      */
@@ -113,6 +118,20 @@ public:
      * @return A new match rule instance.
      */
     MatchRule path(const types::ObjectPath& p) const;
+
+    /**
+     * @brief Adjusts the string method arguments that this rule applies to.
+     * @param p The new method arguments.
+     * @return The match rule instance.
+     */
+    MatchRule& args(const MatchArgs& p);
+
+    /**
+     * @brief Adjusts the path that this rule applies to.
+     * @param p The new path.
+     * @return A new match rule instance.
+     */
+    MatchRule& args(const MatchArgs& p) const;
 
     /**
      * @brief Constructs a valid match rule string from this instance.
