@@ -6,6 +6,9 @@ export DH_VERBOSE=1
 
 DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 
+export CC=gcc-4.7
+export CXX=g++-4.7
+
 export DPKG_GENSYMBOLS_CHECK_LEVEL=4
 
 %:

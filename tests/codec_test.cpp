@@ -396,7 +396,8 @@ TEST(Properties, DictionaryMappingToVariantsIsEncodedCorrectly)
         counter++;
     }
 
-    EXPECT_EQ(5, counter);
+    unsigned int expected_value{5};
+    EXPECT_EQ(expected_value, counter);
 }
 
 TEST(Properties, DictionaryMappingToVariantsIsEncodedCorrectlyWithMap)
@@ -421,10 +422,11 @@ TEST(Properties, DictionaryMappingToVariantsIsEncodedCorrectlyWithMap)
     std::map<std::string, dbus::types::Variant> map;
     reader >> map;
 
-    EXPECT_EQ(5, map.size());
-    EXPECT_EQ(1, map.at("key1").as<std::uint32_t>());
-    EXPECT_EQ(2, map.at("key2").as<std::uint32_t>());
-    EXPECT_EQ(3, map.at("key3").as<std::uint32_t>());
-    EXPECT_EQ(4, map.at("key4").as<std::uint32_t>());
-    EXPECT_EQ(5, map.at("key5").as<std::uint32_t>());
+    unsigned int expected_value{5};
+    EXPECT_EQ(expected_value, map.size());
+    EXPECT_EQ(std::uint32_t(1), map.at("key1").as<std::uint32_t>());
+    EXPECT_EQ(std::uint32_t(2), map.at("key2").as<std::uint32_t>());
+    EXPECT_EQ(std::uint32_t(3), map.at("key3").as<std::uint32_t>());
+    EXPECT_EQ(std::uint32_t(4), map.at("key4").as<std::uint32_t>());
+    EXPECT_EQ(std::uint32_t(5), map.at("key5").as<std::uint32_t>());
 }

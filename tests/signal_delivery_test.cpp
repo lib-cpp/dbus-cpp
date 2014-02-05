@@ -77,7 +77,7 @@ TEST_F(Service, SignalDeliveryMultipleObjectsSameInterface)
         std::thread t{[bus](){ bus->run(); }};
 
         server_is_running.try_signal_ready_for(std::chrono::milliseconds{1000});
-        EXPECT_EQ(1,
+        EXPECT_EQ(std::uint32_t(1),
                   client_has_setup_signals_and_connections.wait_for_signal_ready_for(
                       std::chrono::milliseconds{500}));
 
@@ -113,7 +113,7 @@ TEST_F(Service, SignalDeliveryMultipleObjectsSameInterface)
         test::Service::Interfaces::Foo::Signals::Dummy::ArgumentType received2 = -1;
 
         // server ready
-        EXPECT_EQ(1,
+        EXPECT_EQ(std::uint32_t(1),
                   server_is_running.wait_for_signal_ready_for(std::chrono::milliseconds{500}));
 
         auto stub_service = dbus::Service::use_service(bus, dbus::traits::Service<test::Service>::interface_name());
@@ -141,8 +141,8 @@ TEST_F(Service, SignalDeliveryMultipleObjectsSameInterface)
         if (t.joinable())
             t.join();
 
-        EXPECT_EQ(received1, 1);
-        EXPECT_EQ(received2, 2);
+        EXPECT_EQ(std::uint32_t(1), received1);
+        EXPECT_EQ(std::uint32_t(2), received2);
 
         return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
@@ -170,7 +170,7 @@ TEST_F(Service, SignalDeliverySameObjectSameInterfaceDifferentSignal)
         std::thread t{[bus](){ bus->run(); }};
 
         server_is_running.try_signal_ready_for(std::chrono::milliseconds{1000});
-        EXPECT_EQ(1,
+        EXPECT_EQ(std::uint32_t(1),
                   client_has_setup_signals_and_connections.wait_for_signal_ready_for(
                       std::chrono::milliseconds{500}));
 
@@ -204,7 +204,7 @@ TEST_F(Service, SignalDeliverySameObjectSameInterfaceDifferentSignal)
         test::Service::Interfaces::Foo::Signals::Bar::ArgumentType received2 = -1;
 
         // server ready
-        EXPECT_EQ(1,
+        EXPECT_EQ(std::uint32_t(1),
                   server_is_running.wait_for_signal_ready_for(std::chrono::milliseconds{500}));
 
         auto stub_service = dbus::Service::use_service(bus, dbus::traits::Service<test::Service>::interface_name());
@@ -231,8 +231,8 @@ TEST_F(Service, SignalDeliverySameObjectSameInterfaceDifferentSignal)
         if (t.joinable())
             t.join();
 
-        EXPECT_EQ(received1, 1);
-        EXPECT_EQ(received2, 2);
+        EXPECT_EQ(std::uint32_t(1), received1);
+        EXPECT_EQ(std::uint32_t(2), received2);
 
         return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
@@ -260,7 +260,7 @@ TEST_F(Service, SignalDeliverySameObjectSameInterfaceSameSignal)
         std::thread t{[bus](){ bus->run(); }};
 
         server_is_running.try_signal_ready_for(std::chrono::milliseconds{1000});
-        EXPECT_EQ(1,
+        EXPECT_EQ(std::uint32_t(1),
                   client_has_setup_signals_and_connections.wait_for_signal_ready_for(
                       std::chrono::milliseconds{500}));
 
@@ -296,7 +296,7 @@ TEST_F(Service, SignalDeliverySameObjectSameInterfaceSameSignal)
         test::Service::Interfaces::Foo::Signals::Dummy::ArgumentType received2 = -1;
 
         // server ready
-        EXPECT_EQ(1,
+        EXPECT_EQ(std::uint32_t(1),
                   server_is_running.wait_for_signal_ready_for(std::chrono::milliseconds{500}));
 
         auto stub_service = dbus::Service::use_service(bus, dbus::traits::Service<test::Service>::interface_name());
@@ -323,8 +323,8 @@ TEST_F(Service, SignalDeliverySameObjectSameInterfaceSameSignal)
         if (t.joinable())
             t.join();
 
-        EXPECT_EQ(received1, 1);
-        EXPECT_EQ(received2, 1);
+        EXPECT_EQ(std::uint32_t(1), received1);
+        EXPECT_EQ(std::uint32_t(1), received2);
 
         return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };

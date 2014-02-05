@@ -65,7 +65,7 @@ TEST_F(ServiceWatcher, Registration)
     {
         core::testing::SigTermCatcher sc;
 
-        EXPECT_EQ(1,
+        EXPECT_EQ(std::uint32_t(1),
                           client_is_listening_for_service_registration.wait_for_signal_ready_for(
                               std::chrono::milliseconds{500}));
 
@@ -122,11 +122,11 @@ TEST_F(ServiceWatcher, Registration)
         if (t.joinable())
             t.join();
 
-        EXPECT_EQ(1, owner_changed.size());
+        EXPECT_EQ(std::uint32_t(1), owner_changed.size());
         EXPECT_FALSE(owner_changed.at(0).first.empty());
         EXPECT_TRUE(owner_changed.at(0).second.empty());
-        EXPECT_EQ(1, service_registered);
-        EXPECT_EQ(0, service_unregistered);
+        EXPECT_EQ(std::uint32_t(1), service_registered);
+        EXPECT_EQ(std::uint32_t(0), service_unregistered);
 
         return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
@@ -145,7 +145,7 @@ TEST_F(ServiceWatcher, Unregistration)
 
         // Ensure that the client is listening for unregistration before we even
         // start the service.
-        EXPECT_EQ(1,
+        EXPECT_EQ(std::uint32_t(1),
                 client_is_listening_for_service_unregistration.wait_for_signal_ready_for(
                               std::chrono::milliseconds{500}));
 
@@ -198,11 +198,11 @@ TEST_F(ServiceWatcher, Unregistration)
         if (t.joinable())
             t.join();
 
-        EXPECT_EQ(1, owner_changed.size());
+        EXPECT_EQ(std::uint32_t(1), owner_changed.size());
         EXPECT_TRUE(owner_changed.at(0).first.empty());
         EXPECT_FALSE(owner_changed.at(0).second.empty());
-        EXPECT_EQ(0, service_registered);
-        EXPECT_EQ(1, service_unregistered);
+        EXPECT_EQ(std::uint32_t(0), service_registered);
+        EXPECT_EQ(std::uint32_t(1), service_unregistered);
 
         return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
