@@ -15,7 +15,7 @@ export DPKG_GENSYMBOLS_CHECK_LEVEL=4
 	dh $@
 
 override_dh_auto_configure:
-	dh_auto_configure -- -DCMAKE_INSTALL_LIBEXECDIR=/usr/lib/$(DEB_HOST_MULTIARCH)/dbus-cpp -DCMAKE_C_COMPILER=$(DEB_HOST_MULTIARCH)-gcc-4.7 -DCMAKE_CXX_COMPILER=$(DEB_HOST_MULTIARCH)-g++-4.7
+	dh_auto_configure -- -DCMAKE_INSTALL_LIBEXECDIR=/usr/lib/$(DEB_HOST_MULTIARCH)/dbus-cpp -DCMAKE_BUILD_TYPE=coverage -DCMAKE_C_COMPILER=$(DEB_HOST_MULTIARCH)-gcc-4.7 -DCMAKE_CXX_COMPILER=$(DEB_HOST_MULTIARCH)-g++-4.7
 
 override_dh_auto_test:
 	if [ "$(DEB_HOST_MULTIARCH)" != "powerpc-linux-gnu" ]; then \
