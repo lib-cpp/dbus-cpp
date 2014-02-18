@@ -901,3 +901,5 @@
  (c++|optional)"typeinfo for core::dbus::Message::Private::Private(DBusMessage*, bool)::{lambda(DBusMessage*)#1}@Base" 0replaceme
  (c++|optional)"std::_Head_base<0u, core::dbus::types::ObjectPath, false>::~_Head_base()@Base" 1.1.0bzr58pkg0trusty105-0ubuntu1
  (c++|optional)"std::_Head_base<0u, core::dbus::types::ObjectPath, false>::~_Head_base()@Base" 1.1.0bzr58pkg0trusty105-0ubuntu1
+ (c++|optional)"std::pair<core::dbus::types::ObjectPath const, std::function<void (std::shared_ptr<core::dbus::Message> const&)> >::pair<core::dbus::types::ObjectPath, std::function<void (std::shared_ptr<core::dbus::Message> const&)>, void>(std::pair<core::dbus::types::ObjectPath, std::function<void (std::shared_ptr<core::dbus::Message> const&)> >&&)@Base" 0replaceme
+ (c++|optional)"std::pair<core::dbus::types::ObjectPath const, std::function<void (std::shared_ptr<core::dbus::Message> const&)> >::pair<core::dbus::types::ObjectPath, std::function<void (std::shared_ptr<core::dbus::Message> const&)>, void>(std::pair<core::dbus::types::ObjectPath, std::function<void (std::shared_ptr<core::dbus::Message> const&)> >&&)@Base" 0replaceme
