@@ -22,9 +22,6 @@
 #include <chrono>
 #include <system_error>
 
-#include <poll.h>
-#include <sys/signalfd.h>
-
 namespace core
 {
 namespace testing
@@ -36,6 +33,9 @@ struct SigTermCatcher
         sigemptyset(&signal_mask);
 
         if (-1 == sigaddset(&signal_mask, SIGTERM))
+            throw std::system_error(errno, std::system_category());
+
+        if (-1 == sigprocmask(SIG_BLOCK, &signal_mask, nullptr))
             throw std::system_error(errno, std::system_category());
     }
 
