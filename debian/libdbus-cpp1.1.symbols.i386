@@ -1,2 +1,2 @@
 libdbus-cpp.so.1 libdbus-cpp1.1 #MINVER#
-(arch=!amd64 !arm64)#include "libdbus-cpp1.1.symbols.32bit"
+#include "libdbus-cpp1.1.symbols.32bit"
