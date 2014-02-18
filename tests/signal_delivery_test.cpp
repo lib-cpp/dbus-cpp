@@ -92,7 +92,7 @@ TEST_F(Service, SignalDeliveryMultipleObjectsSameInterface)
                 > (2);
 
 
-        sc.wait_for_signal_for(std::chrono::seconds{10});
+        sc.wait_for_signal();
 
         bus->stop();
 
@@ -183,7 +183,7 @@ TEST_F(Service, SignalDeliverySameObjectSameInterfaceDifferentSignal)
         auto bar = foo1->get_signal<test::Service::Interfaces::Foo::Signals::Bar>();
         bar->emit(2);
 
-        sc.wait_for_signal_for(std::chrono::seconds{10});
+        sc.wait_for_signal();
 
         bus->stop();
 
@@ -275,7 +275,7 @@ TEST_F(Service, SignalDeliverySameObjectSameInterfaceSameSignal)
                 > (2);
 
 
-        sc.wait_for_signal_for(std::chrono::seconds{10});
+        sc.wait_for_signal();
 
         bus->stop();
 

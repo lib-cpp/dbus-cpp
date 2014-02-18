@@ -109,6 +109,8 @@ struct Service
 
 #include <core/dbus/traits/service.h>
 
+#include <iostream>
+
 namespace core
 {
 namespace dbus
@@ -124,6 +126,7 @@ struct Service<test::Service>
         {
             "this.is.unlikely.to.exist.Service"
         };
+        std::cout << __PRETTY_FUNCTION__ << ": " << s << std::endl;
         return s;
     }
 };

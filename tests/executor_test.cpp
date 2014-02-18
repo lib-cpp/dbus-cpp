@@ -85,7 +85,7 @@ TEST_F(Executor, ABusRunByAnExecutorReceivesSignals)
 
         std::thread worker([bus]() { bus->run(); });
 
-        sc.wait_for_signal_for(std::chrono::milliseconds{500});
+        sc.wait_for_signal();
 
         bus->stop();
 

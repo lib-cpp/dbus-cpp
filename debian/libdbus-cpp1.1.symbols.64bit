@@ -1,4 +1,3 @@
-libdbus-cpp.so.1 libdbus-cpp1.1 #MINVER#
  (c++)"guard variable for core::dbus::DBus::GetConnectionUnixUser::name()::s@Base" 1.0.0+14.04.20140123
  (c++)"guard variable for core::dbus::DBus::GetConnectionUnixProcessID::name()::s@Base" 1.0.0+14.04.20140123
  (c++)"guard variable for core::dbus::DBus::Hello::name()::s@Base" 1.0.0+14.04.20140123

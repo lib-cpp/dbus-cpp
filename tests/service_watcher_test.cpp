@@ -76,7 +76,7 @@ TEST_F(ServiceWatcher, Registration)
 
         std::thread t{[bus](){ bus->run(); }};
 
-        sc.wait_for_signal_for(std::chrono::seconds{10});
+        sc.wait_for_signal();
 
         bus->stop();
 
