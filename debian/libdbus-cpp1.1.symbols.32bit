@@ -406,12 +406,12 @@
  (c++)"std::_Bind<std::function<void (std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >)> (std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >)>::~_Bind()@Base" 1.0.0+14.04.20140123
  (c++)"std::tuple<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >::~tuple()@Base" 1.0.0+14.04.20140123
  (c++)"std::tuple<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >::~tuple()@Base" 1.0.0+14.04.20140123
- (c++)"std::tuple<std::shared_ptr<core::dbus::ServiceWatcher::Private>, std::_Placeholder<1> >::~tuple()@Base" 1.1.0
- (c++)"std::tuple<std::shared_ptr<core::dbus::ServiceWatcher::Private>, std::_Placeholder<1> >::~tuple()@Base" 1.1.0
+ (c++|optional)"std::tuple<std::shared_ptr<core::dbus::ServiceWatcher::Private>, std::_Placeholder<1> >::~tuple()@Base" 1.1.0
+ (c++|optional)"std::tuple<std::shared_ptr<core::dbus::ServiceWatcher::Private>, std::_Placeholder<1> >::~tuple()@Base" 1.1.0
  (c++)"std::tuple<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >::~tuple()@Base" 1.0.0+14.04.20140123
  (c++)"std::tuple<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >::~tuple()@Base" 1.0.0+14.04.20140123
- (c++)"std::tuple<std::shared_ptr<core::dbus::ServiceWatcher::Private>, std::_Placeholder<1> >::~tuple()@Base" 1.1.0
- (c++)"std::tuple<std::shared_ptr<core::dbus::ServiceWatcher::Private>, std::_Placeholder<1> >::~tuple()@Base" 1.1.0
+ (c++|optional)"std::tuple<std::shared_ptr<core::dbus::ServiceWatcher::Private>, std::_Placeholder<1> >::~tuple()@Base" 1.1.0
+ (c++|optional)"std::tuple<std::shared_ptr<core::dbus::ServiceWatcher::Private>, std::_Placeholder<1> >::~tuple()@Base" 1.1.0
  (c++)"void std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::_M_emplace_back_aux<std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&>(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 1.0.0+14.04.20140123
  (c++)"void std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::_M_emplace_back_aux<std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&>(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 1.0.0+14.04.20140123
  (c++)"std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::~vector()@Base" 1.0.0+14.04.20140123
