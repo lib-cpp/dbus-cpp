@@ -94,9 +94,9 @@ public:
             ul.unlock();
             handler(msg);
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
 private:

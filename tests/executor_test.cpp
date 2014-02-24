@@ -85,7 +85,7 @@ TEST_F(Executor, ABusRunByAnExecutorReceivesSignals)
 
         std::thread worker([bus]() { bus->run(); });
 
-        sc.wait_for_signal_for(std::chrono::milliseconds{500});
+        sc.wait_for_signal();
 
         bus->stop();
 
@@ -101,7 +101,7 @@ TEST_F(Executor, ABusRunByAnExecutorReceivesSignals)
         bus->install_executor(dbus::asio::make_executor(bus));
         std::thread t{[bus](){bus->run();}};
         
-        EXPECT_EQ(1, cross_process_sync.wait_for_signal_ready_for(std::chrono::milliseconds{500}));
+        EXPECT_EQ(std::uint32_t(1), cross_process_sync.wait_for_signal_ready_for(std::chrono::milliseconds{500}));
 
         auto stub_service = dbus::Service::use_service(bus, dbus::traits::Service<test::Service>::interface_name());
         auto stub = stub_service->object_for_path(dbus::types::ObjectPath("/this/is/unlikely/to/exist/Service"));

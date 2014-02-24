@@ -89,7 +89,7 @@ TEST(CodecForMaps, DictionaryMappingToVariantsIsEncodedAndDecodedCorrectly)
     std::map<std::string, dbus::types::Variant> result;
     msg->reader() >> result;
 
-    EXPECT_EQ(5, result.size());
+    EXPECT_EQ(std::uint32_t(5), result.size());
 
     for (const auto& element : result)
     {
