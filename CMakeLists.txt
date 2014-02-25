@@ -55,6 +55,8 @@ set(DBUS_CPP_VERSION_MAJOR 1)
 set(DBUS_CPP_VERSION_MINOR 1)
 set(DBUS_CPP_VERSION_PATCH 0)
 
+set(DBUS_CPP_VERSION_ABI 2)
+
 include(CTest)
 
 include_directories(
