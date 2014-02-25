@@ -1,4 +1,4 @@
-dbus-cpp (1.1.0) UNRELEASED; urgency=medium
+dbus-cpp (2.0.0) UNRELEASED; urgency=medium
 
   [ Pete Woods ]
   * Change the way signals register match rules -> ABI version bump
