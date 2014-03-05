@@ -755,3 +755,4 @@
  (c++|optional)"std::basic_string<char, std::char_traits<char>, std::allocator<char> > std::operator+<char, std::char_traits<char>, std::allocator<char> >(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*)@Base" 0replaceme
  (c++|optional)"std::logic_error::logic_error(std::logic_error const&)@Base" 0replaceme
  (c++|optional)"std::logic_error::logic_error(std::logic_error const&)@Base" 0replaceme
+ (c++|optional)"std::__shared_ptr<core::dbus::Message, (__gnu_cxx::_Lock_policy)2>::operator=(std::__shared_ptr<core::dbus::Message, (__gnu_cxx::_Lock_policy)2>&&)@Base" 0replaceme
