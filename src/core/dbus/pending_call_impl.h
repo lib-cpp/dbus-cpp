@@ -24,7 +24,6 @@
 
 #include <dbus/dbus.h>
 
-#include <condition_variable>
 #include <mutex>
 
 namespace core
@@ -62,7 +61,6 @@ private:
 
         if (callback)
             callback(message);
-
     }
 
     DBusPendingCall* pending_call;
@@ -124,8 +122,6 @@ private:
     PendingCall(DBusPendingCall* call)
         : pending_call(call)
     {
-
-
     }
 };
 }
