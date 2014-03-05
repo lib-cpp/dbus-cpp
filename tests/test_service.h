@@ -38,7 +38,7 @@ struct Service
 
         inline static const std::chrono::milliseconds default_timeout()
         {
-            return std::chrono::seconds{1};
+            return std::chrono::milliseconds{10};
         }
     };
 
@@ -126,7 +126,6 @@ struct Service<test::Service>
         {
             "this.is.unlikely.to.exist.Service"
         };
-        std::cout << __PRETTY_FUNCTION__ << ": " << s << std::endl;
         return s;
     }
 };

@@ -36,6 +36,22 @@ namespace dbus = core::dbus;
 
 namespace
 {
+// A very simple wrapper for flipping a coin whether something should go wrong.
+// Please note that we are considering an unfair coin here, with a probability of 0.2
+// for failure.
+struct ChaosMonkey
+{
+    constexpr static const double probability_for_failure{0.2};
+
+    bool thinks_that_something_should_go_wrong()
+    {
+        return coin(rng) == 1;
+    }
+
+    std::mt19937 rng{42};
+    std::binomial_distribution<> coin{1, 1.-probability_for_failure};
+};
+
 struct Executor : public core::dbus::testing::Fixture
 {
 };
@@ -126,6 +142,125 @@ TEST_F(Executor, ABusRunByAnExecutorReceivesSignals)
 
     EXPECT_EQ(core::testing::ForkAndRunResult::empty, core::testing::fork_and_run(service, client));
 }
+
+TEST_F(Executor, TimeoutsAreHandledCorrectly)
+{
+    core::testing::CrossProcessSync cross_process_sync;
+
+    const int64_t expected_value = 42;
+    auto service = [this, expected_value, &cross_process_sync]()
+    {
+        ChaosMonkey chaos_monkey;
+        core::testing::SigTermCatcher sc;
+        auto bus = session_bus();
+        bus->install_executor(dbus::asio::make_executor(bus));
+        auto service = dbus::Service::add_service<test::Service>(bus);
+        auto skeleton = service->add_object_for_path(dbus::types::ObjectPath("/this/is/unlikely/to/exist/Service"));
+        skeleton->install_method_handler<test::Service::Method>(
+            [bus, skeleton, expected_value, &chaos_monkey](const dbus::Message::Ptr& msg)
+        {
+            // Let's add some randomness to this test and see if things are still stable.
+            // In this case, chaos means an early return and no reply being sent.
+            if (chaos_monkey.thinks_that_something_should_go_wrong())
+                return;
+
+            auto reply = dbus::Message::make_method_return(msg);
+            reply->writer() << expected_value;
+            bus->send(reply);
+        });
+
+        cross_process_sync.try_signal_ready_for(std::chrono::milliseconds{500});
+
+        std::thread w1([bus]() { bus->run(); });
+        std::thread w2([bus]() { bus->run(); });
+
+        sc.wait_for_signal();
+
+        bus->stop();
+
+        if (w1.joinable())
+            w1.join();
+
+        if (w2.joinable())
+            w2.join();
+
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
+    };
+
+    auto client = [this, expected_value, &cross_process_sync]() -> core::posix::exit::Status
+    {
+        auto bus = session_bus();
+        bus->install_executor(dbus::asio::make_executor(bus));
+        std::thread t{[bus](){bus->run();}};
+
+        // If you encounter failures in the client, uncomment the following two lines
+        // and follow the instructions on the terminal.
+        // std::cout << "Invoke gdb with: sudo gdb -p " << getpid() << std::endl;
+        // sleep(10);
+
+        EXPECT_EQ(std::uint32_t(1), cross_process_sync.wait_for_signal_ready_for(std::chrono::milliseconds{500}));
+
+        auto stub_service = dbus::Service::use_service(bus, dbus::traits::Service<test::Service>::interface_name());
+        auto stub = stub_service->object_for_path(dbus::types::ObjectPath("/this/is/unlikely/to/exist/Service"));
+
+        std::thread updater1([bus, stub]()
+        {
+            for (unsigned int counter = 0; counter < 1000; counter++)
+            {
+                try
+                {
+                    auto result = stub->transact_method<test::Service::Method, int64_t>();
+
+                    if (result.is_error())
+                        std::cout << result.error().print() << std::endl;
+                    else
+                        EXPECT_EQ(42, result.value());
+
+                } catch(const std::runtime_error& e)
+                {
+                    std::cout << e.what() << std::endl;
+                }
+            }
+        });
+
+        std::thread updater2([bus, stub]()
+        {
+            for (unsigned int counter = 0; counter < 1000; counter++)
+            {
+                try
+                {
+                    auto result = stub->transact_method<test::Service::Method, int64_t>();
+
+                    if (result.is_error())
+                        std::cout << result.error().print() << std::endl;
+                    else
+                        EXPECT_EQ(42, result.value());
+
+                } catch(const std::runtime_error& e)
+                {
+                    std::cout << e.what() << std::endl;
+                }
+            }
+        });
+
+        if (updater1.joinable())
+            updater1.join();
+
+        if (updater2.joinable())
+            updater2.join();
+
+        bus->stop();
+
+        if (t.joinable())
+            t.join();
+
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
+    };
+
+    EXPECT_EQ(core::testing::ForkAndRunResult::empty, core::testing::fork_and_run(service, client));
+}
+
+
 
 /*TEST(Bus, TimeoutThrowsForNullDBusWatch)
 {

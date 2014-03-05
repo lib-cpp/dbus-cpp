@@ -98,12 +98,16 @@ TEST_F(DBus, QueryingUnixProcessIdReturnsCorrectResult)
         object->install_method_handler<test::Service::Method>(handler);
         barrier.try_signal_ready_for(std::chrono::milliseconds{500});
 
-        std::thread t{[bus](){ bus->run(); }};
+        std::thread t1{[bus](){ bus->run(); }};
+        std::thread t2{[bus](){ bus->run(); }};
 
         sc.wait_for_signal();
 
-        if (t.joinable())
-            t.join();
+        if (t1.joinable())
+            t1.join();
+
+        if (t2.joinable())
+            t2.join();
 
         EXPECT_EQ(pid, sender_pid);
         EXPECT_EQ(uid, sender_uid);

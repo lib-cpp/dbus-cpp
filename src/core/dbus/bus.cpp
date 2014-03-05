@@ -252,6 +252,16 @@ std::shared_ptr<Message> Bus::send_with_reply_and_block_for_at_most(
         const std::shared_ptr<Message>& msg,
         const std::chrono::milliseconds& milliseconds)
 {
+    // TODO(tvoss): Enable this once method handlers have been adjusted to
+    // operate on contexts.
+    // if (d->executor)
+    // {
+    //    throw std::logic_error("Calling Bus::send_with_reply_and_block_for_at_most on a "
+    //                           "connection that is run by an executor, i.e., an event loop "
+    //                           "is not supported as the underlying implementation in libdbus "
+    //                           "is racy");
+    //}
+
     Error se;
 
     auto result = dbus_connection_send_with_reply_and_block(
@@ -277,7 +287,7 @@ PendingCall::Ptr Bus::send_with_reply_and_timeout(
                 std::addressof(pending_call),
                 timeout.count());
 
-    if (!result)
+    if (result == FALSE)
         throw Errors::NoMemory{};
 
     if (!pending_call)

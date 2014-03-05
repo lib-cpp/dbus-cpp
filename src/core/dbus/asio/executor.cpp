@@ -25,7 +25,12 @@
 #include <boost/asio/io_service.hpp>
 
 #include <stdexcept>
+
+#include <condition_variable>
 #include <memory>
+#include <mutex>
+#include <future>
+#include <thread>
 
 namespace core
 {
@@ -40,7 +45,7 @@ struct Timeout<DBusTimeout>
 
     static inline bool is_timeout_enabled(DBusTimeout* timeout)
     {
-        return dbus_timeout_get_enabled(timeout);
+        return TRUE == dbus_timeout_get_enabled(timeout);
     }
 
     static inline int get_timeout_interval(DBusTimeout* timeout)
@@ -64,7 +69,7 @@ struct Watch<DBusWatch>
 
     static inline bool is_watch_enabled(DBusWatch* watch)
     {
-        return dbus_watch_get_enabled(watch);
+        return TRUE == dbus_watch_get_enabled(watch);
     }
 
     static inline int get_watch_unix_fd(DBusWatch* watch)
@@ -105,9 +110,9 @@ public:
                 throw std::runtime_error("Precondition violated: timeout has to be non-null");
         }
 
-        ~Timeout() noexcept
+        ~Timeout()
         {
-            timer.cancel();
+            // cancel();
         }
 
         void start()
@@ -117,37 +122,36 @@ public:
                 return;
             }
 
-            timer.expires_from_now(boost::posix_time::milliseconds(traits::Timeout<UnderlyingTimeoutType>::get_timeout_interval(timeout)));
-            timer.async_wait(std::bind(&Timeout::on_timeout, Timeout<UnderlyingTimeoutType>::shared_from_this(), std::placeholders::_1));
-        }
-
-        void restart_or_cancel()
-        {
-            if (!traits::Timeout<UnderlyingTimeoutType>::is_timeout_enabled(timeout))
-            {
-                timer.cancel();
-                return;
-            }
-
-            timer.expires_from_now(boost::posix_time::milliseconds(traits::Timeout<UnderlyingTimeoutType>::get_timeout_interval(timeout)));
-            timer.async_wait(std::bind(&Timeout::on_timeout, Timeout<UnderlyingTimeoutType>::shared_from_this(), std::placeholders::_1));
+            timer.expires_from_now(
+                        boost::posix_time::milliseconds(
+                            traits::Timeout<UnderlyingTimeoutType>::get_timeout_interval(
+                                timeout)));
+            timer.async_wait(
+                        std::bind(&Timeout::on_timeout,
+                                  Timeout<UnderlyingTimeoutType>::shared_from_this(),
+                                  std::placeholders::_1));
         }
 
         void cancel()
         {
-            timer.cancel();
+            try
+            {
+                timer.cancel();
+            } catch(...)
+            {
+                // Really not sure what we should do about exceptions here.
+            }
         }
 
         void on_timeout(const boost::system::error_code& ec)
         {
+            if (ec == boost::asio::error::operation_aborted)
+                return;
+
             if (ec)
                 return;
 
-            if (ec != boost::asio::error::operation_aborted)
-            {
-                traits::Timeout<UnderlyingTimeoutType>::invoke_timeout_handler(timeout);
-                restart_or_cancel();
-            }
+            traits::Timeout<UnderlyingTimeoutType>::invoke_timeout_handler(timeout);
         }
 
         boost::asio::io_service& io_service;
@@ -299,7 +303,7 @@ public:
                     Holder<std::shared_ptr<Timeout<>>>::ptr_delete);
 
         t->start();
-        return true;
+        return TRUE;
     }
 
     static void on_dbus_remove_timeout(DBusTimeout* timeout, void*)
@@ -310,13 +314,20 @@ public:
     static void on_dbus_timeout_toggled(DBusTimeout* timeout, void*)
     {
         auto holder = static_cast<Holder<std::shared_ptr<Timeout<>>>*>(dbus_timeout_get_data(timeout));
-        holder->value->restart_or_cancel();
+        holder->value->start();
     }
 
     static void on_dbus_wakeup_event_loop(void* data)
     {
         auto thiz = static_cast<Executor*>(data);
-        thiz->io_service.post(std::bind(dbus_connection_dispatch, thiz->bus->raw()));
+        auto bus = thiz->bus;
+        thiz->io_service.post([bus]()
+        {
+            while (dbus_connection_get_dispatch_status(bus->raw()) == DBUS_DISPATCH_DATA_REMAINS)
+            {
+                dbus_connection_dispatch(bus->raw());
+            }
+        });
     }
 
 public:

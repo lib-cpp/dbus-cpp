@@ -24,6 +24,7 @@
 
 #include <dbus/dbus.h>
 
+#include <condition_variable>
 #include <mutex>
 
 namespace core
@@ -37,69 +38,96 @@ class PendingCall : public core::dbus::PendingCall
 private:
     struct Wrapper
     {
-        std::shared_ptr<PendingCall> pending_call;
+        std::shared_ptr<core::dbus::impl::PendingCall> pending_call;
     };
 
     static void on_pending_call_completed(DBusPendingCall* call,
                                           void* cookie)
     {
+        // std::cout << __PRETTY_FUNCTION__  << std::endl;
         auto wrapper = static_cast<Wrapper*>(cookie);
-        std::lock_guard<std::mutex> lg(wrapper->pending_call->callback_guard);
-        if (wrapper->pending_call->callback)
-        {
-            auto message = dbus_pending_call_steal_reply(call);
-            if (message)
-                wrapper->pending_call->callback(Message::from_raw_message(message));
-        }
+
+        auto message = dbus_pending_call_steal_reply(call);
+
+        if (!message)
+            std::cout << "\t Received a null reply." << std::endl;
+
+        wrapper->pending_call->notify(Message::from_raw_message(message));
+    }
+
+    void notify(const Message::Ptr& msg)
+    {
+        std::lock_guard<std::mutex> lg(guard);
+
+        message = msg;
+
+        if (callback)
+            callback(message);
+
     }
 
     DBusPendingCall* pending_call;
-    std::mutex callback_guard;
-    core::dbus::PendingCall::Notification callback;
+    std::mutex guard;
+    Message::Ptr message;
+    PendingCall::Notification callback;
 
 public:
     inline static core::dbus::PendingCall::Ptr create(DBusPendingCall* call)
     {
-        auto result = std::shared_ptr<core::dbus::impl::PendingCall>(
-                    new core::dbus::impl::PendingCall(call));
+        auto result = std::shared_ptr<core::dbus::impl::PendingCall>
+        {
+            new core::dbus::impl::PendingCall{call}
+        };
 
-        dbus_pending_call_set_notify(
-                    result->pending_call,
-                    PendingCall::on_pending_call_completed,
-                    new Wrapper{result},
-                    [](void* data) { delete static_cast<Wrapper*>(data); });
+        if (FALSE == dbus_pending_call_set_notify(
+                result->pending_call,
+                PendingCall::on_pending_call_completed,
+                new Wrapper{result},
+                [](void* data)
+                {
+                    delete static_cast<Wrapper*>(data);
+                }))
+        {
+            throw std::runtime_error("Error setting up pending call notification.");
+        }
+
+        // And here comes the beauty of libdbus, and its racy architecture:
+        {
+            std::lock_guard<std::mutex> lg(result->guard);
+            if (TRUE == dbus_pending_call_get_completed(call))
+            {
+                // We took too long while setting up the pending call notification.
+                // For that we now have to inject the message here.
+                auto msg = dbus_pending_call_steal_reply(call);
+                result->message = Message::from_raw_message(msg);
+            }
+        }
 
         return std::dynamic_pointer_cast<core::dbus::PendingCall>(result);
     }
 
-    inline std::shared_ptr<Message> wait_for_reply()
-    {
-        dbus_pending_call_block(pending_call);
-        auto reply = dbus_pending_call_steal_reply(pending_call);
-
-        if (!reply)
-        {
-            // TODO(tvoss): Throw PendingCallYieldedEmptyReply.
-        }
-
-        return Message::from_raw_message(reply);
-    }
-
     void cancel()
     {
+        // std::cout << __PRETTY_FUNCTION__ << std::endl;
         dbus_pending_call_cancel(pending_call);
     }
 
     void then(const core::dbus::PendingCall::Notification& notification)
     {
-        std::lock_guard<std::mutex> lg{callback_guard};
+        // std::cout << __PRETTY_FUNCTION__ << std::endl;
+        std::lock_guard<std::mutex> lg(guard);
         callback = notification;
+
+        if (message)
+            callback(message);
     }
 
 private:
     PendingCall(DBusPendingCall* call)
         : pending_call(call)
     {
+
+
     }
 };
 }

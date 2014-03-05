@@ -323,8 +323,8 @@ TEST_F(Service, SignalDeliverySameObjectSameInterfaceSameSignal)
         if (t.joinable())
             t.join();
 
-        EXPECT_EQ(std::uint32_t(1), received1);
-        EXPECT_EQ(std::uint32_t(1), received2);
+        EXPECT_EQ(std::uint32_t(2), received1);
+        EXPECT_EQ(std::uint32_t(2), received2);
 
         return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };

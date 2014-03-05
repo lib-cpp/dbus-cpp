@@ -63,12 +63,6 @@ public:
     bool operator==(const PendingCall&) const = delete;
 
     /**
-     * @brief Suspends the current thread until a reply has arrived.
-     * @return Pointer to a message.
-     */
-    virtual std::shared_ptr<Message> wait_for_reply() = 0;
-
-    /**
      * @brief Cancels the outstanding call.
      */
     virtual void cancel() = 0;
