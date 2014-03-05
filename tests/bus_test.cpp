@@ -91,8 +91,6 @@ TEST_F(Bus, NonBlockingMethodInvocationSucceedsForValidMessage)
     bus->install_executor(dbus::asio::make_executor(bus));
     std::thread t{[bus](){bus->run();}};
 
-    std::this_thread::sleep_for(std::chrono::seconds{1});
-
     const std::chrono::milliseconds timeout = std::chrono::seconds(10);
 
     auto call = bus->send_with_reply_and_timeout(msg, timeout);
