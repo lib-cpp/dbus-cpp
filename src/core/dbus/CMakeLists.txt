@@ -47,6 +47,12 @@ add_library(
 
   types/object_path.cpp
 )
+# We compile with all symbols visible by default. For the shipping library, we strip
+# out all symbols that are not in core::dbus::*
+set(symbol_map "${CMAKE_SOURCE_DIR}/symbols.map")
+set_target_properties(dbus-cpp PROPERTIES
+                      LINK_FLAGS "${ldflags} -Wl,--version-script,${symbol_map}")
+set_target_properties(dbus-cpp PROPERTIES LINK_DEPENDS ${symbol_map})
 
 target_link_libraries(
   dbus-cpp
