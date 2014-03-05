@@ -44,15 +44,14 @@ private:
     static void on_pending_call_completed(DBusPendingCall* call,
                                           void* cookie)
     {
-        // std::cout << __PRETTY_FUNCTION__  << std::endl;
         auto wrapper = static_cast<Wrapper*>(cookie);
 
         auto message = dbus_pending_call_steal_reply(call);
 
-        if (!message)
-            std::cout << "\t Received a null reply." << std::endl;
-
-        wrapper->pending_call->notify(Message::from_raw_message(message));
+        if (message)
+        {
+            wrapper->pending_call->notify(Message::from_raw_message(message));
+        }
     }
 
     void notify(const Message::Ptr& msg)
@@ -108,16 +107,15 @@ public:
 
     void cancel()
     {
-        // std::cout << __PRETTY_FUNCTION__ << std::endl;
         dbus_pending_call_cancel(pending_call);
     }
 
     void then(const core::dbus::PendingCall::Notification& notification)
     {
-        // std::cout << __PRETTY_FUNCTION__ << std::endl;
         std::lock_guard<std::mutex> lg(guard);
         callback = notification;
 
+        // We already have a reply and invoke the callback directly.
         if (message)
             callback(message);
     }
