@@ -59,7 +59,7 @@ public:
     template<typename T>
     static inline Variant encode(T t)
     {
-        auto encoder = [t](dbus::Message::Writer& writer)
+        Encoder encoder = [t](dbus::Message::Writer& writer)
         {
             Codec<T>::encode_argument(writer, t);
         };
@@ -74,7 +74,7 @@ public:
     template<typename T>
     static inline Variant decode(T& t)
     {
-        auto decoder = [&t](dbus::Message::Reader& reader)
+        Decoder decoder = [&t](dbus::Message::Reader& reader)
         {
             Codec<T>::decode_argument(reader, t);
         };
@@ -94,7 +94,7 @@ public:
         };
     }
 
-    inline Variant(const Variant& rhs) = default;
+    inline Variant(const Variant&) = default;
 
     inline Variant(Variant&& rhs)
         : encoder(std::move(rhs.encoder)),

@@ -100,7 +100,7 @@ TEST_F(DBus, QueryingUnixProcessIdReturnsCorrectResult)
 
         std::thread t{[bus](){ bus->run(); }};
 
-        sc.wait_for_signal_for(std::chrono::seconds{2});
+        sc.wait_for_signal();
 
         if (t.joinable())
             t.join();
