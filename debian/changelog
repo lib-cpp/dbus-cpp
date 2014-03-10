@@ -1,12 +1,36 @@
-dbus-cpp (2.0.0) UNRELEASED; urgency=medium
+dbus-cpp (2.0.0+14.04.20140310-0ubuntu1) trusty; urgency=medium
 
   [ Pete Woods ]
   * Change the way signals register match rules -> ABI version bump
+  * Mark symbols that only appear when built under Jenkins as optional.
 
   [ Ubuntu daily release ]
   * debian/*symbols: auto-update new symbols to released version
+  * New rebuild forced
 
- -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 10 Mar 2014 09:20:02 +0000
+  [ thomas-voss ]
+  * Make sure that signals call about_to_be_destroyed. Make
+    core::dbus::Signal report that it is about to be destructed. Add a
+    thread-safe lifetime constrained object cache & accompanying tests.
+  * Add dbus as runtime dependency for libdbus-cpp-dev. (LP: #1272191)
+  * Don't exit on dbus connection close.
+  * Remove local versions of cross-process-sync and fork-and-run.
+  * Switch to release build type for production builds.
+  * Small adjustments to the symbols file.
+  * Try to create symbols files for each architecture, not caring for
+    too much redundancy. It's really hard to maintain those otherwise.
+  * Add a test for racyness and provide an alternative to _and_block.
+
+  [ Antti Kaijanmäki ]
+  * Fix stack corruption in core::dbus::Message::pop_boolean().
+  * Fix Signal::emit().
+  * Fix deadlock in MessageRouter.
+
+  [ Łukasz 'sil2100' Zemczak ]
+  * Try to create symbols files for each architecture, not caring for
+    too much redundancy. It's really hard to maintain those otherwise.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 10 Mar 2014 09:20:09 +0000
 
 dbus-cpp (1.0.0+14.04.20140123.1-0ubuntu1) trusty; urgency=medium
 
