@@ -9,6 +9,12 @@ include /usr/share/dpkg/default.mk
 export CC=$(DEB_HOST_GNU_TYPE)-gcc-4.7
 export CXX=$(DEB_HOST_GNU_TYPE)-g++-4.7
 
+# g++-4.7 does not have SSP. This workaround can be removed
+# when we switch to gcc 4.8
+ifeq (arm64,$(DEB_HOST_ARCH))
+	export DEB_CXXFLAGS_MAINT_STRIP := -fstack-protector
+endif
+
 export DPKG_GENSYMBOLS_CHECK_LEVEL=4
 
 %:
