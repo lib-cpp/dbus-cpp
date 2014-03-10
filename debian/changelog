@@ -1,9 +1,21 @@
-dbus-cpp (1.1.0) UNRELEASED; urgency=medium
+dbus-cpp (2.0.0) UNRELEASED; urgency=medium
 
   [ Pete Woods ]
   * Change the way signals register match rules -> ABI version bump
 
  -- Pete Woods <pete.woods@canonical.com>  Mon, 03 Feb 2014 10:10:41 +0000
+
+dbus-cpp (1.0.0+14.04.20140123.1-0ubuntu1) trusty; urgency=medium
+
+  [ Thomas Voß ]
+  * Force compilation against GCC 4.7. Account for toolchain differences.
+
+  [ Łukasz 'sil2100' Zemczak ]
+  * Drop symbols file as a last minute decision. The ABI is not stable and
+    different between architectures. This change won't be merged in trunk.
+    shlibs -V is used in the meantime.
+
+ -- Lukasz 'sil2100' Zemczak <lukasz.zemczak@canonical.com>  Wed, 05 Feb 2014 13:42:44 +0000
 
 dbus-cpp (1.0.0+14.04.20140123-0ubuntu1) trusty; urgency=low
 

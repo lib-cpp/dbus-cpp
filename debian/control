@@ -24,7 +24,7 @@ Homepage: http://launchpad.net/dbus-cpp
 Vcs-Bzr: https://code.launchpad.net/~phablet-team/dbus-cpp/trunk
 Vcs-Browser: http://bazaar.launchpad.net/~phablet-team/dbus-cpp/trunk/files
 
-Package: libdbus-cpp1.1
+Package: libdbus-cpp2
 Section: libdevel
 Architecture: any
 Multi-Arch: same
@@ -41,7 +41,7 @@ Architecture: any
 Multi-Arch: foreign
 Depends: ${misc:Depends},
          ${shlibs:Depends},
-         libdbus-cpp1.1 (= ${binary:Version})
+         libdbus-cpp2 (= ${binary:Version})
 Description: header-only dbus-binding leveraging C++-11
  Protocol compiler and generator to automatically generate protocol headers from
  introspection XML.
@@ -53,7 +53,7 @@ Multi-Arch: same
 Depends: ${misc:Depends},
          ${shlibs:Depends},
          dbus,
-         libdbus-cpp1.1 (= ${binary:Version})
+         libdbus-cpp2 (= ${binary:Version})
 Replaces: dbus-cpp-dev
 Conflicts: dbus-cpp-dev
 Provides: dbus-cpp-dev
