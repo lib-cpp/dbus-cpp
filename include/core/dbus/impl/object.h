@@ -85,6 +85,12 @@ inline Result<ResultType> Object::invoke_method_synchronously(const Args& ... ar
 }
 
 template<typename Method, typename ResultType, typename... Args>
+inline Result<ResultType> Object::transact_method(const Args& ... args)
+{
+    return invoke_method_asynchronously<Method, ResultType, Args...>(args...).get();
+}
+
+template<typename Method, typename ResultType, typename... Args>
 inline std::future<Result<ResultType>> Object::invoke_method_asynchronously(const Args& ... args)
 {
     auto msg_factory = parent->get_connection()->message_factory();
@@ -97,41 +103,22 @@ inline std::future<Result<ResultType>> Object::invoke_method_asynchronously(cons
     if (!msg)
         throw std::runtime_error("No memory available to allocate DBus message");
     
-    msg->writer().append(args...);    
+    auto writer = msg->writer();
+    encode_message(writer, args...);
 
     auto pending_call =
             parent->get_connection()->send_with_reply_and_timeout(
-                msg->get(), Method::default_timeout());
+                msg, Method::default_timeout());
     
-    auto cb = 
-            [](DBusPendingCall* pending, void* user_data)
-            {
-                auto promise = static_cast<std::promise<Result<ResultType>>*>(user_data);
-                
-                auto msg = dbus_pending_call_steal_reply(pending);
-                if (msg)
-                {
-                    auto result = Result<ResultType>::from_message(msg);
-                    promise->set_value(result);
-                }
-                else
-                {
-                    promise->set_exception(std::make_exception_ptr(std::runtime_error("Method invocation timed out")));
-                }
-            };
+    auto promise = std::make_shared<std::promise<Result<ResultType>>>();
+    auto future = promise->get_future();
 
-    auto promise = new std::promise<Result<ResultType>>();
+    pending_call->then([promise](const Message::Ptr& reply)
+    {
+        promise->set_value(Result<ResultType>::from_message(reply));
+    });
 
-    dbus_pending_call_set_notify(
-        pending_call,
-        cb,
-        promise,
-        [](void* p)
-        {
-            delete static_cast<std::promise<Result<ResultType>>*>(p);
-        });
-
-    return promise->get_future();
+    return future;
 }
 
 template<typename PropertyDescription>

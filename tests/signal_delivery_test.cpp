@@ -314,7 +314,9 @@ TEST_F(Service, SignalDeliverySameObjectSameInterfaceSameSignal)
         foo2signal->connect([bus, &received2](test::Service::Interfaces::Foo::Signals::Dummy::ArgumentType value)
         {
             received2 = value;
-            bus->stop();
+
+            if (received2 == 2)
+                bus->stop();
         });
 
         // signals connected
@@ -323,8 +325,8 @@ TEST_F(Service, SignalDeliverySameObjectSameInterfaceSameSignal)
         if (t.joinable())
             t.join();
 
-        EXPECT_EQ(std::uint32_t(1), received1);
-        EXPECT_EQ(std::uint32_t(1), received2);
+        EXPECT_EQ(2u, received1);
+        EXPECT_EQ(2u, received2);
 
         return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };

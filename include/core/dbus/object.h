@@ -97,7 +97,7 @@ class Object : public std::enable_shared_from_this<Object>
     inline void emit_signal(const Args& ... args);
 
     /**
-     * @brief Invokes a method of a remote object blocking while waiting for the result.
+     * @brief Invokes a method of a remote object blocking the bus instance while waiting for the result.
      * @tparam Method The method to invoke.
      * @tparam ResultType The expected type of the result.
      * @tparam Args Parameter pack of arguments passed to the invocation.
@@ -106,6 +106,17 @@ class Object : public std::enable_shared_from_this<Object>
      */
     template<typename Method, typename ResultType, typename... Args>
     inline Result<ResultType> invoke_method_synchronously(const Args& ... args);
+
+    /**
+     * @brief Invokes a method of a remote object blocking the current thread while waiting for the result.
+     * @tparam Method The method to invoke.
+     * @tparam ResultType The expected type of the result.
+     * @tparam Args Parameter pack of arguments passed to the invocation.
+     * @param [in] args Argument instances passed to the invocation.
+     * @return A future wrapping an invocation result, either signalling an error or containing the result of the invocation.
+     */
+    template<typename Method, typename ResultType, typename... Args>
+    inline Result<ResultType> transact_method(const Args& ... args);
 
     /**
      * @brief Invokes a method of a remote object returning a std::future to synchronize with the result

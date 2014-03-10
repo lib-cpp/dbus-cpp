@@ -1,0 +1,5 @@
+ (c++|optional)"core::dbus::ServiceWatcher::Private::Private()@Base" 0replaceme
+ (c++|optional)"core::dbus::Bus::Name::~Name()@Base" 0replaceme
+ (c++|optional)"core::dbus::Bus::Private::~Private()@Base" 0replaceme
+ (c++|optional)"core::dbus::Message::Writer::Private::~Private()@Base" 0replaceme
+ (c++|optional)"typeinfo for core::dbus::Message::Private::Private(DBusMessage*, bool)::{lambda(DBusMessage*)#1}@Base" 0replaceme

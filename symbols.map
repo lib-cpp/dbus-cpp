@@ -1,0 +1,16 @@
+{
+global:
+    extern "C++" {
+        core::dbus::*;
+	typeinfo?for?core::dbus::*;
+	typeinfo?name?for?core::dbus::*;
+	VTT?for?core::dbus::*;
+	virtual?thunk?to?core::dbus::*;
+	vtable?for?core::dbus::*;
+	std::hash*;
+    };
+local:
+    extern "C++" {
+        *;
+    };
+};

@@ -88,13 +88,26 @@ TEST_F(Bus, NonBlockingMethodInvocationSucceedsForValidMessage)
                 "ListNames");
 
     auto bus = session_bus();
+    bus->install_executor(dbus::asio::make_executor(bus));
+    std::thread t{[bus](){bus->run();}};
+
     const std::chrono::milliseconds timeout = std::chrono::seconds(10);
 
     auto call = bus->send_with_reply_and_timeout(msg, timeout);
-    auto reply = call->wait_for_reply();
-    EXPECT_EQ(dbus::Message::Type::method_return, reply->type());
-    std::vector<std::string> result; reply->reader() >> result;
-    EXPECT_TRUE(result.size() > 0);
+    auto promise = std::make_shared<std::promise<std::vector<std::string>>>();
+    auto future = promise->get_future();
+    call->then([promise](const core::dbus::Message::Ptr& reply)
+    {
+        std::vector<std::string> result; reply->reader() >> result;
+        promise->set_value(result);
+    });
+
+    EXPECT_TRUE(future.get().size() > 0);
+
+    bus->stop();
+
+    if (t.joinable())
+        t.join();
 }
 
 TEST_F(Bus, HasOwnerForNameReturnsTrueForExistingName)

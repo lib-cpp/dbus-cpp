@@ -146,6 +146,7 @@ uint32_t DBus::get_connection_unix_user(const std::string& name) const
 
 std::string DBus::hello() const
 {
+    // TODO: We really should switch to method transaction here.
     return object->invoke_method_synchronously<Hello, std::string>().value();
 }
 
