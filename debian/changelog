@@ -1,3 +1,16 @@
+dbus-cpp (2.0.0+14.04.20140322-0ubuntu1) trusty; urgency=low
+
+  [ CI bot ]
+  * Resync trunk
+
+  [ Robert Bruce Park ]
+  * Do not build-dep explicitly on specific g++ version for ppc64-el.
+
+  [ thomas-voss ]
+  * Do not build-dep explicitly on specific g++ version for ppc64-el.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Sat, 22 Mar 2014 09:42:35 +0000
+
 dbus-cpp (2.0.0+14.04.20140310-0ubuntu1) trusty; urgency=medium
 
   [ Pete Woods ]
