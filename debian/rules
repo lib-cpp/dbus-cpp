@@ -12,8 +12,12 @@ endif
 
 include /usr/share/dpkg/default.mk
 
-export CC=$(DEB_HOST_GNU_TYPE)-gcc-4.7
-export CXX=$(DEB_HOST_GNU_TYPE)-g++-4.7
+ifneq (ppc64el,$(DEB_HOST_ARCH))
+	export GCC_VERSION := -4.7
+endif
+
+export CC=$(DEB_HOST_GNU_TYPE)-gcc$(GCC_VERSION)
+export CXX=$(DEB_HOST_GNU_TYPE)-g++$(GCC_VERSION)
 
 export DPKG_GENSYMBOLS_CHECK_LEVEL=4
 
@@ -21,7 +25,7 @@ export DPKG_GENSYMBOLS_CHECK_LEVEL=4
 	dh $@
 
 override_dh_auto_configure:
-	dh_auto_configure -- -DCMAKE_INSTALL_LIBEXECDIR=/usr/lib/$(DEB_HOST_MULTIARCH)/dbus-cpp -DCMAKE_C_COMPILER=$(DEB_HOST_GNU_TYPE)-gcc-4.7 -DCMAKE_CXX_COMPILER=$(DEB_HOST_GNU_TYPE)-g++-4.7
+	dh_auto_configure -- -DCMAKE_INSTALL_LIBEXECDIR=/usr/lib/$(DEB_HOST_MULTIARCH)/dbus-cpp -DCMAKE_C_COMPILER=$(DEB_HOST_GNU_TYPE)-gcc$(GCC_VERSION) -DCMAKE_CXX_COMPILER=$(DEB_HOST_GNU_TYPE)-g++$(GCC_VERSION)
 
 override_dh_auto_test:
 	if [ "$(DEB_HOST_MULTIARCH)" != "powerpc-linux-gnu" ]; then \
