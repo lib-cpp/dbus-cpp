@@ -205,7 +205,7 @@ public:
      * @throw Bus::Errors::AlreadyOwned if the name is already owned on the bus.
      * @return A unique instance if the ownership request completed successfully.
      */
-    Name&& request_name_on_bus(
+    Name request_name_on_bus(
             const std::string& name,
             RequestNameFlag flags);
 

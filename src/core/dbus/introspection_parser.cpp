@@ -32,7 +32,7 @@ namespace
 {
 std::string safe_string_construct(const char* c)
 {
-    return std::move(std::string((c ? c : "")));
+    return std::string((c ? c : ""));
 }
 }
 struct IntrospectionParser::Private

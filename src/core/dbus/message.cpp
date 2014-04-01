@@ -225,7 +225,7 @@ Message::Reader Message::Reader::pop_array()
                 std::addressof(d->iter),
                 std::addressof(result.d->iter));
     dbus_message_iter_next(std::addressof(d->iter));
-    return std::move(result);
+    return result;
 }
 
 Message::Reader Message::Reader::pop_structure()
@@ -235,7 +235,7 @@ Message::Reader Message::Reader::pop_structure()
                 std::addressof(d->iter),
                 std::addressof(result.d->iter));
     dbus_message_iter_next(std::addressof(d->iter));
-    return std::move(result);
+    return result;
 }
 
 Message::Reader Message::Reader::pop_variant()
@@ -245,7 +245,7 @@ Message::Reader Message::Reader::pop_variant()
                 std::addressof(d->iter),
                 std::addressof(result.d->iter));
     dbus_message_iter_next(std::addressof(d->iter));
-    return std::move(result);
+    return result;
 }
 
 Message::Reader Message::Reader::pop_dict_entry()
@@ -255,7 +255,7 @@ Message::Reader Message::Reader::pop_dict_entry()
                 std::addressof(d->iter),
                 std::addressof(result.d->iter));
     dbus_message_iter_next(std::addressof(d->iter));
-    return std::move(result);
+    return result;
 }
 
 const std::shared_ptr<Message>& Message::Reader::access_message()
@@ -419,7 +419,7 @@ Message::Writer Message::Writer::open_array(const types::Signature& signature)
                 std::addressof(w.d->iter)))
         throw std::runtime_error("Problem opening container");
 
-    return std::move(w);
+    return w;
 }
 
 void Message::Writer::close_array(Message::Writer w)
@@ -439,7 +439,7 @@ Message::Writer Message::Writer::open_structure()
                 std::addressof(w.d->iter)))
         throw std::runtime_error("Problem opening container");
 
-    return std::move(w);
+    return w;
 }
 
 void Message::Writer::close_structure(Message::Writer w)
@@ -462,7 +462,7 @@ Message::Writer Message::Writer::open_variant(const types::Signature& signature)
                 std::addressof(w.d->iter)))
         throw std::runtime_error("Problem opening container");
 
-    return std::move(w);
+    return w;
 }
 
 void Message::Writer::close_variant(Writer w)
@@ -482,7 +482,7 @@ Message::Writer Message::Writer::open_dict_entry()
                 std::addressof(w.d->iter)))
         throw std::runtime_error("Problem opening container");
 
-    return std::move(w);
+    return w;
 }
 
 void Message::Writer::close_dict_entry(Message::Writer w)
@@ -606,7 +606,7 @@ Error Message::error() const
     Error result;
     dbus_set_error_from_message(std::addressof(result.raw()), d->dbus_message.get());
 
-    return std::move(result);
+    return result;
 }
 
 Message::Reader Message::reader()
@@ -617,7 +617,7 @@ Message::Reader Message::reader()
                 std::addressof(result.d->iter)))
         throw std::runtime_error(
                 "Could not initialize reader, message does not have arguments");
-    return std::move(result);
+    return result;
 }
 
 Message::Writer Message::writer()
@@ -628,7 +628,7 @@ Message::Writer Message::writer()
                 d->dbus_message.get(),
                 std::addressof(w.d->iter));
 
-    return std::move(w);
+    return w;
 }
 
 void Message::ensure_serial_larger_than_zero_for_testing()
