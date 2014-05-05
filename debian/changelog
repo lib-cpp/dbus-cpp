@@ -1,3 +1,9 @@
+dbus-cpp (3.0.0) UNRELEASED; urgency=medium
+
+  * Version bump, switching to GCC 4.8.
+
+ -- Thomas Voß <thomas.voss@canonical.com>  Mon, 05 May 2014 10:28:18 +0200
+
 dbus-cpp (2.0.0+14.04.20140326-0ubuntu1) trusty; urgency=low
 
   * New rebuild forced
