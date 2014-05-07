@@ -1,8 +1,12 @@
-dbus-cpp (3.0.0-0ubuntu1) UNRELEASED; urgency=medium
+dbus-cpp (3.0.0+14.10.20140507-0ubuntu1) utopic; urgency=medium
 
+  [ Thomas Voß ]
   * Version bump, switching to GCC 4.8.
 
- -- Thomas Voß <thomas.voss@canonical.com>  Mon, 05 May 2014 10:28:18 +0200
+  [ Ubuntu daily release ]
+  * New rebuild forced
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 07 May 2014 09:54:12 +0000
 
 dbus-cpp (2.0.0+14.04.20140326-0ubuntu1) trusty; urgency=low
 
