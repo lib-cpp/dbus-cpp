@@ -1,4 +1,4 @@
-dbus-cpp (3.0.0) UNRELEASED; urgency=medium
+dbus-cpp (3.0.0-0ubuntu1) UNRELEASED; urgency=medium
 
   * Version bump, switching to GCC 4.8.
 
