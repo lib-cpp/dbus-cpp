@@ -22,8 +22,8 @@
  (c++)"core::dbus::Bus::request_name_on_bus(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, core::dbus::Bus::RequestNameFlag)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Bus::run()@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Bus::send(std::shared_ptr<core::dbus::Message> const&)@Base" 2.0.0+14.04.20140310
- (c++)"core::dbus::Bus::send_with_reply_and_block_for_at_most(std::shared_ptr<core::dbus::Message> const&, std::chrono::duration<long long, std::ratio<1ll, 1000ll> > const&)@Base" 2.0.0+14.04.20140310
- (c++)"core::dbus::Bus::send_with_reply_and_timeout(std::shared_ptr<core::dbus::Message> const&, std::chrono::duration<long long, std::ratio<1ll, 1000ll> > const&)@Base" 2.0.0+14.04.20140310
+ (c++)"core::dbus::Bus::send_with_reply_and_block_for_at_most(std::shared_ptr<core::dbus::Message> const&, std::chrono::duration<long, std::ratio<1l, 1000l> > const&)@Base" 2.0.0+14.04.20140310
+ (c++)"core::dbus::Bus::send_with_reply_and_timeout(std::shared_ptr<core::dbus::Message> const&, std::chrono::duration<long, std::ratio<1l, 1000l> > const&)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Bus::stop()@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Bus::unregister_object_path(core::dbus::types::ObjectPath const&)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::DBus::DBus(std::shared_ptr<core::dbus::Bus> const&)@Base" 2.0.0+14.04.20140310
@@ -54,8 +54,8 @@
  (c++)"core::dbus::Fixture::default_system_bus_config_file()@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Fixture::~Fixture()@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Fixture::Fixture(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 2.0.0+14.04.20140310
- (c++)"core::dbus::MatchRule::args(std::vector<std::pair<unsigned int, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<unsigned int, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > const&)@Base" 2.0.0+14.04.20140310
- (c++)"core::dbus::MatchRule::args(std::vector<std::pair<unsigned int, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<unsigned int, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > const&) const@Base" 2.0.0+14.04.20140310
+ (c++)"core::dbus::MatchRule::args(std::vector<std::pair<unsigned long, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<unsigned long, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > const&)@Base" 2.0.0+14.04.20140310
+ (c++)"core::dbus::MatchRule::args(std::vector<std::pair<unsigned long, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<unsigned long, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > const&) const@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::MatchRule::as_string() const@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::MatchRule::interface(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::MatchRule::interface(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) const@Base" 2.0.0+14.04.20140310
@@ -130,13 +130,13 @@
  (c++)"core::dbus::Message::Writer::push_floating_point(double)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Message::Writer::push_int16(short)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Message::Writer::push_int32(int)@Base" 2.0.0+14.04.20140310
- (c++)"core::dbus::Message::Writer::push_int64(long long)@Base" 2.0.0+14.04.20140310
+ (c++)"core::dbus::Message::Writer::push_int64(long)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Message::Writer::push_object_path(core::dbus::types::ObjectPath const&)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Message::Writer::push_signature(core::dbus::types::Signature const&)@Base" 2.0.0+14.04.20140310
- (c++)"core::dbus::Message::Writer::push_stringn(char const*, unsigned int)@Base" 2.0.0+14.04.20140310
+ (c++)"core::dbus::Message::Writer::push_stringn(char const*, unsigned long)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Message::Writer::push_uint16(unsigned short)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Message::Writer::push_uint32(unsigned int)@Base" 2.0.0+14.04.20140310
- (c++)"core::dbus::Message::Writer::push_uint64(unsigned long long)@Base" 2.0.0+14.04.20140310
+ (c++)"core::dbus::Message::Writer::push_uint64(unsigned long)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Message::Writer::push_unix_fd(core::dbus::types::UnixFd const&)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Message::Writer::~Writer()@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Message::Writer::Writer(core::dbus::Message::Writer&&)@Base" 2.0.0+14.04.20140310
@@ -200,4 +200,4 @@
  (c++)"vtable for core::dbus::Fixture@Base" 2.0.0+14.04.20140310
  (c++)"vtable for core::dbus::PendingCall@Base" 2.0.0+14.04.20140310
  (c++)"vtable for core::dbus::types::ObjectPath::Errors::InvalidObjectPathStringRepresentation@Base" 2.0.0+14.04.20140310
-#include "libdbus-cpp2.symbols.coverage"
+#include "libdbus-cpp3.symbols.coverage"
