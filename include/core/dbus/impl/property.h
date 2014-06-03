@@ -161,10 +161,14 @@ Property<PropertyType>::handle_changed(const types::Variant& arg)
     try
     {
         auto value = arg.as<typename PropertyType::ValueType>();
-        set(value);
+        Super::set(value);
+    }
+    catch (std::exception &e){
+        std::cout << __PRETTY_FUNCTION__ << ": " << e.what() << std::endl;
     }
     catch (...)
     {
+        std::cout << __PRETTY_FUNCTION__ << ": " << "Unknown exception." << std::endl;
     }
 }
 }

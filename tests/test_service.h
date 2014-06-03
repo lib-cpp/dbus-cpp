@@ -68,6 +68,18 @@ struct Service
             static const bool readable = true;
             static const bool writable = true;
         };
+
+        struct ReadOnly
+        {
+            inline static std::string name()
+            {
+                return "ReadOnly";
+            };
+            typedef Service Interface;
+            typedef std::uint32_t ValueType;
+            static const bool readable = true;
+            static const bool writable = false;
+        };
     };
 
     struct Interfaces
