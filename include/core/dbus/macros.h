@@ -26,7 +26,7 @@
 
 #define SECONDS(seconds) std::chrono::seconds{seconds};
 
-#define METHOD(Name, Itf, Timeout) \
+#define DBUS_CPP_METHOD_WITH_TIMEOUT_DEF(Name, Itf, Timeout) \
     struct Name \
     { \
         typedef Itf Interface; \
@@ -35,10 +35,12 @@
             static const std::string s{#Name}; \
             return s; \
         } \
-        inline static const std::chrono::milliseconds default_timeout() { return std::chrono::milliseconds{2000}; } \
+        inline static const std::chrono::milliseconds default_timeout() { return std::chrono::milliseconds{Timeout}; } \
     };\
 
-#define SIGNAL(Name, Itf, ArgType) \
+#define DBUS_CPP_METHOD_DEF(Name, Itf) DBUS_CPP_METHOD_WITH_TIMEOUT_DEF(Name, Itf, 2000)
+
+#define DBUS_CPP_SIGNAL_DEF(Name, Itf, ArgType) \
     struct Name \
     { \
         inline static std::string name() \
@@ -49,7 +51,7 @@
         typedef ArgType ArgumentType; \
     };\
 
-#define READABLE_PROPERTY(Name, Itf, Type) \
+#define DBUS_CPP_READABLE_PROPERTY_DEF(Name, Itf, Type) \
     struct Name \
     { \
         inline static std::string name() \
@@ -62,7 +64,7 @@
         static const bool writable = false; \
     }; \
 
-#define WRITABLE_PROPERTY(Name, Itf, Type) \
+#define DBUS_CPP_WRITABLE_PROPERTY_DEF(Name, Itf, Type) \
     struct Name \
     { \
         inline static std::string name() \
