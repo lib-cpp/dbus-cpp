@@ -1,3 +1,10 @@
+dbus-cpp (3.0.0+14.10.20140604-0ubuntu1) utopic; urgency=low
+
+  [ Jussi Pakkanen ]
+  * Remove unnecessary std::moves in return statements.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 04 Jun 2014 07:29:10 +0000
+
 dbus-cpp (3.0.0+14.10.20140507-0ubuntu1) utopic; urgency=medium
 
   [ Thomas Voß ]
