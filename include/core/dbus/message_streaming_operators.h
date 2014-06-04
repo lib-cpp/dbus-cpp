@@ -28,14 +28,14 @@ template<typename T>
 Message::Reader operator>>(Message::Reader reader, T& out)
 {
     decode_argument(reader, out);
-    return std::move(reader);
+    return reader;
 }
 
 template<typename T>
 Message::Writer operator<<(Message::Writer writer, const T& out)
 {
     encode_argument(writer, out);
-    return std::move(writer);
+    return writer;
 }
 }
 }

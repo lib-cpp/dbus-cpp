@@ -202,7 +202,7 @@ const std::shared_ptr<MessageFactory> Bus::message_factory()
     return d->message_factory_impl;
 }
 
-Bus::Name&& Bus::request_name_on_bus(
+Bus::Name Bus::request_name_on_bus(
         const std::string& name,
         Bus::RequestNameFlag flags)
 {
@@ -217,14 +217,14 @@ Bus::Name&& Bus::request_name_on_bus(
 
     switch (rc)
     {
-    case DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER: return std::move(result);
-    case DBUS_REQUEST_NAME_REPLY_IN_QUEUE: return std::move(result);
+    case DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER: return result;
+    case DBUS_REQUEST_NAME_REPLY_IN_QUEUE: return result;
     case DBUS_REQUEST_NAME_REPLY_EXISTS: throw Bus::Errors::AlreadyOwned{}; break;
     case DBUS_REQUEST_NAME_REPLY_ALREADY_OWNER: throw Bus::Errors::AlreadyOwner{}; break;
     case -1: throw std::runtime_error(error.print());
     }
 
-    return std::move(result);
+    return result;
 }
 
 void Bus::release_name_on_bus(Bus::Name&& name)
