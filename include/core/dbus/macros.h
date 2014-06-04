@@ -24,8 +24,6 @@
 #include <chrono>
 #include <string>
 
-#define SECONDS(seconds) std::chrono::seconds{seconds};
-
 #define DBUS_CPP_METHOD_WITH_TIMEOUT_DEF(Name, Itf, Timeout) \
     struct Name \
     { \
@@ -77,5 +75,5 @@
         static const bool writable = true; \
     }; \
 
-#endif // MPRIS_MACROS_H_
+#endif // CORE_DBUS_MACROS_H_
 
