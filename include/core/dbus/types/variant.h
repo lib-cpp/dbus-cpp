@@ -64,11 +64,10 @@ public:
             Codec<T>::encode_argument(writer, t);
         };
 
-        return std::move(
-                    Variant(
-                        encoder,
-                        types::Signature(
-                            core::dbus::helper::TypeMapper<T>::signature())));
+        return Variant(
+                encoder,
+                types::Signature(
+                        core::dbus::helper::TypeMapper<T>::signature()));
     }
 
     template<typename T>
@@ -79,11 +78,10 @@ public:
             Codec<T>::decode_argument(reader, t);
         };
 
-        return std::move(
-                    Variant(
-                        decoder,
-                        types::Signature(
-                            core::dbus::helper::TypeMapper<T>::signature())));
+        return Variant(
+                decoder,
+                types::Signature(
+                        core::dbus::helper::TypeMapper<T>::signature()));
     }
 
     inline Variant()

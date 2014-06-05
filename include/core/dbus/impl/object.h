@@ -81,7 +81,7 @@ inline Result<ResultType> Object::invoke_method_synchronously(const Args& ... ar
                 msg,
                 Method::default_timeout());
     
-    return std::move(Result<ResultType>::from_message(reply));
+    return Result<ResultType>::from_message(reply);
 }
 
 template<typename Method, typename ResultType, typename... Args>

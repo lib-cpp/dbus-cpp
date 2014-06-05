@@ -64,7 +64,7 @@ public:
             break;
         }
 
-        return std::move(result);
+        return result;
     }
 
     /**
@@ -134,7 +134,7 @@ public:
             break;
         }
 
-        return std::move(result);
+        return result;
     }
 
     /**
