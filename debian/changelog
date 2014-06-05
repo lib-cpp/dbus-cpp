@@ -1,3 +1,9 @@
+dbus-cpp (3.1.0-0ubuntu1) UNRELEASED; urgency=medium
+
+  * Provide a new make_executor method to allow to pass the io_service.
+
+ -- Manuel de la Pena <manuel.delapena@canonical.com>  Thu, 05 Jun 2014 13:53:45 +0200
+
 dbus-cpp (3.0.0+14.10.20140507-0ubuntu1) utopic; urgency=medium
 
   [ Thomas Voß ]
