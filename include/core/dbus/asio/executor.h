@@ -22,6 +22,17 @@
 #include <core/dbus/executor.h>
 #include <core/dbus/visibility.h>
 
+namespace boost
+{
+namespace asio
+{
+
+class io_service;
+
+}
+
+}
+
 namespace core
 {
 namespace dbus
@@ -29,6 +40,7 @@ namespace dbus
 namespace asio
 {
 ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Executor::Ptr make_executor(const Bus::Ptr& bus);
+ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Executor::Ptr make_executor(const Bus::Ptr& bus, boost::asio::io_service& io);
 }
 }
 }
