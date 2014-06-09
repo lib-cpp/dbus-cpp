@@ -26,11 +26,8 @@ namespace boost
 {
 namespace asio
 {
-
 class io_service;
-
 }
-
 }
 
 namespace core
