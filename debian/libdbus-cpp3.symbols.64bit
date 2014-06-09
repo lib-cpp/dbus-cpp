@@ -1,6 +1,5 @@
- (c++)"core::dbus::asio::make_executor(std::shared_ptr<core::dbus::Bus> const&, boost::asio::io_service&)@Base" 0replaceme
  (c++)"core::dbus::asio::make_executor(std::shared_ptr<core::dbus::Bus> const&)@Base" 2.0.0+14.04.20140310
- (c++)"core::dbus::asio::make_executor(std::shared_ptr<core::dbus::Bus> const&, boost::asio::io_service &)@Base" 0replaceme
+ (c++)"core::dbus::asio::make_executor(std::shared_ptr<core::dbus::Bus> const&, boost::asio::io_service&)@Base" 0replaceme
  (c++)"core::dbus::Bus::access_signal_router()@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Bus::add_match(core::dbus::MatchRule const&)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Bus::~Bus()@Base" 2.0.0+14.04.20140310
