@@ -1,4 +1,4 @@
-dbus-cpp (4.0.0-0ubuntu1) UNRELEASED; urgency=medium
+dbus-cpp (3.1.0-0ubuntu1) UNRELEASED; urgency=medium
 
   * Provide a new make_executor method to allow to pass the io_service.
 
