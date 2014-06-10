@@ -96,7 +96,7 @@ TEST_F(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
                 core::dbus::interfaces::Properties::Signals::PropertiesChanged::ArgumentType
                         args("this.is.unlikely.to.exist.Service",
                              {{test::Service::Properties::ReadOnly::name(),
-                               core::dbus::types::TypedVariant<test::Service::Properties::ReadOnly::ValueType>(expected_value)},},
+                               core::dbus::types::TypedVariant<test::Service::Properties::ReadOnly::ValueType>(expected_value)}},
                              {});
                 skeleton->emit_signal<core::dbus::interfaces::Properties::Signals::PropertiesChanged, core::dbus::interfaces::Properties::Signals::PropertiesChanged::ArgumentType>(args);
                 changed_signal->emit(args);

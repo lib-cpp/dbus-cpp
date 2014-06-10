@@ -163,7 +163,7 @@ Property<PropertyType>::handle_changed(const types::Variant& arg)
         auto value = arg.as<typename PropertyType::ValueType>();
         Super::set(value);
     }
-    catch (std::exception &e){
+    catch (const std::exception &e){
         std::cout << __PRETTY_FUNCTION__ << ": " << e.what() << std::endl;
     }
     catch (...)
