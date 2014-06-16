@@ -4,6 +4,14 @@ dbus-cpp (3.1.0-0ubuntu1) UNRELEASED; urgency=medium
 
  -- Manuel de la Pena <manuel.delapena@canonical.com>  Thu, 05 Jun 2014 13:53:45 +0200
 
+dbus-cpp (3.0.0+14.10.20140612-0ubuntu1) utopic; urgency=low
+
+  [ Manuel de la Peña ]
+  * Provide useful macros to be used by developers so that less code has
+    to be written to define methods, properties and signals.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 12 Jun 2014 11:08:49 +0000
+
 dbus-cpp (3.0.0+14.10.20140604-0ubuntu1) utopic; urgency=low
 
   [ Jussi Pakkanen ]
