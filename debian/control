@@ -5,6 +5,7 @@ Build-Depends: cmake,
                dbus,
                debhelper (>= 9),
                doxygen,
+               g++ (>= 4.9),
                google-mock,
                libboost-filesystem-dev,
                libboost-system-dev,
@@ -22,7 +23,7 @@ Homepage: http://launchpad.net/dbus-cpp
 Vcs-Bzr: https://code.launchpad.net/~phablet-team/dbus-cpp/trunk
 Vcs-Browser: http://bazaar.launchpad.net/~phablet-team/dbus-cpp/trunk/files
 
-Package: libdbus-cpp3
+Package: libdbus-cpp4
 Section: libdevel
 Architecture: any
 Multi-Arch: same
@@ -39,7 +40,7 @@ Architecture: any
 Multi-Arch: foreign
 Depends: ${misc:Depends},
          ${shlibs:Depends},
-         libdbus-cpp3 (= ${binary:Version})
+         libdbus-cpp4 (= ${binary:Version})
 Description: header-only dbus-binding leveraging C++-11
  Protocol compiler and generator to automatically generate protocol headers from
  introspection XML.
@@ -51,7 +52,7 @@ Multi-Arch: same
 Depends: ${misc:Depends},
          ${shlibs:Depends},
          dbus,
-         libdbus-cpp3 (= ${binary:Version})
+         libdbus-cpp4 (= ${binary:Version})
 Replaces: dbus-cpp-dev
 Conflicts: dbus-cpp-dev
 Provides: dbus-cpp-dev
