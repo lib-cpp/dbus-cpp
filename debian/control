@@ -1,13 +1,13 @@
 Source: dbus-cpp
 Priority: optional
 Maintainer: Thomas Voß <thomas.voss@ubuntu.com>
+# We rely on C++11 features, and to prevent from ABI breaks
+# in libstdc++ causing us issues, we explicitly select a G++
+# version.
 Build-Depends: cmake,
                dbus,
                debhelper (>= 9),
                doxygen,
-               # We rely on C++11 features, and to prevent from ABI breaks
-               # in libstdc++ causing us issues, we explicitly select a G++
-               # version.
                g++-4.9,
                google-mock,
                libboost-filesystem-dev,
