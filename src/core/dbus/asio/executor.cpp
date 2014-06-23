@@ -332,7 +332,7 @@ public:
 
 public:
 
-    Executor(const Bus::Ptr& bus, boost::asio::io_service& io, bool requires_free) : bus(bus), io_service(io), work(io_service), requires_free(requires_free)
+    Executor(const Bus::Ptr& bus, boost::asio::io_service& io) : bus(bus), io_service(io), work(io_service)
     {
         if (!bus)
             throw std::runtime_error("Precondition violated, cannot construct executor for null bus.");
@@ -365,8 +365,6 @@ public:
     ~Executor() noexcept
     {
         stop();
-        if (requires_free)
-            delete &io_service;
     }
 
     void run()
@@ -383,18 +381,17 @@ private:
     Bus::Ptr bus;
     boost::asio::io_service& io_service;
     boost::asio::io_service::work work;
-    bool requires_free;
 };
 
 ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Executor::Ptr make_executor(const Bus::Ptr& bus)
 {
-    auto io = new boost::asio::io_service();
-    return std::make_shared<core::dbus::asio::Executor>(bus, *io, true);
+    static boost::asio::io_service io;
+    return std::make_shared<core::dbus::asio::Executor>(bus, io);
 }
 
 ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Executor::Ptr make_executor(const Bus::Ptr& bus, boost::asio::io_service& io)
 {
-    return std::make_shared<core::dbus::asio::Executor>(bus, io, false);
+    return std::make_shared<core::dbus::asio::Executor>(bus, io);
 }
 
 }
