@@ -31,6 +31,9 @@ struct core::dbus::Fixture::Private
         {
             std::vector<std::string> argv
             {
+                "--kill-after=5",
+                std::to_string(core::dbus::Fixture::default_daemon_timeout().count()),
+                "/bin/dbus-daemon",
                 "--config-file",
                 config_file,
                 "--print-address"
@@ -43,7 +46,7 @@ struct core::dbus::Fixture::Private
             });
 
             daemon = core::posix::exec(
-                        "/bin/dbus-daemon",
+                        "/usr/bin/timeout",
                         argv,
                         env,
                         core::posix::StandardStream::stdout);
@@ -58,6 +61,18 @@ struct core::dbus::Fixture::Private
             core::posix::this_process::env::set_or_throw("DBUS_STARTER_BUS_TYPE", "session");
         }
 
+        ~Session()
+        {
+            try
+            {
+                daemon.send_signal_or_throw(core::posix::Signal::sig_term);
+                daemon.wait_for(core::posix::wait::Flags::untraced);
+            } catch(...)
+            {
+                // We drop any exception to make the dtor exception safe.
+            }
+        }
+
         core::posix::ChildProcess daemon = core::posix::ChildProcess::invalid();
         std::string address;
     } session;
@@ -68,6 +83,9 @@ struct core::dbus::Fixture::Private
         {
             std::vector<std::string> argv
             {
+                "--kill-after=5",
+                std::to_string(core::dbus::Fixture::default_daemon_timeout().count()),
+                "/bin/dbus-daemon",
                 "--config-file",
                 config_file,
                 "--print-address"
@@ -80,7 +98,7 @@ struct core::dbus::Fixture::Private
             });
 
             daemon = core::posix::exec(
-                        "/bin/dbus-daemon",
+                        "/usr/bin/timeout",
                         argv,
                         env,
                         core::posix::StandardStream::stdout);
@@ -93,10 +111,28 @@ struct core::dbus::Fixture::Private
             core::posix::this_process::env::set_or_throw("DBUS_SYSTEM_BUS_ADDRESS", address);
         }
 
+        ~System()
+        {
+            try
+            {
+                daemon.send_signal_or_throw(core::posix::Signal::sig_term);
+                daemon.wait_for(core::posix::wait::Flags::untraced);
+            } catch(...)
+            {
+                // We drop any exception to make the dtor exception safe.
+            }
+        }
+
         core::posix::ChildProcess daemon = core::posix::ChildProcess::invalid();
         std::string address;
     } system;
 };
+
+core::dbus::Fixture::Seconds& core::dbus::Fixture::default_daemon_timeout()
+{
+    static core::dbus::Fixture::Seconds instance{60};
+    return instance;
+}
 
 const std::string& core::dbus::Fixture::default_session_bus_config_file()
 {
