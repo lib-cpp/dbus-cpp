@@ -153,11 +153,62 @@ TEST_F(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
 
 TEST_F(Service, AddingANonExistingServiceDoesNotThrow)
 {
-    const std::string service_name
-    {
-        "very.unlikely.that.this.name.exists"
-    };
     ASSERT_NO_THROW(auto service = dbus::Service::add_service<test::Service>(session_bus()););
+}
+
+namespace
+{
+struct Dummy
+{
+    static const std::string& name()
+    {
+        static std::string s{"A.Dummy.Service"};
+        return s;
+    }
+};
+}
+
+// We cache service allocations in-process. For that, we rely on two child processes for testing purposes and
+// to check that trying to own a service name for the second name actually throws.
+TEST_F(Service, AddingAServiceTwiceThrows)
+{
+    // p1 --| Done accessing the service |--> p2
+    core::testing::CrossProcessSync first_process_acquired_name;
+    // p2 --| Done trying to access the service |--> p1
+    core::testing::CrossProcessSync second_process_acquired_name;
+
+    // This is the child process that owns the dummy service. It waits for the second process to
+    // come up and trying to own the same service on the same bus. Otherwise, the service object
+    // would go out of scope in P1 and clean up the owned name.
+    auto p1 = core::posix::fork([this, &first_process_acquired_name, &second_process_acquired_name]
+    {
+        core::dbus::Service::Ptr service;
+        EXPECT_NO_THROW(service = dbus::Service::add_service<Dummy>(session_bus()));
+        first_process_acquired_name.try_signal_ready_for(std::chrono::seconds{2});
+        second_process_acquired_name.wait_for_signal_ready_for(std::chrono::seconds{2});
+
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
+    }, core::posix::StandardStream::empty);
+
+    auto p2 = core::posix::fork([this, &first_process_acquired_name, &second_process_acquired_name]
+    {
+        first_process_acquired_name.wait_for_signal_ready_for(std::chrono::seconds{2});
+
+        core::dbus::Service::Ptr service;
+        EXPECT_ANY_THROW(service = dbus::Service::add_service<Dummy>(session_bus()););
+        second_process_acquired_name.try_signal_ready_for(std::chrono::seconds{2});
+
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
+    }, core::posix::StandardStream::empty);
+
+    core::posix::wait::Result r1 = p1.wait_for(core::posix::wait::Flags::untraced);
+    core::posix::wait::Result r2 = p2.wait_for(core::posix::wait::Flags::untraced);
+
+    EXPECT_EQ(core::posix::wait::Result::Status::exited, r1.status);
+    EXPECT_EQ(core::posix::exit::Status::success, r1.detail.if_exited.status);
+
+    EXPECT_EQ(core::posix::wait::Result::Status::exited, r2.status);
+    EXPECT_EQ(core::posix::exit::Status::success, r2.detail.if_exited.status);
 }
 
 TEST_F(Service, AddingAnExistingServiceThrowsForSpecificFlags)

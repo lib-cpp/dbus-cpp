@@ -96,10 +96,23 @@ Service::Service(const Bus::Ptr& connection, const std::string& name, const Bus:
       stub(false)
 {
     Error error;
-    dbus_bus_request_name(connection->raw(), name.c_str(), static_cast<unsigned int>(flags), std::addressof(error.raw()));
+    auto rc = dbus_bus_request_name(
+                connection->raw(),
+                name.c_str(),
+                static_cast<unsigned int>(flags),
+                std::addressof(error.raw()));
 
     if (error)
         throw std::runtime_error(error.name() + ": " + error.message());
+
+    switch (rc)
+    {
+    case DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER: break;
+    case DBUS_REQUEST_NAME_REPLY_IN_QUEUE: break;
+    case DBUS_REQUEST_NAME_REPLY_EXISTS: throw Bus::Errors::AlreadyOwned{}; break;
+    case DBUS_REQUEST_NAME_REPLY_ALREADY_OWNER: throw Bus::Errors::AlreadyOwner{}; break;
+    case -1: throw std::runtime_error(error.print());
+    }
 }
 
 const std::shared_ptr<Object>& Service::root_object()
