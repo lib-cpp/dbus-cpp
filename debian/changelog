@@ -1,6 +1,10 @@
 dbus-cpp (3.1.0-0ubuntu1) UNRELEASED; urgency=medium
 
+  [ Manuel de la Pena ]
   * Provide a new make_executor method to allow to pass the io_service.
+
+  [ Ubuntu daily release ]
+  * debian/*symbols: auto-update new symbols to released version
 
  -- Manuel de la Pena <manuel.delapena@canonical.com>  Thu, 05 Jun 2014 13:53:45 +0200
 
