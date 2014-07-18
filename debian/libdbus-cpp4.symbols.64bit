@@ -201,4 +201,5 @@
  (c++)"vtable for core::dbus::Fixture@Base" 2.0.0+14.04.20140310
  (c++)"vtable for core::dbus::PendingCall@Base" 2.0.0+14.04.20140310
  (c++)"vtable for core::dbus::types::ObjectPath::Errors::InvalidObjectPathStringRepresentation@Base" 2.0.0+14.04.20140310
-#include "libdbus-cpp3.symbols.coverage"
+#include "libdbus-cpp4.symbols.coverage"
+

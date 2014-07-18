@@ -1,3 +1,9 @@
+dbus-cpp (4.0.0) UNRELEASED; urgency=medium
+
+  * Bump major revision and so name to account for toolchain update.
+
+ -- Thomas Voß <thomas.voss@canonical.com>  Fri, 27 Jun 2014 11:28:52 +0200
+
 dbus-cpp (3.1.0+14.10.20140716.1-0ubuntu1) utopic; urgency=medium
 
   [ Thomas Voß ]
