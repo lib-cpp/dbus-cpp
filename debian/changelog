@@ -4,6 +4,33 @@ dbus-cpp (4.0.0) UNRELEASED; urgency=medium
 
  -- Thomas Voß <thomas.voss@canonical.com>  Fri, 27 Jun 2014 11:28:52 +0200
 
+dbus-cpp (3.1.0+14.10.20140716.1-0ubuntu1) utopic; urgency=medium
+
+  [ Thomas Voß ]
+  * Bumping revision to force build-dependency. 
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 16 Jul 2014 20:19:01 +0000
+
+dbus-cpp (3.1.0+14.10.20140711-0ubuntu1) utopic; urgency=medium
+
+  [ Manuel de la Pena ]
+  * Provide a new make_executor method to allow to pass the io_service.
+
+  [ Ubuntu daily release ]
+  * debian/*symbols: auto-update new symbols to released version
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 11 Jul 2014 13:53:03 +0000
+
+dbus-cpp (3.0.0+14.10.20140709.2-0ubuntu1) utopic; urgency=low
+
+  [ Ubuntu daily release ]
+  * New rebuild forced
+
+  [ Antti Kaijanmäki ]
+  * Fix read-only property PropertiesChanged updates. (LP: #1339589)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 09 Jul 2014 10:15:33 +0000
+
 dbus-cpp (3.0.0+14.10.20140612-0ubuntu1) utopic; urgency=low
 
   [ Manuel de la Peña ]

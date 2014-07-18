@@ -60,6 +60,29 @@ public:
     typedef std::shared_ptr<Service> Ptr;    
 
     /**
+     * @brief Exposes a service on the bus, trying to acquire the given name.
+     * @returns An instance of Service or nullptr in case of errors.
+     * @tparam Interface Needs to a model of concept Service.
+     * @param [in] connection Bus to expose the service upon.
+     * @param [in] name The name to acquire for this service.
+     * @param [in] flags Flags specifying behavior when requesting a name on the bus.
+     */
+    inline static Ptr add_service(
+        const Bus::Ptr& connection,
+        const std::string& name,
+        const Bus::RequestNameFlag& flags =
+            Bus::RequestNameFlag::do_not_queue |
+            Bus::RequestNameFlag::replace_existing)
+    {
+        Ptr instance(
+            new Service(
+                connection,
+                name,
+                flags));
+        return instance;
+    }
+
+    /**
      * @brief Exposes a service on the bus.
      * @returns An instance of Service or nullptr in case of errors.
      * @tparam Interface Needs to a model of concept Service.
@@ -73,11 +96,13 @@ public:
             Bus::RequestNameFlag::do_not_queue |
             Bus::RequestNameFlag::replace_existing)
     {
-        static Ptr instance(
-            new Service(
-                connection, 
-                traits::Service<Interface>::interface_name(), 
-                flags));
+        static Ptr instance
+        {
+            add_service(connection,
+                        traits::Service<Interface>::interface_name(),
+                        flags)
+        };
+
         return instance;
     }
 
