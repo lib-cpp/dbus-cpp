@@ -1,3 +1,4 @@
+ (c++)"core::dbus::Fixture::default_daemon_timeout()@Base" 0replaceme
  (c++)"core::dbus::asio::make_executor(std::shared_ptr<core::dbus::Bus> const&)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::asio::make_executor(std::shared_ptr<core::dbus::Bus> const&, boost::asio::io_service&)@Base" 3.1.0+14.10.20140711
  (c++)"core::dbus::Bus::access_signal_router()@Base" 2.0.0+14.04.20140310

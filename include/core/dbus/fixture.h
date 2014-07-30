@@ -20,6 +20,7 @@
 
 #include <core/dbus/visibility.h>
 
+#include <chrono>
 #include <memory>
 #include <string>
 
@@ -35,6 +36,13 @@ class Bus;
 class ORG_FREEDESKTOP_DBUS_DLL_PUBLIC Fixture
 {
 public:
+    /** @brief Fractional seconds. */
+    typedef std::chrono::duration<double> Seconds;
+
+    /**
+      * @brief default_daemon_timeout after which the dbus daemons will be killed.
+      */
+    static Seconds& default_daemon_timeout();
 
     /**
      * @brief default_session_bus_config_file provides the filename of the default session
