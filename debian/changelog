@@ -1,9 +1,16 @@
-dbus-cpp (4.0.0+14.10.20140718-0ubuntu3) UNRELEASED; urgency=low
+dbus-cpp (4.0.0+14.10.20140730-0ubuntu1) utopic; urgency=low
 
+  [ Ubuntu daily release ]
   * debian/libdbus-cpp4.symbols.32bit: auto-update to released version
   * debian/libdbus-cpp4.symbols.64bit: auto-update to released version
 
- -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 30 Jul 2014 16:12:26 +0000
+  [ thomas-voss ]
+  * Make sure that dbus daemon instances fired up for testing are torn
+    down after a configurable timeout. (LP: #1326200)
+  * Make sure that core::dbus::Service::Service(...) interprets return
+    values of dbus_bus_request_name correctly. (LP: #1329211)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 30 Jul 2014 16:12:30 +0000
 
 dbus-cpp (4.0.0+14.10.20140718-0ubuntu2) utopic; urgency=medium
 
