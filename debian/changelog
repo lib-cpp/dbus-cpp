@@ -1,3 +1,10 @@
+dbus-cpp (4.0.0+14.10.20140718-0ubuntu3) UNRELEASED; urgency=low
+
+  * debian/libdbus-cpp4.symbols.32bit: auto-update to released version
+  * debian/libdbus-cpp4.symbols.64bit: auto-update to released version
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 30 Jul 2014 16:12:26 +0000
+
 dbus-cpp (4.0.0+14.10.20140718-0ubuntu2) utopic; urgency=medium
 
   * No-change rebuild to get dbgsyms for all binaries onto
