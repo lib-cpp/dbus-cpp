@@ -82,11 +82,25 @@ TEST_F(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
             auto writable_property = skeleton->get_property<test::Service::Properties::Dummy>();
             writable_property->set(expected_value);
 
-            skeleton->install_method_handler<test::Service::Method>([bus, skeleton, expected_value](const dbus::Message::Ptr& msg)
+            auto readonly_property = skeleton->get_property<test::Service::Properties::ReadOnly>();
+            readonly_property->set(7);
+
+            skeleton->install_method_handler<test::Service::Method>([bus, skeleton, &readonly_property, expected_value](const dbus::Message::Ptr& msg)
             {
                 auto reply = dbus::Message::make_method_return(msg);
                 reply->writer() << expected_value;
                 bus->send(reply);
+
+                readonly_property->set(expected_value);
+                auto changed_signal = skeleton->get_signal<core::dbus::interfaces::Properties::Signals::PropertiesChanged>();
+                core::dbus::interfaces::Properties::Signals::PropertiesChanged::ArgumentType
+                        args("this.is.unlikely.to.exist.Service",
+                             {{test::Service::Properties::ReadOnly::name(),
+                               core::dbus::types::TypedVariant<test::Service::Properties::ReadOnly::ValueType>(expected_value)}},
+                             {});
+                skeleton->emit_signal<core::dbus::interfaces::Properties::Signals::PropertiesChanged, core::dbus::interfaces::Properties::Signals::PropertiesChanged::ArgumentType>(args);
+                changed_signal->emit(args);
+
                 skeleton->emit_signal<test::Service::Signals::Dummy, int64_t>(expected_value);
             });
 
@@ -118,6 +132,14 @@ TEST_F(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
             {
                 std::cout << "Dummy property changed: " << d << std::endl;
             });
+
+            auto readonly_property = stub->get_property<test::Service::Properties::ReadOnly>();
+            EXPECT_EQ(readonly_property->get(), 7);
+            std::uint32_t changed_value = 0;
+            readonly_property->changed().connect([&changed_value](std::uint32_t value){
+                changed_value = value;
+            });
+
             auto signal = stub->get_signal<test::Service::Signals::Dummy>();
             int64_t received_signal_value = -1;
             signal->connect([bus, &received_signal_value](const int32_t& value)
@@ -144,6 +166,8 @@ TEST_F(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
                 t.join();
 
             EXPECT_EQ(expected_value, received_signal_value);
+            EXPECT_EQ(expected_value, readonly_property->get());
+            EXPECT_EQ(changed_value, expected_value);
 
             return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
         };
