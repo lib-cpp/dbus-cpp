@@ -133,13 +133,13 @@ Object::get_property()
         {
             signal_properties_changed
                 = get_signal<interfaces::Properties::Signals::PropertiesChanged>();
-        }
 
-        signal_properties_changed->connect(
-            std::bind(
-                &Object::on_properties_changed,
-                shared_from_this(),
-                std::placeholders::_1));
+            signal_properties_changed->connect(
+                std::bind(
+                    &Object::on_properties_changed,
+                    shared_from_this(),
+                    std::placeholders::_1));
+        }
     }
 
     typedef Property<PropertyDescription> PropertyType;
