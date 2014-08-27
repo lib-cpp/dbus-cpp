@@ -263,7 +263,7 @@ struct TypeMapper<std::int64_t>
 
     inline static std::string signature()
     {
-        return DBUS_TYPE_INT32_AS_STRING;
+        return DBUS_TYPE_INT64_AS_STRING;
     }
 };
 
