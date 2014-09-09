@@ -121,6 +121,34 @@ inline std::future<Result<ResultType>> Object::invoke_method_asynchronously(cons
     return future;
 }
 
+template<typename Method, typename ResultType, typename... Args>
+inline void Object::invoke_method_asynchronously_with_callback(
+        std::function<void(const Result<ResultType>&)> cb,
+        const Args& ... args)
+{
+    auto msg_factory = parent->get_connection()->message_factory();
+    auto msg = msg_factory->make_method_call(
+        parent->get_name(),
+        object_path.as_string(),
+        traits::Service<typename Method::Interface>::interface_name().c_str(),
+        Method::name());
+
+    if (!msg)
+        throw std::runtime_error("No memory available to allocate DBus message");
+
+    auto writer = msg->writer();
+    encode_message(writer, args...);
+
+    auto pending_call =
+            parent->get_connection()->send_with_reply_and_timeout(
+                msg, Method::default_timeout());
+
+    pending_call->then([cb](const Message::Ptr& reply)
+    {
+        cb(Result<ResultType>::from_message(reply));
+    });
+}
+
 template<typename PropertyDescription>
 inline std::shared_ptr<Property<PropertyDescription>>
 Object::get_property()

@@ -130,6 +130,20 @@ class Object : public std::enable_shared_from_this<Object>
     inline std::future<Result<ResultType>> invoke_method_asynchronously(const Args& ... args);
 
     /**
+     * @brief Invokes a method of a remote object invoking the provided callback on completion or in case of errors.
+     * @tparam Method The method to invoke.
+     * @tparam ResultType The expected type of the result.
+     * @tparam Args Parameter pack of arguments passed to the invocation.
+     * @param [in] args Argument instances passed to the invocation.
+     * @param [in] cb The callback to be invoked on completion/on error.
+     * @return A future wrapping an invocation result, either signalling an error or containing the result of the invocation.
+     */
+    template<typename Method, typename ResultType, typename... Args>
+    inline void invoke_method_asynchronously_with_callback(
+            std::function<void(const Result<ResultType>&)> cb,
+            const Args& ... args);
+
+    /**
      * @brief Accesses a property of the object.
      * @return An instance of the property or nullptr in case of errors.
      */
