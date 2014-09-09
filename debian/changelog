@@ -1,3 +1,10 @@
+dbus-cpp (4.0.0+14.10.20140909-0ubuntu1) utopic; urgency=low
+
+  [ thomas-voss ]
+  * Make sure that signature for int64 types is calculated correctly.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 09 Sep 2014 18:31:44 +0000
+
 dbus-cpp (4.0.0+14.10.20140808-0ubuntu1) utopic; urgency=low
 
   [ thomas-voss ]
