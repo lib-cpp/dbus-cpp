@@ -23,6 +23,29 @@
 #include <core/posix/exec.h>
 #include <core/posix/this_process.h>
 
+namespace
+{
+static constexpr const char* dbus_session_bus_address
+{
+    "DBUS_SESSION_BUS_ADDRESS"
+};
+
+static constexpr const char* dbus_system_bus_address
+{
+    "DBUS_SYSTEM_BUS_ADDRESS"
+};
+
+static constexpr const char* dbus_starter_address
+{
+    "DBUS_STARTER_ADDRESS"
+};
+
+static constexpr const char* dbus_starter_bus_type
+{
+    "DBUS_STARTER_BUS_TYPE"
+};
+}
+
 struct core::dbus::Fixture::Private
 {
     struct Session
@@ -56,9 +79,15 @@ struct core::dbus::Fixture::Private
             if (address.empty())
                 throw std::runtime_error("Session: Could not read address of bus instance.");
 
-            core::posix::this_process::env::set_or_throw("DBUS_SESSION_BUS_ADDRESS", address);
-            core::posix::this_process::env::set_or_throw("DBUS_STARTER_ADDRESS", address);
-            core::posix::this_process::env::set_or_throw("DBUS_STARTER_BUS_TYPE", "session");
+            // We clean up the env prior to injecting the new addresses.
+            std::error_code ec; // And just ignore all error codes.
+            core::posix::this_process::env::unset(dbus_session_bus_address, ec);
+            core::posix::this_process::env::unset(dbus_starter_address, ec);
+            core::posix::this_process::env::unset(dbus_starter_bus_type, ec);
+
+            core::posix::this_process::env::set_or_throw(dbus_session_bus_address, address);
+            core::posix::this_process::env::set_or_throw(dbus_starter_address, address);
+            core::posix::this_process::env::set_or_throw(dbus_starter_bus_type, "session");
         }
 
         ~Session()
@@ -108,7 +137,10 @@ struct core::dbus::Fixture::Private
             if (address.empty())
                 throw std::runtime_error("System: Could not read address of bus instance.");
 
-            core::posix::this_process::env::set_or_throw("DBUS_SYSTEM_BUS_ADDRESS", address);
+            // We clean up the env prior to injecting the new addresses.
+            std::error_code ec; // And just ignore all error codes.
+            core::posix::this_process::env::unset(dbus_system_bus_address, ec);
+            core::posix::this_process::env::set_or_throw(dbus_system_bus_address, address);
         }
 
         ~System()
