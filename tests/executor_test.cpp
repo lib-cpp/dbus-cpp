@@ -263,8 +263,6 @@ TEST_F(Executor, TimeoutsAreHandledCorrectly)
     EXPECT_EQ(core::testing::ForkAndRunResult::empty, core::testing::fork_and_run(service, client));
 }
 
-
-
 /*TEST(Bus, TimeoutThrowsForNullDBusWatch)
 {
     boost::asio::io_service io_service;

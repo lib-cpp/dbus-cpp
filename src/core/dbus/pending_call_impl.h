@@ -26,6 +26,17 @@
 
 #include <mutex>
 
+namespace
+{
+// Better save than sorry. We wrap common error handling here.
+bool is_pending_call_completed(DBusPendingCall* pending_call)
+{
+    if (not pending_call)
+        return false;
+
+    return dbus_pending_call_get_completed(pending_call) == TRUE;
+}
+}
 namespace core
 {
 namespace dbus
@@ -45,18 +56,26 @@ private:
     {
         auto wrapper = static_cast<Wrapper*>(cookie);
 
+        if (not wrapper)
+            return;
+
+        // We synchronize to avoid races on construction.
+        std::lock_guard<std::mutex> lg{wrapper->pending_call->guard};
+        // And we only steal the reply if the call actually completed.
+        if (not is_pending_call_completed(call))
+            return;
+
         auto message = dbus_pending_call_steal_reply(call);
 
         if (message)
         {
-            wrapper->pending_call->notify(Message::from_raw_message(message));
+            wrapper->pending_call->notify_locked(Message::from_raw_message(message));
         }
     }
 
-    void notify(const Message::Ptr& msg)
+    // Announce incoming reply and invoke the callback if set.
+    void notify_locked(const Message::Ptr& msg)
     {
-        std::lock_guard<std::mutex> lg(guard);
-
         message = msg;
 
         if (callback)
@@ -76,6 +95,9 @@ public:
             new core::dbus::impl::PendingCall{call}
         };
 
+        // We synchronize to avoid races on construction.
+        std::lock_guard<std::mutex> lg{result->guard};
+
         if (FALSE == dbus_pending_call_set_notify(
                 result->pending_call,
                 PendingCall::on_pending_call_completed,
@@ -90,8 +112,7 @@ public:
 
         // And here comes the beauty of libdbus, and its racy architecture:
         {
-            std::lock_guard<std::mutex> lg(result->guard);
-            if (TRUE == dbus_pending_call_get_completed(call))
+            if (is_pending_call_completed(call))
             {
                 // We took too long while setting up the pending call notification.
                 // For that we now have to inject the message here.
@@ -101,6 +122,12 @@ public:
         }
 
         return std::dynamic_pointer_cast<core::dbus::PendingCall>(result);
+    }
+
+    ~PendingCall()
+    {
+        if (pending_call)
+            dbus_pending_call_unref(pending_call);
     }
 
     void cancel()
