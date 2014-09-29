@@ -30,12 +30,22 @@
 
 #include <gmock/gmock.h>
 
+#include "test_data.h"
+
 namespace
 {
 // Our fixture for starting up private system- and session-bus instances.
 struct AsyncExecutionLoadTest : public core::dbus::testing::Fixture
 {
 };
+
+auto session_bus_config_file =
+        core::dbus::testing::Fixture::default_session_bus_config_file() =
+        core::testing::session_bus_configuration_file();
+
+auto system_bus_config_file =
+        core::dbus::testing::Fixture::default_system_bus_config_file() =
+        core::testing::system_bus_configuration_file();
 
 struct DBus
 {
@@ -62,10 +72,17 @@ struct CountingEventCollector
             wait_condition.notify_all();
     }
 
-    void wait_for(const std::chrono::milliseconds& ms)
+    ::testing::AssertionResult wait_for(const std::chrono::milliseconds& ms)
     {
         std::unique_lock<std::mutex> ul(guard);
-        wait_condition.wait_for(ul, ms, [this]() { return counter == expected; });
+
+        auto result = wait_condition.wait_for(ul, ms, [this]() { return counter == expected; });
+
+        if (result)
+            return ::testing::AssertionSuccess();
+
+        return ::testing::AssertionFailure() << "Current count of "
+                                             << counter << " does not match " << expected;
     }
 
     std::uint64_t expected;
@@ -74,6 +91,24 @@ struct CountingEventCollector
     std::mutex guard;
     std::condition_variable wait_condition;
 };
+
+void invoke_list_names_n_times_and_update_event_collector(
+        // The object referring to the bus daemon
+        const core::dbus::Object::Ptr& dbus,
+        // Number of iterations
+        std::size_t n,
+        // The event collector instance that should be updated
+        CountingEventCollector& ec)
+{
+    for (unsigned int i = 0; i < n; i++)
+    {
+        dbus->invoke_method_asynchronously_with_callback<DBus::ListNames, std::vector<std::string>>([&ec](const core::dbus::Result<std::vector<std::string>>& vs)
+        {
+            if (not vs.is_error())
+                ec.update();
+        });
+    }
+}
 }
 
 TEST_F(AsyncExecutionLoadTest, RepeatedlyInvokingAnAsyncFunctionWorks)
@@ -90,82 +125,13 @@ TEST_F(AsyncExecutionLoadTest, RepeatedlyInvokingAnAsyncFunctionWorks)
 
     CountingEventCollector ec{5000};
 
-    std::thread t1
-    {
-        [dbus, &ec]()
-        {
-            for (unsigned int i = 0; i < 1000; i++)
-            {
-                dbus->invoke_method_asynchronously_with_callback<DBus::ListNames, std::vector<std::string>>([&ec](const core::dbus::Result<std::vector<std::string>>& vs)
-                {
-                    if (not vs.is_error())
-                        ec.update();
-                });
-            }
-        }
-    };
+    std::thread t1{[dbus, &ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
+    std::thread t2{[dbus, &ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
+    std::thread t3{[dbus, &ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
+    std::thread t4{[dbus, &ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
+    std::thread t5{[dbus, &ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
 
-    std::thread t2
-    {
-        [dbus, &ec]()
-        {
-            for (unsigned int i = 0; i < 1000; i++)
-            {
-                dbus->invoke_method_asynchronously_with_callback<DBus::ListNames, std::vector<std::string>>([&ec](const core::dbus::Result<std::vector<std::string>>& vs)
-                {
-                    if (not vs.is_error())
-                        ec.update();
-                });
-            }
-        }
-    };
-
-    std::thread t3
-    {
-        [dbus, &ec]()
-        {
-            for (unsigned int i = 0; i < 1000; i++)
-            {
-                dbus->invoke_method_asynchronously_with_callback<DBus::ListNames, std::vector<std::string>>([&ec](const core::dbus::Result<std::vector<std::string>>& vs)
-                {
-                    if (not vs.is_error())
-                        ec.update();
-                });
-            }
-        }
-    };
-
-    std::thread t4
-    {
-        [dbus, &ec]()
-        {
-            for (unsigned int i = 0; i < 1000; i++)
-            {
-                dbus->invoke_method_asynchronously_with_callback<DBus::ListNames, std::vector<std::string>>([&ec](const core::dbus::Result<std::vector<std::string>>& vs)
-                {
-                    if (not vs.is_error())
-                        ec.update();
-                });
-            }
-        }
-    };
-
-    std::thread t5
-    {
-        [dbus, &ec]()
-        {
-            for (unsigned int i = 0; i < 1000; i++)
-            {
-                dbus->invoke_method_asynchronously_with_callback<DBus::ListNames, std::vector<std::string>>([&ec](const core::dbus::Result<std::vector<std::string>>& vs)
-                {
-                    if (not vs.is_error())
-                        ec.update();
-                });
-            }
-        }
-    };
-
-    ec.wait_for(std::chrono::seconds{5});
+    EXPECT_TRUE(ec.wait_for(std::chrono::seconds{10}));
 
     bus->stop();
 
@@ -177,4 +143,6 @@ TEST_F(AsyncExecutionLoadTest, RepeatedlyInvokingAnAsyncFunctionWorks)
 
     if (worker.joinable())
         worker.join();
+
+    dbus_shutdown();
 }
