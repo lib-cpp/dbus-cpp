@@ -102,7 +102,7 @@ void invoke_list_names_n_times_and_update_event_collector(
 {
     for (unsigned int i = 0; i < n; i++)
     {
-        dbus->invoke_method_asynchronously_with_callback<DBus::ListNames, std::vector<std::string>>([&ec](const core::dbus::Result<std::vector<std::string>>& vs)
+        dbus->invoke_method_asynchronously_with_callback<DBus::ListNames, std::vector<std::string>>([ec](const core::dbus::Result<std::vector<std::string>>& vs)
         {
             if (not vs.is_error())
                 ec->update();
