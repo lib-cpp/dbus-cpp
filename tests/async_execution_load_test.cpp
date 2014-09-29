@@ -98,14 +98,14 @@ void invoke_list_names_n_times_and_update_event_collector(
         // Number of iterations
         std::size_t n,
         // The event collector instance that should be updated
-        CountingEventCollector& ec)
+        const std::shared_ptr<CountingEventCollector>& ec)
 {
     for (unsigned int i = 0; i < n; i++)
     {
         dbus->invoke_method_asynchronously_with_callback<DBus::ListNames, std::vector<std::string>>([&ec](const core::dbus::Result<std::vector<std::string>>& vs)
         {
             if (not vs.is_error())
-                ec.update();
+                ec->update();
         });
     }
 }
@@ -123,15 +123,15 @@ TEST_F(AsyncExecutionLoadTest, RepeatedlyInvokingAnAsyncFunctionWorks)
     auto service = core::dbus::Service::use_service(bus, DBus::name());
     auto dbus = service->object_for_path(core::dbus::types::ObjectPath{DBUS_PATH_DBUS});
 
-    CountingEventCollector ec{5000};
+    auto ec = std::make_shared<CountingEventCollector>(5000);
 
-    std::thread t1{[dbus, &ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
-    std::thread t2{[dbus, &ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
-    std::thread t3{[dbus, &ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
-    std::thread t4{[dbus, &ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
-    std::thread t5{[dbus, &ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
+    std::thread t1{[dbus, ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
+    std::thread t2{[dbus, ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
+    std::thread t3{[dbus, ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
+    std::thread t4{[dbus, ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
+    std::thread t5{[dbus, ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
 
-    EXPECT_TRUE(ec.wait_for(std::chrono::seconds{10}));
+    EXPECT_TRUE(ec->wait_for(std::chrono::seconds{10}));
 
     bus->stop();
 
