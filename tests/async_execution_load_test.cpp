@@ -131,7 +131,7 @@ TEST_F(AsyncExecutionLoadTest, RepeatedlyInvokingAnAsyncFunctionWorks)
     std::thread t4{[dbus, ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
     std::thread t5{[dbus, ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
 
-    EXPECT_TRUE(ec->wait_for(std::chrono::seconds{10}));
+    EXPECT_TRUE(ec->wait_for(std::chrono::seconds{60}));
 
     bus->stop();
 
@@ -143,6 +143,4 @@ TEST_F(AsyncExecutionLoadTest, RepeatedlyInvokingAnAsyncFunctionWorks)
 
     if (worker.joinable())
         worker.join();
-
-    dbus_shutdown();
 }
