@@ -14,13 +14,14 @@
 #
 # Authored by: Thomas Voss <thomas.voss@canonical.com>
 
-set (OLD_CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-# Don't treat warnings as errors in 3rd_party/{gmock,cucumber-cpp}
-string (REPLACE " -Werror " " " CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-find_package(Gtest REQUIRED)
-include_directories(${GMOCK_INCLUDE_DIR} ${GTEST_INCLUDE_DIR})
-set (CMAKE_CXX_FLAGS ${OLD_CMAKE_CXX_FLAGS})
+# Build with system gmock and embedded gtest
+set (GMOCK_INCLUDE_DIR "/usr/include/gmock/include" CACHE PATH "gmock source include directory")
+set (GMOCK_SOURCE_DIR "/usr/src/gmock" CACHE PATH "gmock source directory")
+set (GTEST_INCLUDE_DIR "${GMOCK_SOURCE_DIR}/gtest/include" CACHE PATH "gtest source include directory")
 
+add_subdirectory(${GMOCK_SOURCE_DIR} "${CMAKE_CURRENT_BINARY_DIR}/gmock")
+
+set(GTEST_BOTH_LIBRARIES gmock gtest gtest_main)
 find_package(Threads)
 
 add_definitions(-DCORE_DBUS_ENABLE_GOOGLE_TEST_FIXTURE)
@@ -39,6 +40,11 @@ include_directories(
   ${GTEST_INCLUDE_DIRS}
   ${PROCESS_CPP_INCLUDE_DIRS}
 )
+
+add_executable(
+  async_execution_load_test
+  async_execution_load_test.cpp
+  )
 
 add_executable(
   bus_test
@@ -109,6 +115,19 @@ add_executable(
   signal_delivery_test
   signal_delivery_test.cpp
   )
+
+target_link_libraries(
+  async_execution_load_test
+
+  dbus-cpp
+  dbus-cppc-helper
+
+  ${CMAKE_THREAD_LIBS_INIT}
+  ${Boost_LIBRARIES}
+  ${DBUS_LIBRARIES}
+  ${GTEST_BOTH_LIBRARIES}
+  ${PROCESS_CPP_LIBRARIES}
+)
 
 target_link_libraries(
   bus_test
@@ -279,6 +298,7 @@ target_link_libraries(
   ${GTEST_BOTH_LIBRARIES}
   )
 
+add_test(async_execution_load_test ${CMAKE_CURRENT_BINARY_DIR}/async_execution_load_test)
 add_test(bus_test ${CMAKE_CURRENT_BINARY_DIR}/bus_test)
 add_test(cache_test ${CMAKE_CURRENT_BINARY_DIR}/cache_test)
 add_test(dbus_test ${CMAKE_CURRENT_BINARY_DIR}/dbus_test)

@@ -122,14 +122,20 @@ public:
                 return;
             }
 
+            // We do not keep ourselves alive to prevent from races during destruction.
+            std::weak_ptr<Timeout<UnderlyingTimeoutType>> wp{this->shared_from_this()};
+
             timer.expires_from_now(
                         boost::posix_time::milliseconds(
                             traits::Timeout<UnderlyingTimeoutType>::get_timeout_interval(
                                 timeout)));
-            timer.async_wait(
-                        std::bind(&Timeout::on_timeout,
-                                  Timeout<UnderlyingTimeoutType>::shared_from_this(),
-                                  std::placeholders::_1));
+            timer.async_wait([wp](const boost::system::error_code& ec)
+            {
+                auto sp = wp.lock();
+
+                if (sp)
+                    sp->on_timeout(ec);
+            });
         }
 
         void cancel()
@@ -184,27 +190,35 @@ public:
 
         void restart()
         {
+            // We do not keep ourselves alive to prevent from races during destruction.
+            std::weak_ptr<Watch<UnderlyingWatchType>> wp{this->shared_from_this()};
+
             if (traits::Watch<UnderlyingWatchType>::is_watch_monitoring_fd_for_readable(watch))
             {
-                stream_descriptor.async_read_some(
-                            boost::asio::null_buffers(),
-                            std::bind(
-                                &Watch::on_stream_descriptor_event,
-                                Watch<UnderlyingWatchType>::shared_from_this(),
-                                traits::Watch<UnderlyingWatchType>::readable_event(),
-                                std::placeholders::_1,
-                                std::placeholders::_2));
+                stream_descriptor.async_read_some(boost::asio::null_buffers(), [wp](boost::system::error_code ec, std::size_t bytes_transferred)
+                {
+                    auto sp = wp.lock();
+
+                    if (sp)
+                        sp->on_stream_descriptor_event(
+                                    traits::Watch<UnderlyingWatchType>::readable_event(),
+                                    ec,
+                                    bytes_transferred);
+                });
             }
+
             if (traits::Watch<UnderlyingWatchType>::is_watch_monitoring_fd_for_writable(watch))
             {
-                stream_descriptor.async_write_some(
-                            boost::asio::null_buffers(),
-                            std::bind(
-                                &Watch::on_stream_descriptor_event,
-                                Watch<UnderlyingWatchType>::shared_from_this(),
-                                traits::Watch<UnderlyingWatchType>::writeable_event(),
-                                std::placeholders::_1,
-                                std::placeholders::_2));
+                stream_descriptor.async_write_some(boost::asio::null_buffers(), [wp](boost::system::error_code ec, std::size_t bytes_transferred)
+                {
+                    auto sp = wp.lock();
+
+                    if (sp)
+                        sp->on_stream_descriptor_event(
+                                    traits::Watch<UnderlyingWatchType>::writeable_event(),
+                                    ec,
+                                    bytes_transferred);
+                });
             }
         }
 
