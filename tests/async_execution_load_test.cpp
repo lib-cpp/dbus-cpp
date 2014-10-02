@@ -123,13 +123,13 @@ TEST_F(AsyncExecutionLoadTest, RepeatedlyInvokingAnAsyncFunctionWorks)
     auto service = core::dbus::Service::use_service(bus, DBus::name());
     auto dbus = service->object_for_path(core::dbus::types::ObjectPath{DBUS_PATH_DBUS});
 
-    auto ec = std::make_shared<CountingEventCollector>(5000);
+    auto ec = std::make_shared<CountingEventCollector>(500);
 
-    std::thread t1{[dbus, ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
-    std::thread t2{[dbus, ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
-    std::thread t3{[dbus, ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
-    std::thread t4{[dbus, ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
-    std::thread t5{[dbus, ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 1000, ec);}};
+    std::thread t1{[dbus, ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 100, ec);}};
+    std::thread t2{[dbus, ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 100, ec);}};
+    std::thread t3{[dbus, ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 100, ec);}};
+    std::thread t4{[dbus, ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 100, ec);}};
+    std::thread t5{[dbus, ec]() {invoke_list_names_n_times_and_update_event_collector(dbus, 100, ec);}};
 
     EXPECT_TRUE(ec->wait_for(std::chrono::seconds{60}));
 
