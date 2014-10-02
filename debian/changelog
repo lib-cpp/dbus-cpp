@@ -1,3 +1,12 @@
+dbus-cpp (4.0.0+14.10.20141002.1-0ubuntu1) utopic; urgency=low
+
+  [ thomas-voss ]
+  * Always unref pending calls, add load test to ensure correct
+    behavior. Make sure that timeouts are never notified after
+    destruction. (LP: #1367836)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 02 Oct 2014 20:49:03 +0000
+
 dbus-cpp (4.0.0+14.10.20140917-0ubuntu1) utopic; urgency=low
 
   [ thomas-voss ]
