@@ -60,7 +60,7 @@ struct DBus
 
 struct CountingEventCollector
 {
-    CountingEventCollector(std::uint64_t expected)
+    CountingEventCollector(int expected)
         : expected{expected},
           counter{0}
     {
@@ -85,8 +85,8 @@ struct CountingEventCollector
                                              << counter << " does not match " << expected;
     }
 
-    std::uint64_t expected;
-    std::atomic<std::uint64_t> counter;
+    int expected;
+    std::atomic<int> counter;
 
     std::mutex guard;
     std::condition_variable wait_condition;
