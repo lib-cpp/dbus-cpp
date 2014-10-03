@@ -46,6 +46,12 @@ namespace impl
 class PendingCall : public core::dbus::PendingCall
 {
 private:
+    enum class State
+    {
+        pending,
+        completed
+    };
+
     struct Wrapper
     {
         std::shared_ptr<core::dbus::impl::PendingCall> pending_call;
@@ -66,18 +72,15 @@ private:
         {
             ~Scope()
             {
-                // We take over ownership of the wrapper and destroy on scope exit.
-                delete wrapper;
                 // We always unref this message, even if notify_locked or
                 // from_raw_message throws.
                 if (message) dbus_message_unref(message);
             }
 
-            Wrapper* wrapper;
             // We only need this later on, when we have stolen the reply
             // from the pending call.
             DBusMessage* message;
-        } scope{wrapper, nullptr};
+        } scope{nullptr};
 
         // We synchronize to avoid races on construction.
         std::lock_guard<std::mutex> lg{wrapper->pending_call->guard};
@@ -94,12 +97,16 @@ private:
     // Announce incoming reply and invoke the callback if set.
     void notify_locked(const Message::Ptr& msg)
     {
+        if (state.exchange(State::completed) == State::completed)
+            return;
+
         message = msg;
 
         if (callback)
             callback(message);
     }
 
+    std::atomic<State> state;
     DBusPendingCall* pending_call;
     std::mutex guard;
     Message::Ptr message;
@@ -130,29 +137,20 @@ public:
             ~Scope()
             {
                 dbus_pending_call_unref(call);
-                if (armed) delete wrapper;
-            }
-
-            // Disarms the scope for handling the wrapper instance.
-            // Think about it like giving up ownership as we handed over
-            // to libdbus.
-            void disarm_for_wrapper()
-            {
-                armed = false;
-            }
+                if (message) dbus_message_unref(message);
+            }  
 
             // The raw call instance.
             DBusPendingCall* call;
-            // True if the wrapper instance is still owned by the scope.
-            bool armed;
-            // The wrapper instance.
-            Wrapper* wrapper;
+            // Non-null if we managed to steal the reply.
+            DBusMessage* message;
         } scope
         {
             // The raw call that we got handed from the caller.
             call,
-            // Yes, we still own the Wrapper instance.
-            true, new Wrapper{result}
+            // Initialize the message to null to make sure that we
+            // do not unref garbage.
+            nullptr
         };
 
         // We synchronize to avoid races on construction.
@@ -164,7 +162,7 @@ public:
                 result->pending_call, PendingCall::on_pending_call_completed,
                 // We pass in our helper object and do not specify a deleter.
                 // Please refer to the source-code comments in on_pending_call_completed.
-                scope.wrapper, nullptr))
+                new Wrapper{result}, [](void* p){ delete static_cast<Wrapper*>(p); }))
         {
             throw std::runtime_error("Error setting up pending call notification.");
         }
@@ -175,22 +173,8 @@ public:
             {
                 // We took too long while setting up the pending call notification.
                 // For that we now have to inject the message here.
-                auto msg = dbus_pending_call_steal_reply(call);
-
-                if (msg)
-                {
-                    result->message = Message::from_raw_message(msg);
-                    // We decrease the reference count as Message::from_raw_message
-                    // always refs the object that it is passed.
-                    dbus_message_unref(msg);
-                }
-            }
-            else
-            {
-                // We need the wrapper to be alive, so we disarm the scope.
-                // Please note that this is the only "good" path through this
-                // mess of setup and notification functions.
-                scope.disarm_for_wrapper();
+                if (nullptr != (scope.message = dbus_pending_call_steal_reply(call)))
+                    result->notify_locked(Message::from_raw_message(scope.message));
             }
         }
 
@@ -214,7 +198,7 @@ public:
 
 private:
     PendingCall(DBusPendingCall* call)
-        : pending_call(call)
+        : state(State::pending), pending_call(call)
     {
     }    
 };
