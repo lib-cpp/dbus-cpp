@@ -34,7 +34,17 @@ include(GNUInstallDirs)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall -pedantic -Wextra -fvisibility=hidden -fPIC -pthread")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Werror -Wall -fno-strict-aliasing -fvisibility=hidden -fvisibility-inlines-hidden -pedantic -Wextra -fPIC -pthread")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}")
+
+# We leverage GCC's sanitize functionality
+set(
+  DBUS_CPP_SANITIZE None
+  CACHE STRING "Enables sanitizer functionality if set to a value in {address, leak}")
+
+if((${DBUS_CPP_SANITIZE} STREQUAL "address") OR (${DBUS_CPP_SANITIZE} STREQUAL "leak"))
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=${DBUS_CPP_SANITIZE}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=${DBUS_CPP_SANITIZE}")
+endif()
 
 #####################################################################
 # Enable code coverage calculation with gcov/gcovr/lcov
