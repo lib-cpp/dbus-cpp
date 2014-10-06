@@ -46,13 +46,28 @@ namespace impl
 class PendingCall : public core::dbus::PendingCall
 {
 private:
+    // We explicitly maintain the state of the pending call
+    // to avoid races during initialization and callbacks happening.
+    enum class State
+    {
+        // We haven't received a result yet.
+        pending,
+        // We have received a result and either called out
+        // to application code or stored the answer to
+        // our request in a message for later processing
+        completed
+    };
+
+    // We keep an instance alive by passing the pending call
+    // wrapped in an ordinary heap-allocated wrapper to the
+    // notification callback.
     struct Wrapper
     {
         std::shared_ptr<core::dbus::impl::PendingCall> pending_call;
     };
 
-    static void on_pending_call_completed(DBusPendingCall* call,
-                                          void* cookie)
+    // The callback that is passed to libdbus.
+    static void on_pending_call_completed(DBusPendingCall* call, void* cookie)
     {
         auto wrapper = static_cast<Wrapper*>(cookie);
 
@@ -66,53 +81,42 @@ private:
         {
             ~Scope()
             {
-                // We take over ownership of the wrapper and destroy on scope exit.
-                delete wrapper;
                 // We always unref this message, even if notify_locked or
                 // from_raw_message throws.
                 if (message) dbus_message_unref(message);
             }
 
-            Wrapper* wrapper;
             // We only need this later on, when we have stolen the reply
             // from the pending call.
             DBusMessage* message;
-        } scope{wrapper, nullptr};
+        } scope{nullptr};
 
         // We synchronize to avoid races on construction.
         std::lock_guard<std::mutex> lg{wrapper->pending_call->guard};
         // And we only steal the reply if the call actually completed.
-        if (not is_pending_call_completed(call))
-            return;
-
-        scope.message = dbus_pending_call_steal_reply(call);
-
-        if (scope.message)
-            wrapper->pending_call->notify_locked(Message::from_raw_message(scope.message));
+        if (is_pending_call_completed(call))
+            if (nullptr != (scope.message = dbus_pending_call_steal_reply(call)))
+                wrapper->pending_call->notify_locked(Message::from_raw_message(scope.message));
     }
 
     // Announce incoming reply and invoke the callback if set.
+    // Atomically maintains the state of this call instance.
     void notify_locked(const Message::Ptr& msg)
     {
+        if (state.exchange(State::completed) == State::completed)
+            return;
+
         message = msg;
 
         if (callback)
             callback(message);
     }
 
-    DBusPendingCall* pending_call;
-    std::mutex guard;
-    Message::Ptr message;
-    PendingCall::Notification callback;
-
 public:
+    // Creates a new PendingCall instance given the opaque call instance
+    // handed out by libdbus. Throws in case of errors.
     inline static core::dbus::PendingCall::Ptr create(DBusPendingCall* call)
     {
-        if (not call) throw std::runtime_error
-        {
-            "core::dbus::PendingCall cannot be constructed for null object."
-        };
-
         auto result = std::shared_ptr<core::dbus::impl::PendingCall>
         {
             new core::dbus::impl::PendingCall{call}
@@ -130,79 +134,55 @@ public:
             ~Scope()
             {
                 dbus_pending_call_unref(call);
-                if (armed) delete wrapper;
-            }
-
-            // Disarms the scope for handling the wrapper instance.
-            // Think about it like giving up ownership as we handed over
-            // to libdbus.
-            void disarm_for_wrapper()
-            {
-                armed = false;
-            }
+                if (message) dbus_message_unref(message);
+            }  
 
             // The raw call instance.
             DBusPendingCall* call;
-            // True if the wrapper instance is still owned by the scope.
-            bool armed;
-            // The wrapper instance.
-            Wrapper* wrapper;
+            // Non-null if we managed to steal the reply.
+            DBusMessage* message;
         } scope
         {
             // The raw call that we got handed from the caller.
             call,
-            // Yes, we still own the Wrapper instance.
-            true, new Wrapper{result}
+            // Initialize the message to null to make sure that we
+            // do not unref garbage.
+            nullptr
         };
 
         // We synchronize to avoid races on construction.
         std::lock_guard<std::mutex> lg{result->guard};
 
+        // We dispatch to the static on_pending_call_completed when
+        // the call completes.
+        // Please refer to the source-code comments in on_pending_call_completed.
         if (FALSE == dbus_pending_call_set_notify(
-                // We dispatch to the static on_pending_call_completed when
-                // the call completes.
                 result->pending_call, PendingCall::on_pending_call_completed,
-                // We pass in our helper object and do not specify a deleter.
-                // Please refer to the source-code comments in on_pending_call_completed.
-                scope.wrapper, nullptr))
+                new Wrapper{result}, [](void* p){ delete static_cast<Wrapper*>(p); }))
         {
             throw std::runtime_error("Error setting up pending call notification.");
         }
 
         // And here comes the beauty of libdbus, and its racy architecture:
-        {            
-            if (is_pending_call_completed(call))
-            {
-                // We took too long while setting up the pending call notification.
-                // For that we now have to inject the message here.
-                auto msg = dbus_pending_call_steal_reply(call);
-
-                if (msg)
-                {
-                    result->message = Message::from_raw_message(msg);
-                    // We decrease the reference count as Message::from_raw_message
-                    // always refs the object that it is passed.
-                    dbus_message_unref(msg);
-                }
-            }
-            else
-            {
-                // We need the wrapper to be alive, so we disarm the scope.
-                // Please note that this is the only "good" path through this
-                // mess of setup and notification functions.
-                scope.disarm_for_wrapper();
-            }
+        if (is_pending_call_completed(call))
+        {
+            // We took too long while setting up the pending call notification.
+            // For that we now have to inject the message here.
+            if (nullptr != (scope.message = dbus_pending_call_steal_reply(call)))
+                result->notify_locked(Message::from_raw_message(scope.message));
         }
 
         return result;
     }
 
-    void cancel()
+    // Cancels the outstanding call.
+    void cancel() override
     {
         dbus_pending_call_cancel(pending_call);
     }
 
-    void then(const core::dbus::PendingCall::Notification& notification)
+    // Installs a continuation and invokes it if the call already completed.
+    void then(const core::dbus::PendingCall::Notification& notification) override
     {
         std::lock_guard<std::mutex> lg(guard);
         callback = notification;
@@ -214,9 +194,25 @@ public:
 
 private:
     PendingCall(DBusPendingCall* call)
-        : pending_call(call)
+        : state(State::pending), pending_call(call)
     {
-    }    
+        if (not call) throw std::runtime_error
+        {
+            "core::dbus::PendingCall cannot be constructed for null object."
+        };
+    }
+
+    // Our internal state, initialized to State::pending.
+    std::atomic<State> state;
+    // Our pending call instance.
+    DBusPendingCall* pending_call;
+    // We synchronize access to the following two members.
+    std::mutex guard;
+    // The reply message.
+    Message::Ptr message;
+    // The callback, invoked when either the call completed or
+    // if the callback is installed when the call already completed.
+    PendingCall::Notification callback;
 };
 }
 }
