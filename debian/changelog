@@ -1,3 +1,12 @@
+dbus-cpp (4.0.0+14.10.20141006-0ubuntu1) utopic; urgency=low
+
+  [ thomas-voss ]
+  * Fix another race when setting up a pending call notification on
+    another thread than the one driving the event loop. Introduce an
+    option to enable sanitizers.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 06 Oct 2014 15:55:53 +0000
+
 dbus-cpp (4.0.0+14.10.20141002.1-0ubuntu1) utopic; urgency=low
 
   [ thomas-voss ]
