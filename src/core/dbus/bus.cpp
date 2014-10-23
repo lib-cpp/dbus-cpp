@@ -43,8 +43,13 @@ struct VTable
             void* data)
     {
         auto thiz = static_cast<VTable*>(data);
+        auto sp = thiz->object.lock();
 
-        if (thiz->object->on_new_message(
+        // We return early if the underlying object is dead.
+        if (not sp)
+            return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+
+        if (sp->on_new_message(
                     core::dbus::Message::from_raw_message(
                         message)))
             return DBUS_HANDLER_RESULT_HANDLED;
@@ -52,7 +57,7 @@ struct VTable
         return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
     }
 
-    std::shared_ptr<core::dbus::Object> object;
+    std::weak_ptr<core::dbus::Object> object;
 };
 
 DBusHandlerResult static_handle_message(
@@ -340,6 +345,9 @@ void Bus::register_object_for_path(
         const types::ObjectPath& path,
         const std::shared_ptr<Object>& object)
 {
+    // We remove any previously known object.
+    unregister_object_path(path);
+
     auto vtable = new DBusObjectPathVTable
     {
             VTable::unregister_object_path,
