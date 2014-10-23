@@ -315,6 +315,11 @@ inline Object::Object(
     }
 }
 
+inline Object::~Object()
+{
+    parent->get_connection()->access_signal_router().uninstall_route(object_path);
+}
+
 inline void Object::add_match(const MatchRule& rule)
 {
     parent->add_match(rule.path(object_path));

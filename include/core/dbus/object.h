@@ -90,6 +90,8 @@ class Object : public std::enable_shared_from_this<Object>
     typedef std::shared_ptr<Object> Ptr;
     typedef std::function<void(const Message::Ptr&)> MethodHandler;
 
+    ~Object();
+
     /**
      * @brief Emits a signal with arguments for this object.
      */

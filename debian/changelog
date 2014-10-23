@@ -1,3 +1,10 @@
+dbus-cpp (4.1.0) UNRELEASED; urgency=medium
+
+  * Ensure that dead objects are correctly cleaning up their connections to the signal router.
+  * Robustify against dangling objects. 
+
+ -- Thomas Voss <thomas.voss@canonical.com>  Thu, 23 Oct 2014 23:07:25 +0200
+
 dbus-cpp (4.0.0+14.10.20141006-0ubuntu1) utopic; urgency=low
 
   [ thomas-voss ]
