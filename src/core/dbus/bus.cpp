@@ -345,9 +345,6 @@ void Bus::register_object_for_path(
         const types::ObjectPath& path,
         const std::shared_ptr<Object>& object)
 {
-    // We remove any previously known object.
-    unregister_object_path(path);
-
     auto vtable = new DBusObjectPathVTable
     {
             VTable::unregister_object_path,
