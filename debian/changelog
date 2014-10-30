@@ -1,9 +1,10 @@
-dbus-cpp (4.1.0) UNRELEASED; urgency=medium
+dbus-cpp (4.1.0+14.10.20141030~rtm-0ubuntu1) 14.09; urgency=medium
 
+  [ Thomas Voss ]
   * Ensure that dead objects are correctly cleaning up their connections to the signal router.
   * Robustify against dangling objects. 
 
- -- Thomas Voss <thomas.voss@canonical.com>  Thu, 23 Oct 2014 23:07:25 +0200
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 30 Oct 2014 14:01:09 +0000
 
 dbus-cpp (4.0.0+14.10.20141006-0ubuntu1) utopic; urgency=low
 
