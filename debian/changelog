@@ -1,3 +1,15 @@
+dbus-cpp (4.1.0+14.10.20141031~rtm-0ubuntu1) 14.09; urgency=low
+
+  [ thomas-voss ]
+  * Relax timeout on org.freedesktop.Properties::{GetAll, Get, Set}.
+    with timeout set to 30 sec (LP: #1361642)
+
+  [ Kevin Gunn ]
+  * Relax timeout on org.freedesktop.Properties::{GetAll, Get, Set}.
+    with timeout set to 30 sec (LP: #1361642)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 31 Oct 2014 07:51:25 +0000
+
 dbus-cpp (4.1.0+14.10.20141030~rtm-0ubuntu1) 14.09; urgency=medium
 
   [ Thomas Voss ]
