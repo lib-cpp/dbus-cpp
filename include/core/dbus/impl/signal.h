@@ -143,7 +143,14 @@ inline Signal<
             it = d->handlers.upper_bound(it->first))
     {
         const MatchRule::MatchArgs& match_args(it->first);
-        d->parent->remove_match(d->rule.args(match_args));
+
+        try
+        {
+            d->parent->remove_match(d->rule.args(match_args));
+        }
+        catch (...)
+        {
+        }
     }
 }
 
