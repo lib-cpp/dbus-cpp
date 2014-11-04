@@ -1,3 +1,9 @@
+dbus-cpp (4.1.0+15.04.20141104-0ubuntu1) vivid; urgency=low
+
+  * New rebuild forced
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 04 Nov 2014 04:23:34 +0000
+
 dbus-cpp (4.1.0+14.10.20141031~rtm-0ubuntu1) 14.09; urgency=low
 
   [ thomas-voss ]
