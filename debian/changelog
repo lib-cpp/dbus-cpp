@@ -1,3 +1,9 @@
+dbus-cpp (4.2.0) UNRELEASED; urgency=medium
+
+  * Make core::dbus::Signal::~Signal respect the noexcept guarantee.
+
+ -- Thomas Voss <thomas.voss@canonical.com>  Wed, 05 Nov 2014 08:39:31 +0100
+
 dbus-cpp (4.1.0+15.04.20141104-0ubuntu1) vivid; urgency=low
 
   * New rebuild forced
