@@ -1,8 +1,9 @@
-dbus-cpp (4.3.0) UNRELEASED; urgency=medium
+dbus-cpp (4.3.0+15.04.20141110-0ubuntu1) vivid; urgency=medium
 
+  [ Thomas Voss ]
   * Ensure Signal<void>::~Signal is exception safe.
 
- -- Thomas Voss <thomas.voss@canonical.com>  Mon, 10 Nov 2014 09:34:52 +0100
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 10 Nov 2014 12:31:09 +0000
 
 dbus-cpp (4.2.0+15.04.20141105-0ubuntu1) vivid; urgency=medium
 
