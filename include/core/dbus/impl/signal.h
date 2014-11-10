@@ -32,7 +32,15 @@ inline Signal<SignalDescription, Argument>::~Signal() noexcept
     signal_about_to_be_destroyed();
 
     parent->signal_router.uninstall_route(Object::SignalKey{interface, name});
-    parent->remove_match(rule);
+    try
+    {
+        parent->remove_match(rule);
+    }
+    catch (...)
+    {
+        // Intentionally left empty as we do not care about the match rule
+        // not being removed.
+    }
 }
 
 template<typename SignalDescription, typename Argument>
