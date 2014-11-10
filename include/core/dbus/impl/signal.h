@@ -39,7 +39,8 @@ inline Signal<SignalDescription, Argument>::~Signal() noexcept
     catch (...)
     {
         // Intentionally left empty as we do not care about the match rule
-        // not being removed.
+        // not being removed at this point. There is hardly anything we can
+        // do and just assume correct state.
     }
 }
 
