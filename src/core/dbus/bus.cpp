@@ -278,7 +278,8 @@ std::shared_ptr<Message> Bus::send_with_reply_and_block_for_at_most(
     if (!result)
         throw std::runtime_error(se.print());
 
-    auto reply = Message::from_raw_message(result); dbus_message_unref(result);
+    auto reply = Message::from_raw_message(result);
+    dbus_message_unref(result);
     return reply;
 }
 
