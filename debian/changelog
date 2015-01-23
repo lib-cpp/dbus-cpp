@@ -1,3 +1,11 @@
+dbus-cpp (4.3.0+15.04.20150123-0ubuntu1) vivid; urgency=low
+
+  [ thomas-voss ]
+  * We ref on construction, so decrement the ref count by 1 to 1 prior
+    to returning. (LP: #1396985)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 23 Jan 2015 09:56:06 +0000
+
 dbus-cpp (4.3.0+15.04.20141110-0ubuntu1) vivid; urgency=medium
 
   [ Thomas Voss ]
