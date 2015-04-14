@@ -20,6 +20,9 @@
 
 #include <core/dbus/bus.h>
 
+#include <boost/filesystem.hpp>
+#include <boost/optional.hpp>
+
 #include <core/posix/exec.h>
 #include <core/posix/this_process.h>
 
@@ -44,6 +47,40 @@ static constexpr const char* dbus_starter_bus_type
 {
     "DBUS_STARTER_BUS_TYPE"
 };
+
+boost::optional<boost::filesystem::path> find_executable(const boost::filesystem::path& name)
+{
+  if (name.is_absolute())
+    return name;
+
+  std::stringstream ss{core::posix::this_process::env::get("PATH")};
+  std::string token;
+
+  while (std::getline(ss, token, ':'))
+  {
+    auto path = boost::filesystem::path{token} / name;
+    if (boost::filesystem::exists(path))
+      return path;      
+  }
+
+  return boost::optional<boost::filesystem::path>();
+}
+
+boost::filesystem::path dbus_daemon()
+{
+  if (auto path = find_executable("dbus-daemon"))
+    return *path;
+
+  throw std::runtime_error("Could not locate the dbus-daemon executable, please check your installation.");
+}
+
+boost::filesystem::path timeout()
+{
+  if (auto path = find_executable("timeout"))
+    return *path;
+
+  throw std::runtime_error("Could not locate the timeout executable, please check your installation.");
+}
 }
 
 struct core::dbus::Fixture::Private
@@ -56,7 +93,7 @@ struct core::dbus::Fixture::Private
             {
                 "--kill-after=5",
                 std::to_string(core::dbus::Fixture::default_daemon_timeout().count()),
-                "/usr/bin/dbus-daemon",
+                dbus_daemon().native(),
                 "--config-file",
                 config_file,
                 "--print-address"
@@ -69,7 +106,7 @@ struct core::dbus::Fixture::Private
             });
 
             daemon = core::posix::exec(
-                        "/usr/bin/timeout",
+                        timeout().native(),
                         argv,
                         env,
                         core::posix::StandardStream::stdout);
@@ -114,7 +151,7 @@ struct core::dbus::Fixture::Private
             {
                 "--kill-after=5",
                 std::to_string(core::dbus::Fixture::default_daemon_timeout().count()),
-                "/usr/bin/dbus-daemon",
+                dbus_daemon().native(),
                 "--config-file",
                 config_file,
                 "--print-address"
@@ -127,7 +164,7 @@ struct core::dbus::Fixture::Private
             });
 
             daemon = core::posix::exec(
-                        "/usr/bin/timeout",
+                        timeout().native(),
                         argv,
                         env,
                         core::posix::StandardStream::stdout);
