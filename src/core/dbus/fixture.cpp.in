@@ -56,7 +56,7 @@ struct core::dbus::Fixture::Private
             {
                 "--kill-after=5",
                 std::to_string(core::dbus::Fixture::default_daemon_timeout().count()),
-                "/bin/dbus-daemon",
+                "/usr/bin/dbus-daemon",
                 "--config-file",
                 config_file,
                 "--print-address"
@@ -114,7 +114,7 @@ struct core::dbus::Fixture::Private
             {
                 "--kill-after=5",
                 std::to_string(core::dbus::Fixture::default_daemon_timeout().count()),
-                "/bin/dbus-daemon",
+                "/usr/bin/dbus-daemon",
                 "--config-file",
                 config_file,
                 "--print-address"
