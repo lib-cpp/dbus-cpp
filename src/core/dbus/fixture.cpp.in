@@ -226,9 +226,19 @@ core::dbus::Fixture::~Fixture()
 {
 }
 
+std::string core::dbus::Fixture::session_bus_address()
+{
+    return d->session.address;
+}
+
 std::shared_ptr<core::dbus::Bus> core::dbus::Fixture::create_connection_to_session_bus()
 {
     return std::shared_ptr<core::dbus::Bus>(new core::dbus::Bus{d->session.address});
+}
+
+std::string core::dbus::Fixture::system_bus_address()
+{
+    return d->system.address;
 }
 
 std::shared_ptr<core::dbus::Bus> core::dbus::Fixture::create_connection_to_system_bus()

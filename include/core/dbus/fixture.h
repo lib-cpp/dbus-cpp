@@ -70,10 +70,20 @@ public:
 
     virtual ~Fixture();
 
+    /** 
+     * @brief session_bus_address returns the address of the private session bus instance. 
+     */
+    std::string session_bus_address();
+
     /**
      * @brief create_connection_to_session_bus creates a new connection to the testing session bus instance.
      */
     std::shared_ptr<Bus> create_connection_to_session_bus();
+
+    /** 
+     * @brief session_bus_address returns the address of the private session bus instance. 
+     */
+    std::string system_bus_address();
 
     /**
      * @brief create_connection_to_system_bus creates a new connection to the testing system bus instance.
@@ -135,12 +145,28 @@ public:
     {
     }
 
+    /** 
+     * @brief session_bus_address returns the address of the private session bus instance. 
+     */
+    inline std::string session_bus_address()
+    {
+        return fixture.session_bus_address();
+    }
+
     /**
      * @brief session_bus provides access to the private session bus.
      */
     inline std::shared_ptr<Bus> session_bus()
     {
         return fixture.create_connection_to_session_bus();
+    }
+
+    /** 
+     * @brief system_bus_address returns the address of the private session bus instance. 
+     */
+    inline std::string system_bus_address()
+    {
+        return fixture.system_bus_address();
     }
 
     /**
