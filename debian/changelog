@@ -1,3 +1,15 @@
+dbus-cpp (4.3.0+15.04.20150505-0ubuntu1) vivid; urgency=medium
+
+  [ CI Train Bot ]
+  * debian/libdbus-cpp4.symbols.32bit: update to released version.
+  * debian/libdbus-cpp4.symbols.64bit: update to released version.
+
+  [ Thomas Voß ]
+  * core::dbus::Fixture: Provide access to the address of the spawned
+    session/system bus instances.
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Tue, 05 May 2015 08:24:49 +0000
+
 dbus-cpp (4.3.0+15.04.20150415-0ubuntu1) vivid; urgency=medium
 
   [ Thomas Voß ]
