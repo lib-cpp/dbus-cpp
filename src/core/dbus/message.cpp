@@ -298,12 +298,10 @@ void Message::Writer::push_byte(std::int8_t value)
 
 void Message::Writer::push_boolean(bool value)
 {
-    dbus_bool_t bool_value = value ? TRUE : FALSE;
-
     if (!dbus_message_iter_append_basic(
                 std::addressof(d->iter),
                 static_cast<int>(ArgumentType::boolean),
-                std::addressof(bool_value)))
+                std::addressof(value)))
         throw std::runtime_error("Not enough memory to append data to message.");
 }
 
