@@ -1,2 +1,0 @@
-libdbus-cpp.so.4 libdbus-cpp4 #MINVER#
-#include "libdbus-cpp4.symbols.32bit"
