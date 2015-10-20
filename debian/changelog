@@ -1,3 +1,9 @@
+dbus-cpp (5.0.0-0ubuntu3) wily; urgency=medium
+
+  * Bump revision as the archive has 5.0.0-0ubuntu2
+
+ -- Thomas Voß <thomas.voss@canonical.com>  Tue, 20 Oct 2015 17:03:52 +0200
+
 dbus-cpp (5.0.0) wily; urgency=medium
 
   * Bump major revision to account for toolchain update. Fixes LP:#1452322
