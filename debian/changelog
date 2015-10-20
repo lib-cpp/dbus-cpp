@@ -1,3 +1,11 @@
+dbus-cpp (4.3.0+15.04.20151020-0ubuntu1) vivid; urgency=medium
+
+  [ Manuel de la Pena ]
+  * Ensure that the signals are correctly emitted for when the services
+    appear and go.
+
+ -- Thomas Voß <ci-train-bot@canonical.com>  Tue, 20 Oct 2015 10:55:11 +0000
+
 dbus-cpp (4.3.0+15.04.20150505-0ubuntu1) vivid; urgency=medium
 
   [ CI Train Bot ]
