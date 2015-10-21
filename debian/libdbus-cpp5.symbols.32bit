@@ -1,5 +1,5 @@
- (c++)"score::dbus::Fixture::system_bus_address[abi:cxx11]()@Base" 4.3.0+15.04.20150505
- (c++)"score::dbus::Fixture::session_bus_address[abi:cxx11]()@Base" 4.3.0+15.04.20150505
+ (c++)"core::dbus::Fixture::system_bus_address[abi:cxx11]()@Base" 4.3.0+15.04.20150505
+ (c++)"core::dbus::Fixture::session_bus_address[abi:cxx11]()@Base" 4.3.0+15.04.20150505
  (c++)"core::dbus::Fixture::default_daemon_timeout()@Base" 4.0.0+14.10.20140730
  (c++)"core::dbus::asio::make_executor(std::shared_ptr<core::dbus::Bus> const&)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::asio::make_executor(std::shared_ptr<core::dbus::Bus> const&, boost::asio::io_service&)@Base" 3.1.0+14.10.20140711
@@ -8,9 +8,6 @@
  (c++)"core::dbus::Bus::~Bus()@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Bus::Bus(core::dbus::WellKnownBus)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Bus::Bus(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 2.0.0+14.04.20140310
- (c++)"core::dbus::Bus::Errors::AlreadyOwned::~AlreadyOwned()@Base" 2.0.0+14.04.20140310
- (c++)"core::dbus::Bus::Errors::AlreadyOwner::~AlreadyOwner()@Base" 2.0.0+14.04.20140310
- (c++)"core::dbus::Bus::Errors::NoMemory::~NoMemory()@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Bus::handle_message(std::shared_ptr<core::dbus::Message> const&)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Bus::has_owner_for_name(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Bus::install_executor(std::shared_ptr<core::dbus::Executor> const&)@Base" 2.0.0+14.04.20140310
@@ -153,20 +150,16 @@
  (c++)"core::dbus::Service::object_for_path(core::dbus::types::ObjectPath const&)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Service::remove_match(core::dbus::MatchRule const&)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Service::root_object()@Base" 2.0.0+14.04.20140310
- (c++)"core::dbus::Service::~Service()@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Service::Service(std::shared_ptr<core::dbus::Bus> const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Service::Service(std::shared_ptr<core::dbus::Bus> const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, core::dbus::Bus::RequestNameFlag const&)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Service::use_service_or_throw_if_not_available(std::shared_ptr<core::dbus::Bus> const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::Service::use_service(std::shared_ptr<core::dbus::Bus> const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::ServiceWatcher::owner_changed[abi:cxx11]() const@Base" 2.0.0+14.04.20140310
- (c++)"core::dbus::ServiceWatcher::Private::~Private()@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::ServiceWatcher::service_registered() const@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::ServiceWatcher::service_unregistered() const@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::ServiceWatcher::ServiceWatcher(std::shared_ptr<core::dbus::Object>, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, core::dbus::DBus::WatchMode)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::types::ObjectPath::as_string[abi:cxx11]() const@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::types::ObjectPath::empty() const@Base" 2.0.0+14.04.20140310
- (c++)"core::dbus::types::ObjectPath::Errors::InvalidObjectPathStringRepresentation::~InvalidObjectPathStringRepresentation()@Base" 2.0.0+14.04.20140310
- (c++)"core::dbus::types::ObjectPath::~ObjectPath()@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::types::ObjectPath::ObjectPath(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::types::ObjectPath::operator<(core::dbus::types::ObjectPath const&) const@Base" 2.0.0+14.04.20140310
  (c++)"core::dbus::types::ObjectPath::operator==(core::dbus::types::ObjectPath const&) const@Base" 2.0.0+14.04.20140310
@@ -200,8 +193,6 @@
  (c++)"vtable for core::dbus::Bus::Errors::AlreadyOwned@Base" 2.0.0+14.04.20140310
  (c++)"vtable for core::dbus::Bus::Errors::AlreadyOwner@Base" 2.0.0+14.04.20140310
  (c++)"vtable for core::dbus::Bus::Errors::NoMemory@Base" 2.0.0+14.04.20140310
- (c++)"vtable for core::dbus::Executor@Base" 2.0.0+14.04.20140310
  (c++)"vtable for core::dbus::Fixture@Base" 2.0.0+14.04.20140310
- (c++)"vtable for core::dbus::PendingCall@Base" 2.0.0+14.04.20140310
  (c++)"vtable for core::dbus::types::ObjectPath::Errors::InvalidObjectPathStringRepresentation@Base" 2.0.0+14.04.20140310
 #include "libdbus-cpp5.symbols.coverage"
