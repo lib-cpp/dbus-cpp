@@ -48,16 +48,18 @@ struct dbus::ServiceWatcher::Private
         const std::string& old_owner(std::get<1>(args));
         const std::string& new_owner(std::get<2>(args));
 
-        owner_changed(old_owner, new_owner);
 
-        if (new_owner.empty())
-        {
-            service_unregistered();
-        }
-        else
+        if (old_owner.empty() && !new_owner.empty())
         {
             service_registered();
         }
+
+        if (!old_owner.empty() && new_owner.empty())
+        {
+            service_unregistered();
+        }
+
+        owner_changed(old_owner, new_owner);
     }
 
     core::Signal<std::string, std::string> owner_changed;
