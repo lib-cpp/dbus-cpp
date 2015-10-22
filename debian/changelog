@@ -1,3 +1,9 @@
+dbus-cpp (5.0.0+15.10.20151022.1-0ubuntu1) wily; urgency=medium
+
+  * Fix signal emission on dbus::ServiceWatcher.
+
+ -- Thomas Voß <ci-train-bot@canonical.com>  Thu, 22 Oct 2015 07:17:01 +0000
+
 dbus-cpp (5.0.0+15.10.20151021.1-0ubuntu1) wily; urgency=medium
 
   [ CI Train Bot ]
