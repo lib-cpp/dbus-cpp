@@ -298,7 +298,7 @@ void Message::Writer::push_byte(std::int8_t value)
 
 void Message::Writer::push_boolean(bool value)
 {
-    dbus_bool_t bool_value = value ? TRUE : FALSE;
+    auto bool_value = value ? TRUE : FALSE;
 
     if (!dbus_message_iter_append_basic(
                 std::addressof(d->iter),
