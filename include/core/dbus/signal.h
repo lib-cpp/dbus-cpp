@@ -189,8 +189,11 @@ private:
             const std::shared_ptr<Object>& parent, 
             const std::string& interface, 
             const std::string& name);
-
-        typename SignalDescription::ArgumentType value;
+        
+        // We do not need this member anymore, but keep it in place for
+        // the sake of binary compatibility. Leaving a TODO(tvoss) to clean
+        // up on next ABI bump.
+        typename SignalDescription::ArgumentType pad;
         std::shared_ptr<Object> parent;
         std::string interface;
         std::string name;

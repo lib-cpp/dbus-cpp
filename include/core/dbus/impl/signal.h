@@ -322,7 +322,8 @@ Signal<
 {
     try
     {
-        msg->reader() >> d->value;
+        typename SignalDescription::ArgumentType value;
+        msg->reader() >> value;
         std::lock_guard<std::mutex> lg(d->handlers_guard);
         for (auto it : d->handlers)
         {
@@ -356,7 +357,7 @@ Signal<
                     continue;
             }
 
-            handler(d->value);
+            handler(value);
         }
     }
     catch (const std::runtime_error& e)
