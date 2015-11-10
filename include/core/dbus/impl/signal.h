@@ -309,6 +309,8 @@ inline Signal<
             &Signal<SignalDescription, typename SignalDescription::ArgumentType>::operator(),
             this,
             std::placeholders::_1));
+
+    d->rule = d->rule.type(Message::Type::signal).interface(interface).member(name);
 }
 
 template<typename SignalDescription>
