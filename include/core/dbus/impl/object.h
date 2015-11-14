@@ -162,11 +162,13 @@ Object::get_property()
             signal_properties_changed
                 = get_signal<interfaces::Properties::Signals::PropertiesChanged>();
 
-            signal_properties_changed->connect(
-                std::bind(
-                    &Object::on_properties_changed,
-                    shared_from_this(),
-                    std::placeholders::_1));
+            
+            std::weak_ptr<Object> wp{shared_from_this()};
+            signal_properties_changed->connect([wp](const interfaces::Properties::Signals::PropertiesChanged::ArgumentType& arg)
+            {
+                if (auto sp = wp.lock())
+                    sp->on_properties_changed(arg);
+            });
         }
     }
 
@@ -181,10 +183,12 @@ Object::get_property()
                 traits::Service<typename PropertyDescription::Interface>::interface_name(),
                 PropertyDescription::name());
 
-        property_changed_vtable[tuple] = std::bind(
-                &Property<PropertyDescription>::handle_changed,
-                property,
-                std::placeholders::_1);
+        std::weak_ptr<PropertyType> wp{property};
+        property_changed_vtable[tuple] = [wp](const types::Variant& arg)
+        {
+            if (auto sp = wp.lock())
+                sp->handle_changed(arg);
+        };
     }
     return property;
 }
