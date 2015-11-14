@@ -231,12 +231,6 @@ class Object : public std::enable_shared_from_this<Object>
         std::tuple<std::string, std::string>,
         std::function<void(const types::Variant&)>
     > property_changed_vtable;
-    std::shared_ptr<
-        Signal<
-            interfaces::Properties::Signals::PropertiesChanged,
-            interfaces::Properties::Signals::PropertiesChanged::ArgumentType
-        >
-    > signal_properties_changed;
 };
 }
 }

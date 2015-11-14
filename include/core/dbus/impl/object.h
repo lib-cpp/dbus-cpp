@@ -153,25 +153,6 @@ template<typename PropertyDescription>
 inline std::shared_ptr<Property<PropertyDescription>>
 Object::get_property()
 {
-    // If this is a proxy object we set up listening for property changes the
-    // first time someone accesses properties.
-    if (parent->is_stub())
-    {
-        if (!signal_properties_changed)
-        {
-            signal_properties_changed
-                = get_signal<interfaces::Properties::Signals::PropertiesChanged>();
-
-            
-            std::weak_ptr<Object> wp{shared_from_this()};
-            signal_properties_changed->connect([wp](const interfaces::Properties::Signals::PropertiesChanged::ArgumentType& arg)
-            {
-                if (auto sp = wp.lock())
-                    sp->on_properties_changed(arg);
-            });
-        }
-    }
-
     typedef Property<PropertyDescription> PropertyType;
     auto property =
             PropertyType::make_property(
@@ -182,6 +163,15 @@ Object::get_property()
         auto tuple = std::make_tuple(
                 traits::Service<typename PropertyDescription::Interface>::interface_name(),
                 PropertyDescription::name());
+
+        MatchRule mr;
+        mr = mr
+            .type(Message::Type::signal)
+            .interface(traits::Service<interfaces::Properties>::interface_name())
+            .member(interfaces::Properties::Signals::PropertiesChanged::name())
+            .args({std::make_pair(0, std::get<0>(tuple))});
+
+        add_match(mr);
 
         std::weak_ptr<PropertyType> wp{property};
         property_changed_vtable[tuple] = [wp](const types::Variant& arg)
@@ -316,6 +306,21 @@ inline Object::Object(
                 &MessageRouter<PropertyKey>::operator(), 
                 std::ref(set_property_router), 
                 std::placeholders::_1));
+    } else
+    {
+        signal_router.install_route(
+            SignalKey{
+                traits::Service<interfaces::Properties>::interface_name(), 
+                interfaces::Properties::Signals::PropertiesChanged::name()
+            },
+            // Passing this is fine as the lifetime of the signal_router is upper limited
+            // by the lifetime of this.
+            [this](const Message::Ptr& msg)
+            {
+                interfaces::Properties::Signals::PropertiesChanged::ArgumentType arg;
+                msg->reader() >> arg;
+                on_properties_changed(arg);
+            });
     }
 }
 
@@ -323,6 +328,25 @@ inline Object::~Object()
 {
     parent->get_connection()->access_signal_router().uninstall_route(object_path);
     parent->get_connection()->unregister_object_path(object_path);
+
+    for (const auto& pair : property_changed_vtable)
+    {
+        MatchRule mr;
+        mr = mr
+            .type(Message::Type::signal)
+            .interface(traits::Service<interfaces::Properties>::interface_name())
+            .member(interfaces::Properties::Signals::PropertiesChanged::name())
+            .args({std::make_pair(0, std::get<0>(pair.first))});
+        
+        try
+        {
+            remove_match(mr);
+        } catch(...)
+        {
+            // We consciously drop all possible exceptions here. There is hardly 
+            // anything we can do about the error anyway.
+        }
+    }
 }
 
 inline void Object::add_match(const MatchRule& rule)
