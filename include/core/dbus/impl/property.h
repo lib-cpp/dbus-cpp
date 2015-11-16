@@ -64,6 +64,13 @@ Property<PropertyType>::is_writable() const
 }
 
 template<typename PropertyType>
+const core::Signal<void>&
+Property<PropertyType>::about_to_be_destroyed() const
+{
+    return signal_about_to_be_destroyed;
+}
+
+template<typename PropertyType>
 std::shared_ptr<Property<PropertyType>>
 Property<PropertyType>::make_property(const std::shared_ptr<Object>& parent)
 {

@@ -19,7 +19,6 @@
 #define CORE_DBUS_IMPL_OBJECT_H_
 
 #include <core/dbus/bus.h>
-#include <core/dbus/lifetime_constrained_cache.h>
 #include <core/dbus/match_rule.h>
 #include <core/dbus/message_router.h>
 #include <core/dbus/message_streaming_operators.h>
@@ -70,17 +69,17 @@ inline Result<ResultType> Object::invoke_method_synchronously(const Args& ... ar
         object_path.as_string(),
         traits::Service<typename Method::Interface>::interface_name().c_str(),
         Method::name());
-    
+
     if (!msg)
         throw std::runtime_error("No memory available to allocate DBus message");
-    
+ 
     auto writer = msg->writer();
     encode_message(writer, args...);
-    
+
     auto reply = parent->get_connection()->send_with_reply_and_block_for_at_most(
                 msg,
                 Method::default_timeout());
-    
+
     return Result<ResultType>::from_message(reply);
 }
 
@@ -154,15 +153,29 @@ inline std::shared_ptr<Property<PropertyDescription>>
 Object::get_property()
 {
     typedef Property<PropertyDescription> PropertyType;
-    auto property =
-            PropertyType::make_property(
-                shared_from_this());
 
+    // Creating a stub property for a remote object/property instance
+    // requires the following steps:
+    //   * Look up if we already have a property instance available in the cache, 
+    //     leveraging the tuple (path, interface, name) as key.
+    //     * If yes: return the property.
+    //     * If no: Create a new proeprty instance and:
+    //       * Make it known to the cache.
+    //       * Wire it up for property_changed signal receiving.
     if (parent->is_stub())
     {
-        auto tuple = std::make_tuple(
-                traits::Service<typename PropertyDescription::Interface>::interface_name(),
-                PropertyDescription::name());
+        auto itf = traits::Service<typename PropertyDescription::Interface>::interface_name();
+        auto name = PropertyDescription::name(); 
+        auto key = std::make_tuple(path(), itf, name);
+
+        auto property = Object::property_cache<PropertyDescription>().retrieve_value_for_key(key);
+        if (property)
+            return property;
+
+        property = PropertyType::make_property(shared_from_this());
+        auto tuple = std::make_tuple(itf, name);
+
+        Object::property_cache<PropertyDescription>().insert_value_for_key(key, property);
 
         MatchRule mr;
         mr = mr
@@ -179,8 +192,11 @@ Object::get_property()
             if (auto sp = wp.lock())
                 sp->handle_changed(arg);
         };
+
+        return property;
     }
-    return property;
+
+    return PropertyType::make_property(shared_from_this());
 }
 
 template<typename Interface>
@@ -308,13 +324,15 @@ inline Object::Object(
                 std::placeholders::_1));
     } else
     {
+        // We centrally route org.freedesktop.DBus.Properties.PropertiesChanged
+        // through the object, which in turn routes via a custom Property cache.
         signal_router.install_route(
             SignalKey{
                 traits::Service<interfaces::Properties>::interface_name(), 
                 interfaces::Properties::Signals::PropertiesChanged::name()
             },
-            // Passing this is fine as the lifetime of the signal_router is upper limited
-            // by the lifetime of this.
+            // Passing 'this' is fine as the lifetime of the signal_router is upper limited
+            // by the lifetime of 'this'.
             [this](const Message::Ptr& msg)
             {
                 interfaces::Properties::Signals::PropertiesChanged::ArgumentType arg;
@@ -373,6 +391,19 @@ inline void Object::on_properties_changed(
             it->second(value.second);
         }
     }
+}
+
+template<typename PropertyDescription>
+inline core::dbus::ThreadSafeLifetimeConstrainedCache<
+    core::dbus::Object::CacheKey,
+    core::dbus::Property<PropertyDescription>>&
+core::dbus::Object::property_cache()
+{
+    static core::dbus::ThreadSafeLifetimeConstrainedCache<
+        core::dbus::Object::CacheKey,
+        core::dbus::Property<PropertyDescription>
+    > cache;
+    return cache;
 }
 }
 }

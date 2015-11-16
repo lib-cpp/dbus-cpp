@@ -61,6 +61,11 @@ public:
      */
     inline bool is_writable() const;
 
+    /**
+     * @brief Emitted during destruction of an object instance.
+     */
+    inline const core::Signal<void>& about_to_be_destroyed() const;
+
 protected:
     friend class Object;
 
@@ -82,6 +87,7 @@ private:
     std::string interface;
     std::string name;
     bool writable;
+    core::Signal<void> signal_about_to_be_destroyed;
 };
 }
 }
