@@ -354,24 +354,19 @@ inline Object::~Object()
     parent->get_connection()->access_signal_router().uninstall_route(object_path);
     parent->get_connection()->unregister_object_path(object_path);
 
-    for (const auto& pair : property_changed_vtable)
+    auto mr = MatchRule()
+        .type(Message::Type::signal)
+        .interface(traits::Service<interfaces::Properties>::interface_name())
+        .member(interfaces::Properties::Signals::PropertiesChanged::name());
+
+    try
     {
-        MatchRule mr;
-        mr = mr
-            .type(Message::Type::signal)
-            .interface(traits::Service<interfaces::Properties>::interface_name())
-            .member(interfaces::Properties::Signals::PropertiesChanged::name())
-            .args({std::make_pair(0, std::get<0>(pair.first))});
-        
-        try
-        {
-            remove_match(mr);
-        } catch(...)
-        {
-            // We consciously drop all possible exceptions here. There is hardly 
-            // anything we can do about the error anyway.
-        }
-    }
+        remove_match(mr);
+    } catch(...)
+   {
+        // We consciously drop all possible exceptions here. There is hardly 
+        // anything we can do about the error anyway.
+   }
 }
 
 inline void Object::add_match(const MatchRule& rule)
