@@ -43,6 +43,8 @@ public:
     typedef typename PropertyType::ValueType ValueType;
     typedef core::Property<ValueType> Super;
 
+    inline ~Property();
+
     /**
      * @brief Non-mutable access to the contained value.
      * @return Non-mutable reference to the contained value.

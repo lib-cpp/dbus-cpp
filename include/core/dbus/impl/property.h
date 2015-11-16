@@ -116,6 +116,20 @@ Property<PropertyType>::Property(
 }
 
 template<typename PropertyType>
+Property<PropertyType>::~Property()
+{
+    try
+    {
+        signal_about_to_be_destroyed();
+    } catch(...)
+    {
+        // Consciously dropping all exceptions here.
+        // There is hardly anything we can do about it while
+        // tearing down the object anyway.
+    }
+}
+
+template<typename PropertyType>
 void
 Property<PropertyType>::handle_get(const Message::Ptr& msg)
 {
