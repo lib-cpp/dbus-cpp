@@ -163,8 +163,7 @@ Object::get_property()
     //     [1.2] If no: Create a new proeprty instance and:
     //       [1.2.1] Make it known to the cache.
     //       [1.2.2] Wire it up for property_changed signal receiving.
-    //       [1.2.3] Wire up to its about_to_be_destroyed signal for cleanup purposes.
-    //       [1.2.4] Communicate a new match rule to the dbus daemon to enable reception.
+    //       [1.2.3] Communicate a new match rule to the dbus daemon to enable reception.
     if (parent->is_stub())
     {
         auto itf = traits::Service<typename PropertyDescription::Interface>::interface_name();
@@ -180,21 +179,18 @@ Object::get_property()
         auto mr = MatchRule()
             .type(Message::Type::signal)
             .interface(traits::Service<interfaces::Properties>::interface_name())
-            .member(interfaces::Properties::Signals::PropertiesChanged::name())
-            .args({std::make_pair(0, itf)});
+            .member(interfaces::Properties::Signals::PropertiesChanged::name());
 
         property = PropertyType::make_property(shared_from_this());
 
         Object::property_cache<PropertyDescription>().insert_value_for_key(ekey, property);
 
-        // [1.2.3] Clean up as soon as the property goes out of scope.
-        property->about_to_be_destroyed().connect([this, mr]()
+        // We only ever do this once per object.
+        std::call_once(add_match_once, [&]()
         {
-            remove_match(mr);      
+            // [1.2.4] Inform the dbus daemon that we would like to receive the respective signals.
+            add_match(mr);
         });
-
-        // [1.2.4] Inform the dbus daemon that we would like to receive the respective signals.
-        add_match(mr);
 
         // [1.2.2] Enable dispatching of changes.
         std::weak_ptr<PropertyType> wp{property};

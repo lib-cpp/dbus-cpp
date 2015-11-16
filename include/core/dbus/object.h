@@ -26,6 +26,7 @@
 #include <future>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <ostream>
 #include <string>
 
@@ -232,6 +233,7 @@ class Object : public std::enable_shared_from_this<Object>
     MessageRouter<MethodKey> method_router;
     MessageRouter<PropertyKey> get_property_router;
     MessageRouter<PropertyKey> set_property_router;
+    std::once_flag add_match_once;
     std::map<
         std::tuple<std::string, std::string>,
         std::function<void(const types::Variant&)>
