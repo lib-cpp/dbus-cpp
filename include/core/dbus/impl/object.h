@@ -36,6 +36,7 @@
 
 #include <functional>
 #include <future>
+#include <iostream>
 #include <map>
 #include <memory>
 #include <string>
@@ -156,38 +157,48 @@ Object::get_property()
 
     // Creating a stub property for a remote object/property instance
     // requires the following steps:
-    //   * Look up if we already have a property instance available in the cache, 
-    //     leveraging the tuple (path, interface, name) as key.
-    //     * If yes: return the property.
-    //     * If no: Create a new proeprty instance and:
-    //       * Make it known to the cache.
-    //       * Wire it up for property_changed signal receiving.
+    //   [1.] Look up if we already have a property instance available in the cache, 
+    //        leveraging the tuple (path, interface, name) as key.
+    //     [1.1] If yes: return the property.
+    //     [1.2] If no: Create a new proeprty instance and:
+    //       [1.2.1] Make it known to the cache.
+    //       [1.2.2] Wire it up for property_changed signal receiving.
+    //       [1.2.3] Wire up to its about_to_be_destroyed signal for cleanup purposes.
+    //       [1.2.4] Communicate a new match rule to the dbus daemon to enable reception.
     if (parent->is_stub())
     {
         auto itf = traits::Service<typename PropertyDescription::Interface>::interface_name();
         auto name = PropertyDescription::name(); 
-        auto key = std::make_tuple(path(), itf, name);
+        auto ekey = std::make_tuple(path(), itf, name);
 
-        auto property = Object::property_cache<PropertyDescription>().retrieve_value_for_key(key);
+        auto property = Object::property_cache<PropertyDescription>().retrieve_value_for_key(ekey);
         if (property)
+        {
             return property;
+        }
 
-        property = PropertyType::make_property(shared_from_this());
-        auto tuple = std::make_tuple(itf, name);
-
-        Object::property_cache<PropertyDescription>().insert_value_for_key(key, property);
-
-        MatchRule mr;
-        mr = mr
+        auto mr = MatchRule()
             .type(Message::Type::signal)
             .interface(traits::Service<interfaces::Properties>::interface_name())
             .member(interfaces::Properties::Signals::PropertiesChanged::name())
-            .args({std::make_pair(0, std::get<0>(tuple))});
+            .args({std::make_pair(0, itf)});
 
+        property = PropertyType::make_property(shared_from_this());
+
+        Object::property_cache<PropertyDescription>().insert_value_for_key(ekey, property);
+
+        // [1.2.3] Clean up as soon as the property goes out of scope.
+        property->about_to_be_destroyed().connect([this, mr]()
+        {
+            remove_match(mr);      
+        });
+
+        // [1.2.4] Inform the dbus daemon that we would like to receive the respective signals.
         add_match(mr);
 
+        // [1.2.2] Enable dispatching of changes.
         std::weak_ptr<PropertyType> wp{property};
-        property_changed_vtable[tuple] = [wp](const types::Variant& arg)
+        property_changed_vtable[std::make_tuple(itf, name)] = [wp](const types::Variant& arg)
         {
             if (auto sp = wp.lock())
                 sp->handle_changed(arg);
