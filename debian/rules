@@ -6,15 +6,31 @@ export DH_VERBOSE=1
 
 include /usr/share/dpkg/default.mk
 
+distro=$(shell lsb_release -c -s)
+
+ifeq ($(distro),vivid)
+	full_version=$(shell cat $(CURDIR)/debian/VERSION.vivid)
+else
+	full_version=$(shell cat $(CURDIR)/debian/VERSION)
+endif
+
+major=$(shell echo $(full_version) | cut -d'.' -f1)
+minor=$(shell echo $(full_version) | cut -d'.' -f2)
+patch=$(shell echo $(full_version) | cut -d'.' -f3)
+
 export DPKG_GENSYMBOLS_CHECK_LEVEL=4
 
 %:
 	dh $@
 
 override_dh_auto_configure:
-	dh_auto_configure -- -DCMAKE_INSTALL_LIBEXECDIR=/usr/lib/$(DEB_HOST_MULTIARCH)/dbus-cpp -DCMAKE_C_COMPILER=$(CC) -DCMAKE_CXX_COMPILER=$(CXX)
+	dh_auto_configure -- -DCMAKE_INSTALL_LIBEXECDIR=/usr/lib/$(DEB_HOST_MULTIARCH)/dbus-cpp -DCMAKE_C_COMPILER=$(CC) -DCMAKE_CXX_COMPILER=$(CXX) -DDBUS_CPP_VERSION_MAJOR=$(major) -DDBUS_CPP_VERSION_MINOR=$(minor) -DDBUS_CPP_VERSION_PATCH=$(patch)
 
 override_dh_auto_test:
 	if [ "$(DEB_HOST_MULTIARCH)" != "powerpc-linux-gnu" ]; then \
 		dh_auto_test; \
 	fi
+
+override_dh_auto_clean:
+	/bin/sh $(CURDIR)/debian/gen-debian-files.sh $(CURDIR)/debian
+	dh_auto_clean
