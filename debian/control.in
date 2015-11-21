@@ -1,0 +1,73 @@
+Source: dbus-cpp
+Priority: optional
+Maintainer: Thomas Voß <thomas.voss@ubuntu.com>
+Build-Depends: cmake,
+               dbus,
+               debhelper (>= 9),
+               doxygen,
+               google-mock,
+               libboost-filesystem-dev,
+               libboost-system-dev,
+               libboost-program-options-dev,
+               libdbus-1-dev,
+               libgtest-dev,
+               libprocess-cpp-dev,
+               libproperties-cpp-dev,
+               libxml2-dev,
+               lsb-release,
+Standards-Version: 3.9.5
+Section: libs
+Homepage: http://launchpad.net/dbus-cpp
+# If you aren't a member of ~phablet-team but need to upload packaging changes,
+# just go ahead.  ~phablet-team will notice and sync up the code again.
+Vcs-Bzr: https://code.launchpad.net/~phablet-team/dbus-cpp/trunk
+Vcs-Browser: http://bazaar.launchpad.net/~phablet-team/dbus-cpp/trunk/files
+
+Package: libdbus-cpp@DBUS_CPP_SOVERSION@
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+Description: header-only dbus-binding leveraging C++-11
+ A header-only dbus-binding leveraging C++-11, relying on compile-time
+ polymorphism to integrate with arbitrary type systems. Runtime portions to bind
+ to different event loops.
+
+Package: dbus-cpp-bin
+Section: libdevel
+Architecture: any
+Multi-Arch: foreign
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+         libdbus-cpp@DBUS_CPP_SOVERSION@ (= ${binary:Version})
+Description: header-only dbus-binding leveraging C++-11
+ Protocol compiler and generator to automatically generate protocol headers from
+ introspection XML.
+
+Package: libdbus-cpp-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+         dbus,
+         libdbus-cpp@DBUS_CPP_SOVERSION@ (= ${binary:Version})
+Replaces: dbus-cpp-dev
+Conflicts: dbus-cpp-dev
+Provides: dbus-cpp-dev
+Description: header-only dbus-binding leveraging C++-11
+ A header-only dbus-binding leveraging C++-11, relying on compile-time
+ polymorphism to integrate with arbitrary type systems.
+
+Package: dbus-cpp-dev-examples
+Section: x11
+Architecture: any
+Multi-Arch: same
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+Description: header-only dbus-binding leveraging C++-11, example binaries
+ A header-only dbus-binding leveraging C++-11, relying on compile-time
+ polymorphism to integrate with arbitrary type systems.
+ .
+ This package provides examples.
