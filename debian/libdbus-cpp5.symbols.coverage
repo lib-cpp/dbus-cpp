@@ -1,5 +1,0 @@
- (c++|optional)"core::dbus::ServiceWatcher::Private::Private()@Base" 2.0.0+14.04.20140310
- (c++|optional)"core::dbus::Bus::Name::~Name()@Base" 2.0.0+14.04.20140310
- (c++|optional)"core::dbus::Bus::Private::~Private()@Base" 2.0.0+14.04.20140310
- (c++|optional)"core::dbus::Message::Writer::Private::~Private()@Base" 2.0.0+14.04.20140310
- (c++|optional)"typeinfo for core::dbus::Message::Private::Private(DBusMessage*, bool)::{lambda(DBusMessage*)#1}@Base" 2.0.0+14.04.20140310
