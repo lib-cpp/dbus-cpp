@@ -23,6 +23,24 @@ dbus-cpp (5.0.0) wily; urgency=medium
 
  -- Thomas Voß <thomas.voss@canonical.com>  Tue, 21 Jul 2015 12:36:46 +0200
 
+dbus-cpp (4.3.0+15.04.20151023-0ubuntu1) vivid; urgency=medium
+
+  [ CI Train Bot ]
+  * New rebuild forced.
+
+  [ Thomas Voß ]
+  * Do not cache emitted values for stub signals. (LP: #1509285)
+
+ -- Jim Hodapp <ci-train-bot@canonical.com>  Fri, 23 Oct 2015 10:01:27 +0000
+
+dbus-cpp (4.3.0+15.04.20151020-0ubuntu1) vivid; urgency=medium
+
+  [ Manuel de la Pena ]
+  * Ensure that the signals are correctly emitted for when the services
+    appear and go.
+
+ -- Thomas Voß <ci-train-bot@canonical.com>  Tue, 20 Oct 2015 10:55:11 +0000
+
 dbus-cpp (4.3.0+15.04.20150505-0ubuntu1) vivid; urgency=medium
 
   [ CI Train Bot ]
