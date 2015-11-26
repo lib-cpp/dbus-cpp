@@ -121,8 +121,8 @@ inline Signal<SignalDescription, Argument>::Signal(
             &Signal<SignalDescription>::operator(),
             this,
             std::placeholders::_1));
-    parent->add_match(
-        rule.type(Message::Type::signal).interface(interface).member(name));
+    rule = rule.type(Message::Type::signal).interface(interface).member(name);
+    parent->add_match(rule);
 }
 
 template<typename SignalDescription, typename Argument>
@@ -309,6 +309,8 @@ inline Signal<
             &Signal<SignalDescription, typename SignalDescription::ArgumentType>::operator(),
             this,
             std::placeholders::_1));
+
+    d->rule = d->rule.type(Message::Type::signal).interface(interface).member(name);
 }
 
 template<typename SignalDescription>
