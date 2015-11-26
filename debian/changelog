@@ -1,3 +1,14 @@
+dbus-cpp (4.3.0+15.04.20151126-0ubuntu1) vivid; urgency=medium
+
+  [ CI Train Bot ]
+  * New rebuild forced.
+
+  [ Thomas Voß ]
+  * Ensure that Signal with non-void argument types correctly narrow
+    their match rules. (LP: #1480877)
+
+ -- Thomas Voß <ci-train-bot@canonical.com>  Thu, 26 Nov 2015 07:31:37 +0000
+
 dbus-cpp (4.3.0+15.04.20151023-0ubuntu1) vivid; urgency=medium
 
   [ CI Train Bot ]
