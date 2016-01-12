@@ -1,3 +1,10 @@
+dbus-cpp (4.3.0+15.04.20160112-0ubuntu1) vivid; urgency=medium
+
+  * Only run dbus_shutdown if explicitly requested by env var. (LP:
+    #1422304, #1526877)
+
+ -- Thomas Voß <ci-train-bot@canonical.com>  Tue, 12 Jan 2016 16:28:02 +0000
+
 dbus-cpp (4.3.0+15.04.20151126-0ubuntu1) vivid; urgency=medium
 
   [ CI Train Bot ]
