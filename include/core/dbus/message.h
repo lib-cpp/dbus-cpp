@@ -439,6 +439,8 @@ private:
 };
 typedef std::shared_ptr<Message> MessagePtr;
 typedef std::unique_ptr<Message> MessageUPtr;
+
+ORG_FREEDESKTOP_DBUS_DLL_PUBLIC std::ostream& operator<<(std::ostream&, Message::Type);
 }
 }
 

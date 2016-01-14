@@ -151,17 +151,10 @@ dbus::MatchRule& dbus::MatchRule::args(const MatchArgs& p) const
 
 std::string dbus::MatchRule::as_string() const
 {
-    static const std::map<Message::Type, std::string> lut =
-    {
-        {Message::Type::signal, "signal"},
-        {Message::Type::method_call, "method_call"},
-        {Message::Type::method_return, "method_return"},
-        {Message::Type::error, "error"}
-    };
     Comma comma;
     std::stringstream ss;
     if (d->type != Message::Type::invalid)
-        ss << "type='" << lut.at(d->type) << "'" << comma;
+        ss << "type='" << d->type << "'" << comma;
     if (!d->sender.empty())
         ss << comma << "sender='" << d->sender << "'" << comma;
     if (!d->interface.empty())
