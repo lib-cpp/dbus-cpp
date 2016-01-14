@@ -1,3 +1,4 @@
+ (c++)"core::dbus::operator<<(std::basic_ostream<char, std::char_traits<char> >&, core::dbus::Message::Type)@Base" 0replaceme
  (c++)"core::dbus::Fixture::system_bus_address()@Base" 4.3.0+15.04.20150505
  (c++)"core::dbus::Fixture::session_bus_address()@Base" 4.3.0+15.04.20150505
  (c++)"core::dbus::Fixture::default_daemon_timeout()@Base" 4.0.0+14.10.20140730
