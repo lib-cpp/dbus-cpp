@@ -33,6 +33,8 @@
 #include <boost/asio.hpp>
 #include <gtest/gtest.h>
 
+#include <random>
+
 namespace dbus = core::dbus;
 
 namespace

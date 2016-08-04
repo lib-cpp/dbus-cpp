@@ -65,7 +65,7 @@ Signal<SignalDescription, Argument>::disconnect(
         const typename Signal<SignalDescription, Argument>::SubscriptionToken& token)
 {
     std::lock_guard<std::mutex> lg(handlers_guard);
-    return handlers.erase(token);
+    handlers.erase(token);
 }
 
 template<typename SignalDescription, typename Argument>
