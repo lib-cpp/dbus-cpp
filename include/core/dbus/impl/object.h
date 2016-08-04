@@ -19,7 +19,6 @@
 #define CORE_DBUS_IMPL_OBJECT_H_
 
 #include <core/dbus/bus.h>
-#include <core/dbus/lifetime_constrained_cache.h>
 #include <core/dbus/match_rule.h>
 #include <core/dbus/message_router.h>
 #include <core/dbus/message_streaming_operators.h>
@@ -37,6 +36,7 @@
 
 #include <functional>
 #include <future>
+#include <iostream>
 #include <map>
 #include <memory>
 #include <string>
@@ -70,17 +70,17 @@ inline Result<ResultType> Object::invoke_method_synchronously(const Args& ... ar
         object_path.as_string(),
         traits::Service<typename Method::Interface>::interface_name().c_str(),
         Method::name());
-    
+
     if (!msg)
         throw std::runtime_error("No memory available to allocate DBus message");
-    
+ 
     auto writer = msg->writer();
     encode_message(writer, args...);
-    
+
     auto reply = parent->get_connection()->send_with_reply_and_block_for_at_most(
                 msg,
                 Method::default_timeout());
-    
+
     return Result<ResultType>::from_message(reply);
 }
 
@@ -153,40 +153,57 @@ template<typename PropertyDescription>
 inline std::shared_ptr<Property<PropertyDescription>>
 Object::get_property()
 {
-    // If this is a proxy object we set up listening for property changes the
-    // first time someone accesses properties.
-    if (parent->is_stub())
-    {
-        if (!signal_properties_changed)
-        {
-            signal_properties_changed
-                = get_signal<interfaces::Properties::Signals::PropertiesChanged>();
-
-            signal_properties_changed->connect(
-                std::bind(
-                    &Object::on_properties_changed,
-                    shared_from_this(),
-                    std::placeholders::_1));
-        }
-    }
-
     typedef Property<PropertyDescription> PropertyType;
-    auto property =
-            PropertyType::make_property(
-                shared_from_this());
 
+    // Creating a stub property for a remote object/property instance
+    // requires the following steps:
+    //   [1.] Look up if we already have a property instance available in the cache, 
+    //        leveraging the tuple (path, interface, name) as key.
+    //     [1.1] If yes: return the property.
+    //     [1.2] If no: Create a new proeprty instance and:
+    //       [1.2.1] Make it known to the cache.
+    //       [1.2.2] Wire it up for property_changed signal receiving.
+    //       [1.2.3] Communicate a new match rule to the dbus daemon to enable reception.
     if (parent->is_stub())
     {
-        auto tuple = std::make_tuple(
-                traits::Service<typename PropertyDescription::Interface>::interface_name(),
-                PropertyDescription::name());
+        auto itf = traits::Service<typename PropertyDescription::Interface>::interface_name();
+        auto name = PropertyDescription::name(); 
+        auto ekey = std::make_tuple(path(), itf, name);
 
-        property_changed_vtable[tuple] = std::bind(
-                &Property<PropertyDescription>::handle_changed,
-                property,
-                std::placeholders::_1);
+        auto property = Object::property_cache<PropertyDescription>().retrieve_value_for_key(ekey);
+        if (property)
+        {
+            return property;
+        }
+
+        auto mr = MatchRule()
+            .type(Message::Type::signal)
+            .interface(traits::Service<interfaces::Properties>::interface_name())
+            .member(interfaces::Properties::Signals::PropertiesChanged::name());
+
+        property = PropertyType::make_property(shared_from_this());
+
+        Object::property_cache<PropertyDescription>().insert_value_for_key(ekey, property);
+
+        // We only ever do this once per object.
+        std::call_once(add_match_once, [&]()
+        {
+            // [1.2.4] Inform the dbus daemon that we would like to receive the respective signals.
+            add_match(mr);
+        });
+
+        // [1.2.2] Enable dispatching of changes.
+        std::weak_ptr<PropertyType> wp{property};
+        property_changed_vtable[std::make_tuple(itf, name)] = [wp](const types::Variant& arg)
+        {
+            if (auto sp = wp.lock())
+                sp->handle_changed(arg);
+        };
+
+        return property;
     }
-    return property;
+
+    return PropertyType::make_property(shared_from_this());
 }
 
 template<typename Interface>
@@ -312,6 +329,23 @@ inline Object::Object(
                 &MessageRouter<PropertyKey>::operator(), 
                 std::ref(set_property_router), 
                 std::placeholders::_1));
+    } else
+    {
+        // We centrally route org.freedesktop.DBus.Properties.PropertiesChanged
+        // through the object, which in turn routes via a custom Property cache.
+        signal_router.install_route(
+            SignalKey{
+                traits::Service<interfaces::Properties>::interface_name(), 
+                interfaces::Properties::Signals::PropertiesChanged::name()
+            },
+            // Passing 'this' is fine as the lifetime of the signal_router is upper limited
+            // by the lifetime of 'this'.
+            [this](const Message::Ptr& msg)
+            {
+                interfaces::Properties::Signals::PropertiesChanged::ArgumentType arg;
+                msg->reader() >> arg;
+                on_properties_changed(arg);
+            });
     }
 }
 
@@ -319,6 +353,20 @@ inline Object::~Object()
 {
     parent->get_connection()->access_signal_router().uninstall_route(object_path);
     parent->get_connection()->unregister_object_path(object_path);
+
+    auto mr = MatchRule()
+        .type(Message::Type::signal)
+        .interface(traits::Service<interfaces::Properties>::interface_name())
+        .member(interfaces::Properties::Signals::PropertiesChanged::name());
+
+    try
+    {
+        remove_match(mr);
+    } catch(...)
+   {
+        // We consciously drop all possible exceptions here. There is hardly 
+        // anything we can do about the error anyway.
+   }
 }
 
 inline void Object::add_match(const MatchRule& rule)
@@ -345,6 +393,19 @@ inline void Object::on_properties_changed(
             it->second(value.second);
         }
     }
+}
+
+template<typename PropertyDescription>
+inline core::dbus::ThreadSafeLifetimeConstrainedCache<
+    core::dbus::Object::CacheKey,
+    core::dbus::Property<PropertyDescription>>&
+core::dbus::Object::property_cache()
+{
+    static core::dbus::ThreadSafeLifetimeConstrainedCache<
+        core::dbus::Object::CacheKey,
+        core::dbus::Property<PropertyDescription>
+    > cache;
+    return cache;
 }
 }
 }

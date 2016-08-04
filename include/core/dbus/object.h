@@ -19,12 +19,14 @@
 #define CORE_DBUS_OBJECT_H_
 
 #include <core/dbus/bus.h>
+#include <core/dbus/lifetime_constrained_cache.h>
 #include <core/dbus/service.h>
 
 #include <functional>
 #include <future>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <ostream>
 #include <string>
 
@@ -82,9 +84,13 @@ class Signal;
 class Object : public std::enable_shared_from_this<Object>
 {
   private:
+    typedef std::tuple<types::ObjectPath, std::string, std::string> CacheKey;
     typedef std::tuple<std::string, std::string> MethodKey;
     typedef std::tuple<std::string, std::string> PropertyKey;
     typedef std::tuple<std::string, std::string> SignalKey;
+
+    template<typename PropertyDescription>
+    static ThreadSafeLifetimeConstrainedCache<CacheKey, Property<PropertyDescription>>& property_cache();
 
   public:
     typedef std::shared_ptr<Object> Ptr;
@@ -173,7 +179,7 @@ class Object : public std::enable_shared_from_this<Object>
      * @param [in] path The path to associate the object with.
      * @return An object instance or nullptr in case of errors.
      */
-    std::shared_ptr<Object> 
+    std::shared_ptr<Object>
     inline add_object_for_path(const types::ObjectPath& path);
 
     /**
@@ -227,16 +233,11 @@ class Object : public std::enable_shared_from_this<Object>
     MessageRouter<MethodKey> method_router;
     MessageRouter<PropertyKey> get_property_router;
     MessageRouter<PropertyKey> set_property_router;
+    std::once_flag add_match_once;
     std::map<
         std::tuple<std::string, std::string>,
         std::function<void(const types::Variant&)>
     > property_changed_vtable;
-    std::shared_ptr<
-        Signal<
-            interfaces::Properties::Signals::PropertiesChanged,
-            interfaces::Properties::Signals::PropertiesChanged::ArgumentType
-        >
-    > signal_properties_changed;
 };
 }
 }
