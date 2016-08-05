@@ -65,4 +65,3 @@ echo ${minor} >${output_dir}/libdbus-cpp.minor-version
 echo ${micro} >${output_dir}/libdbus-cpp.micro-version
 echo ${major_minor} >${output_dir}/libdbus-cpp.major-minor-version
 echo ${soversion} >${output_dir}/libdbus-cpp.soversion
-echo ${vivid_soversion} >${output_dir}/libdbus-cpp.vivid-soversion
