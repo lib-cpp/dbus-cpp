@@ -24,6 +24,8 @@
 #include <core/dbus/traits/timeout.h>
 #include <core/dbus/traits/watch.h>
 
+#include <core/posix/this_process.h>
+
 #include "message_p.h"
 #include "message_factory_impl.h"
 #include "pending_call_impl.h"
@@ -76,8 +78,18 @@ DBusHandlerResult static_handle_message(
 
 void init_libdbus_thread_support_and_install_shutdown_handler()
 {
+    static const bool install_dbus_shutdown_handler
+    {
+        not core::posix::this_process::env::get("DBUS_CPP_INSTALL_DBUS_SHUTDOWN_HANDLER").empty()
+    };
+
     static std::once_flag once;
-    std::call_once(once, []() { dbus_threads_init_default(); std::atexit(dbus_shutdown); });
+    std::call_once(once, []()
+    {
+        dbus_threads_init_default();
+        if (install_dbus_shutdown_handler)
+            std::atexit(dbus_shutdown);
+    });
 }
 }
 

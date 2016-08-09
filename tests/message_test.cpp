@@ -175,3 +175,23 @@ TEST(Message, WriteAndSuccessiveIterationAreIdempotent)
         }
     }
 }
+
+namespace
+{
+class MessageType : public testing::TestWithParam<std::pair<core::dbus::Message::Type, std::string>>
+{
+};
+}
+
+TEST_P(MessageType, IsPrintedCorrectly)
+{
+    std::stringstream ss; ss << GetParam().first;
+    EXPECT_EQ(GetParam().second, ss.str());
+}
+
+INSTANTIATE_TEST_CASE_P(MessageType, MessageType, ::testing::Values(
+                            std::make_pair(core::dbus::Message::Type::error, "error"),
+                            std::make_pair(core::dbus::Message::Type::invalid, "invalid"),
+                            std::make_pair(core::dbus::Message::Type::method_call, "method_call"),
+                            std::make_pair(core::dbus::Message::Type::method_return, "method_return"),
+                            std::make_pair(core::dbus::Message::Type::signal, "signal")));

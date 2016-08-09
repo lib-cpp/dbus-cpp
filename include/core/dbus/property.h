@@ -43,6 +43,8 @@ public:
     typedef typename PropertyType::ValueType ValueType;
     typedef core::Property<ValueType> Super;
 
+    inline ~Property();
+
     /**
      * @brief Non-mutable access to the contained value.
      * @return Non-mutable reference to the contained value.
@@ -60,6 +62,11 @@ public:
      * @return true if the property is writable, false otherwise.
      */
     inline bool is_writable() const;
+
+    /**
+     * @brief Emitted during destruction of an object instance.
+     */
+    inline const core::Signal<void>& about_to_be_destroyed() const;
 
 protected:
     friend class Object;
@@ -82,6 +89,7 @@ private:
     std::string interface;
     std::string name;
     bool writable;
+    core::Signal<void> signal_about_to_be_destroyed;
 };
 }
 }

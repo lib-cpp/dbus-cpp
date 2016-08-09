@@ -652,5 +652,24 @@ std::shared_ptr<Message> Message::clone()
 {
     return std::shared_ptr<Message>(new Message(d->clone()));
 }
+
+std::ostream& operator<<(std::ostream& out, Message::Type type)
+{
+    switch (type)
+    {
+    case Message::Type::error:
+        return out << "error";
+    case Message::Type::invalid:
+        return out << "invalid";
+    case Message::Type::method_call:
+        return out << "method_call";
+    case Message::Type::method_return:
+        return out << "method_return";
+    case Message::Type::signal:
+        return out << "signal";
+    }
+
+    return out;
+}
 }
 }

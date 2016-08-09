@@ -18,6 +18,35 @@ cmake_minimum_required(VERSION 2.8)
 
 project(dbus-cpp)
 
+# We haven't received version information via the packaging setup.
+# For that, we try to determine sensible values on our own, ensuring
+# plain old invocations to cmake still work as expected.
+if (NOT DEFINED DBUS_CPP_VERSION_MAJOR)
+  find_program(LSB_RELEASE lsb_release)
+  execute_process(
+    COMMAND ${LSB_RELEASE} -c -s
+    OUTPUT_VARIABLE DISTRO_CODENAME
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+  # We explicitly ignore errors and only check if we are building for vivid.
+  # For all other cases:
+  #   - releases other than vivid
+  #   - other distros
+  #   - errors
+  # we define the version to be 2.0.0
+  if (${DISTRO_CODENAME} STREQUAL "vivid")
+    set(DBUS_CPP_VERSION_MAJOR 4)
+    set(DBUS_CPP_VERSION_MINOR 3)
+    set(DBUS_CPP_VERSION_PATCH 0)
+  else ()
+    set(DBUS_CPP_VERSION_MAJOR 5)
+    set(DBUS_CPP_VERSION_MINOR 0)
+    set(DBUS_CPP_VERSION_PATCH 0)
+  endif()
+endif()
+
+message(STATUS "${CMAKE_PROJECT_NAME} ${DBUS_CPP_VERSION_MAJOR}.${DBUS_CPP_VERSION_MINOR}.${DBUS_CPP_VERSION_PATCH}")
+
 find_package(Boost COMPONENTS filesystem program_options system REQUIRED)
 find_package(LibXml2 REQUIRED)
 find_package(PkgConfig REQUIRED)
@@ -60,10 +89,6 @@ IF(CMAKE_BUILD_TYPE MATCHES [cC][oO][vV][eE][rR][aA][gG][eE])
   SET(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -ftest-coverage -fprofile-arcs" )
   SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -ftest-coverage -fprofile-arcs" )
 ENDIF(CMAKE_BUILD_TYPE MATCHES [cC][oO][vV][eE][rR][aA][gG][eE])
-
-set(DBUS_CPP_VERSION_MAJOR 5)
-set(DBUS_CPP_VERSION_MINOR 0) 
-set(DBUS_CPP_VERSION_PATCH 0)
 
 include(CTest)
 

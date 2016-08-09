@@ -23,6 +23,53 @@ dbus-cpp (5.0.0) wily; urgency=medium
 
  -- Thomas Voß <thomas.voss@canonical.com>  Tue, 21 Jul 2015 12:36:46 +0200
 
+dbus-cpp (4.3.0+15.04.20160114.2-0ubuntu1) vivid; urgency=medium
+
+  [ CI Train Bot ]
+  * debian/libdbus-cpp4.symbols.32bit: update to released version.
+  * debian/libdbus-cpp4.symbols.64bit: update to released version.
+
+  [ Thomas Voß ]
+  * Add a proper operator<< for dbus::Message::Type. (LP: #1524131)
+
+ -- Thomas Voß <ci-train-bot@canonical.com>  Thu, 14 Jan 2016 21:51:19 +0000
+
+dbus-cpp (4.3.0+15.04.20160112-0ubuntu1) vivid; urgency=medium
+
+  * Only run dbus_shutdown if explicitly requested by env var. (LP:
+    #1422304, #1526877)
+
+ -- Thomas Voß <ci-train-bot@canonical.com>  Tue, 12 Jan 2016 16:28:02 +0000
+
+dbus-cpp (4.3.0+15.04.20151126-0ubuntu1) vivid; urgency=medium
+
+  [ CI Train Bot ]
+  * New rebuild forced.
+
+  [ Thomas Voß ]
+  * Ensure that Signal with non-void argument types correctly narrow
+    their match rules. (LP: #1480877)
+
+ -- Thomas Voß <ci-train-bot@canonical.com>  Thu, 26 Nov 2015 07:31:37 +0000
+
+dbus-cpp (4.3.0+15.04.20151023-0ubuntu1) vivid; urgency=medium
+
+  [ CI Train Bot ]
+  * New rebuild forced.
+
+  [ Thomas Voß ]
+  * Do not cache emitted values for stub signals. (LP: #1509285)
+
+ -- Jim Hodapp <ci-train-bot@canonical.com>  Fri, 23 Oct 2015 10:01:27 +0000
+
+dbus-cpp (4.3.0+15.04.20151020-0ubuntu1) vivid; urgency=medium
+
+  [ Manuel de la Pena ]
+  * Ensure that the signals are correctly emitted for when the services
+    appear and go.
+
+ -- Thomas Voß <ci-train-bot@canonical.com>  Tue, 20 Oct 2015 10:55:11 +0000
+
 dbus-cpp (4.3.0+15.04.20150505-0ubuntu1) vivid; urgency=medium
 
   [ CI Train Bot ]

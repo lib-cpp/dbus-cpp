@@ -33,6 +33,8 @@
 #include <boost/asio.hpp>
 #include <gtest/gtest.h>
 
+#include <random>
+
 namespace dbus = core::dbus;
 
 namespace
@@ -172,7 +174,7 @@ TEST_F(Executor, TimeoutsAreHandledCorrectly)
             bus->send(reply);
         });
 
-        cross_process_sync.try_signal_ready_for(std::chrono::milliseconds{500});
+        cross_process_sync.try_signal_ready_for(std::chrono::seconds{20});
 
         std::thread w1([bus]() { bus->run(); });
         std::thread w2([bus]() { bus->run(); });
@@ -201,7 +203,7 @@ TEST_F(Executor, TimeoutsAreHandledCorrectly)
         // std::cout << "Invoke gdb with: sudo gdb -p " << getpid() << std::endl;
         // sleep(10);
 
-        EXPECT_EQ(std::uint32_t(1), cross_process_sync.wait_for_signal_ready_for(std::chrono::milliseconds{500}));
+        EXPECT_EQ(std::uint32_t(1), cross_process_sync.wait_for_signal_ready_for(std::chrono::seconds{20}));
 
         auto stub_service = dbus::Service::use_service(bus, dbus::traits::Service<test::Service>::interface_name());
         auto stub = stub_service->object_for_path(dbus::types::ObjectPath("/this/is/unlikely/to/exist/Service"));

@@ -65,7 +65,7 @@ Signal<SignalDescription, Argument>::disconnect(
         const typename Signal<SignalDescription, Argument>::SubscriptionToken& token)
 {
     std::lock_guard<std::mutex> lg(handlers_guard);
-    return handlers.erase(token);
+    handlers.erase(token);
 }
 
 template<typename SignalDescription, typename Argument>
@@ -121,8 +121,8 @@ inline Signal<SignalDescription, Argument>::Signal(
             &Signal<SignalDescription>::operator(),
             this,
             std::placeholders::_1));
-    parent->add_match(
-        rule.type(Message::Type::signal).interface(interface).member(name));
+    rule = rule.type(Message::Type::signal).interface(interface).member(name);
+    parent->add_match(rule);
 }
 
 template<typename SignalDescription, typename Argument>
@@ -309,6 +309,8 @@ inline Signal<
             &Signal<SignalDescription, typename SignalDescription::ArgumentType>::operator(),
             this,
             std::placeholders::_1));
+
+    d->rule = d->rule.type(Message::Type::signal).interface(interface).member(name);
 }
 
 template<typename SignalDescription>
@@ -322,7 +324,8 @@ Signal<
 {
     try
     {
-        msg->reader() >> d->value;
+        typename SignalDescription::ArgumentType value;
+        msg->reader() >> value;
         std::lock_guard<std::mutex> lg(d->handlers_guard);
         for (auto it : d->handlers)
         {
@@ -356,7 +359,7 @@ Signal<
                     continue;
             }
 
-            handler(d->value);
+            handler(value);
         }
     }
     catch (const std::runtime_error& e)
