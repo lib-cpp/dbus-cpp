@@ -15,13 +15,8 @@
 # Authored by: Thomas Voss <thomas.voss@canonical.com>
 
 # Build with system gmock and embedded gtest
-set (GMOCK_INCLUDE_DIR "/usr/include/gmock/include" CACHE PATH "gmock source include directory")
-set (GMOCK_SOURCE_DIR "/usr/src/gmock" CACHE PATH "gmock source directory")
-set (GTEST_INCLUDE_DIR "${GMOCK_SOURCE_DIR}/gtest/include" CACHE PATH "gtest source include directory")
+find_package(GMock)
 
-add_subdirectory(${GMOCK_SOURCE_DIR} "${CMAKE_CURRENT_BINARY_DIR}/gmock")
-
-set(GTEST_BOTH_LIBRARIES gmock gtest gtest_main)
 find_package(Threads)
 
 add_definitions(-DCORE_DBUS_ENABLE_GOOGLE_TEST_FIXTURE)
@@ -125,6 +120,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
+  ${GMOCK_LIBRARIES}
   ${GTEST_BOTH_LIBRARIES}
   ${PROCESS_CPP_LIBRARIES}
 )
@@ -138,6 +134,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
+  ${GMOCK_LIBRARIES}
   ${GTEST_BOTH_LIBRARIES}
   ${PROCESS_CPP_LIBRARIES}
 )
@@ -150,6 +147,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
+  ${GMOCK_LIBRARIES}
   ${GTEST_BOTH_LIBRARIES}
   ${PROCESS_CPP_LIBRARIES}
 )
@@ -163,6 +161,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
+  ${GMOCK_LIBRARIES}
   ${GTEST_BOTH_LIBRARIES}
   )
 
@@ -175,6 +174,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
+  ${GMOCK_LIBRARIES}
   ${GTEST_BOTH_LIBRARIES}
   )
 
@@ -187,6 +187,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
+  ${GMOCK_LIBRARIES}
   ${GTEST_BOTH_LIBRARIES}
   )
 
@@ -201,6 +202,7 @@ target_link_libraries(
   ${DBUS_LIBRARIES}
   ${LIBXML2_LIBRARIES}
   ${GMOCK_LIBRARY}
+  ${GMOCK_LIBRARIES}
   ${GTEST_BOTH_LIBRARIES}
   )
 
@@ -213,6 +215,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
+  ${GMOCK_LIBRARIES}
   ${GTEST_BOTH_LIBRARIES}
   )
 
@@ -225,6 +228,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
+  ${GMOCK_LIBRARIES}
   ${GTEST_BOTH_LIBRARIES}
   )
 
@@ -237,6 +241,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
+  ${GMOCK_LIBRARIES}
   ${GTEST_BOTH_LIBRARIES}
   )
 
@@ -249,6 +254,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
+  ${GMOCK_LIBRARIES}
   ${GTEST_BOTH_LIBRARIES}
   )
 
@@ -261,6 +267,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
+  ${GMOCK_LIBRARIES}
   ${GTEST_BOTH_LIBRARIES}
   )
 
@@ -273,6 +280,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
+  ${GMOCK_LIBRARIES}
   ${GTEST_BOTH_LIBRARIES}
   )
 
@@ -284,6 +292,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
+  ${GMOCK_LIBRARIES}
   ${GTEST_BOTH_LIBRARIES}
   )
 
@@ -295,6 +304,7 @@ target_link_libraries(
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${DBUS_LIBRARIES}
+  ${GMOCK_LIBRARIES}
   ${GTEST_BOTH_LIBRARIES}
   )
 

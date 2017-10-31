@@ -134,7 +134,7 @@ TEST_F(Service, AddingServiceAndObjectAndCallingIntoItSucceeds)
             });
 
             auto readonly_property = stub->get_property<test::Service::Properties::ReadOnly>();
-            EXPECT_EQ(readonly_property->get(), 7);
+            EXPECT_EQ(readonly_property->get(), (std::uint32_t)7);
             std::uint32_t changed_value = 0;
             readonly_property->changed().connect([&changed_value](std::uint32_t value){
                 changed_value = value;
