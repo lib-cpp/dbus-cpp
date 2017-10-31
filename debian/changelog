@@ -1,3 +1,12 @@
+dbus-cpp (5.0.0+18.04.20171031-0ubuntu1) bionic; urgency=medium
+
+  [ Łukasz 'sil2100' Zemczak ]
+  * Fix FTBFS on bionic by switching to use cmake-extras and not
+    enforcing -pedantic anymore as current gtest macros do not follow
+    strict standards anymore.
+
+ -- Łukasz Zemczak <lukasz.zemczak@canonical.com>  Tue, 31 Oct 2017 19:11:23 +0000
+
 dbus-cpp (5.0.0+16.10.20160809-0ubuntu1) yakkety; urgency=medium
 
   * Fix signal emission on dbus::ServiceWatcher.
