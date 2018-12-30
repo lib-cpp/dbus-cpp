@@ -18,17 +18,11 @@
 #ifndef CORE_DBUS_ASIO_EXECUTOR_H_
 #define CORE_DBUS_ASIO_EXECUTOR_H_
 
+#include <boost/asio/io_service.hpp>
+
 #include <core/dbus/bus.h>
 #include <core/dbus/executor.h>
 #include <core/dbus/visibility.h>
-
-namespace boost
-{
-namespace asio
-{
-class io_service;
-}
-}
 
 namespace core
 {
