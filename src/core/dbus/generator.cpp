@@ -311,6 +311,8 @@ public:
     {
     }
 
+    Interface(const Interface&) = default;
+
     Interface& operator=(const Interface& rhs)
     {
         d = rhs.d;
@@ -361,6 +363,8 @@ public:
         : d(new Private(name))
     {
     }
+
+    Method(const Method&) = default;
 
     Method& operator=(const Method& rhs)
     {
@@ -421,6 +425,8 @@ public:
     {
     }
 
+    Property(const Property&) = default;
+
     Property& operator=(const Property& rhs)
     {
         d = rhs.d;
@@ -473,6 +479,8 @@ public:
         : d(new Private(name))
     {
     }
+
+    Signal(const Signal&) = default;
 
     Signal& operator=(const Signal& rhs)
     {
